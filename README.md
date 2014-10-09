@@ -14,7 +14,7 @@ To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We used
 6. Go to the Properties page of your project and navigate to C/C++ Build -> Settings
  * Go to GCC C++ Compiler -> Includes. Here you need to add "PATH_TO_OPENCV\build\include\"
  ![Compiler includes](https://raw.githubusercontent.com/swank-rats/image-processing/master/doc/images/compiler_includes.png)
- * Go to MinGW C++ Linker -> Libraries. Here you add opencv_imgproc249, opencv_highgui249^, opencv_core249 (one by one!) to Libraries (-I) and "PATH_TO_OPENCV\build\x86\mingw\lib" to Library search path (-L).
+ * Go to MinGW C++ Linker -> Libraries. Here you add opencv_imgproc249, opencv_highgui249, opencv_core249 (one by one!) to Libraries (-I) and "PATH_TO_OPENCV\build\x86\mingw\lib" to Library search path (-L).
 ![Linker includes](https://raw.githubusercontent.com/swank-rats/image-processing/master/doc/images/linker_includes.png)
 7. Now you can build the project and start it
 
