@@ -10,6 +10,7 @@ To get this project running you need [OpenCV](http://opencv.org/). We used [Ecli
 These installation instructions may be also helpful to get things running:
   * [Install OpenCV on Windows](http://seevisionc.blogspot.co.uk/2011/09/linux-like-installation-of-opencv-230.html)
   * [Build OpenCV under MinGW](http://sourceforge.net/p/opencvmingw/wiki/Build%20OpenCV%20under%20MinGW/)
+  * [The second and third post are also helpful](http://stackoverflow.com/questions/10860352/getting-started-with-opencv-2-4-and-mingw-on-windows-7)
 4. Clone this repository
 5. Import eclipse project with e
 5. Follow this instructions for the OpenCV settings for the eclipse project: [go to instructions](http://docs.opencv.org/doc/tutorials/introduction/linux_eclipse/linux_eclipse.html#linux-eclipse-usage)
