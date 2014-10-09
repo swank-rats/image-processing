@@ -9,6 +9,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
+#include <iostream>
 
 using namespace cv;
 using namespace std;
@@ -28,18 +29,34 @@ int main(int argc, char** argv)
 
 	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY);
 
-	while(1){ //Create infinte loop for live streaming
-		IplImage* frame = cvQueryFrame(capture); //Create image frames from capture
-		cvShowImage("Camera stream", frame);   //Show image frames on created window
+	if(!capture){
+	        cout << "No camera found." << endl;
+	        return -1;
+	}
 
-		key = cvWaitKey(10);     //Capture Keyboard stroke
+	IplImage* frame;
+
+	//Create infinte loop for live streaming
+	//exit by pressing ESC
+	while(1){
+		//Create image frames from capture
+		frame = cvQueryFrame(capture);
+		//Show image frames on created window
+		cvShowImage("Camera stream", frame);
+
+		//sending data
+
+		//Capture Keyboard stroke
+		key = cvWaitKey(10);
 		if (char(key) == 27){
-			break;//If you hit ESC key loop will break.
+			break; //If you hit ESC key loop will break.
 		}
 	}
 
-	cvReleaseCapture(&capture); //Release capture.
-	destroyAllWindows(); //Destroy Window
+	//Release capture.
+	cvReleaseCapture(&capture);
+	//Destroy Window
+	destroyAllWindows();
 
 	return 0;
 }
