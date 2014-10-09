@@ -3,7 +3,7 @@ image-processing
 
 Installation and project setup
 -------------------
-To get this project running you need OpenCV. We used [Eclipse](http://www.eclipse.org) as IDE.
+To get this project running you need [OpenCV](http://opencv.org/). We used [Eclipse](http://www.eclipse.org) as IDE.
 
 1. Download [OpenCV](http://opencv.org/)
 2. Install it on your computer: [installation instructions](http://docs.opencv.org/doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.html)
