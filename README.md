@@ -1,4 +1,4 @@
-image-processing
+Image processing
 ================
 
 Installation and project setup
