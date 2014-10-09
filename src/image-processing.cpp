@@ -1,9 +1,9 @@
 //============================================================================
 // Name        : image-processing.cpp
 // Author      : ITM13
-// Version     :
+// Version     : 1.0
 // Copyright   : Copyright (c) 2014 Swank Rat, MIT License (MIT)
-// Description : Hello World in C++, Ansi-style
+// Description : Image process start point
 //============================================================================
 
 #include <opencv2/core/core.hpp>
@@ -13,17 +13,33 @@
 using namespace cv;
 using namespace std;
 
+char key;
+
 int main(int argc, char** argv)
 {
-  Mat im = imread(argc == 2 ? argv[1] : "lena.png", 1);
-  if (im.empty())
-  {
-    cout << "Cannot open image!" << endl;
-    return -1;
-  }
+	cvNamedWindow("Camera stream", CV_WINDOW_NORMAL);
 
-  imshow("image", im);
-  waitKey(0);
+	Mat im = imread(argc == 2 ? argv[1] : "lena.png", 1);
 
-  return 0;
+	if (!im.empty())
+	{
+		imshow("Lena", im);
+	}
+
+	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY);
+
+	while(1){ //Create infinte loop for live streaming
+		IplImage* frame = cvQueryFrame(capture); //Create image frames from capture
+		cvShowImage("Camera stream", frame);   //Show image frames on created window
+
+		key = cvWaitKey(10);     //Capture Keyboard stroke
+		if (char(key) == 27){
+			break;//If you hit ESC key loop will break.
+		}
+	}
+
+	cvReleaseCapture(&capture); //Release capture.
+	destroyAllWindows(); //Destroy Window
+
+	return 0;
 }
