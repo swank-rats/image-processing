@@ -19,5 +19,5 @@ To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We used
 7. Now you can build the project and start it
 
 Maybe you get some help for troubleshooting here:
-  *[Using OpenCV with Eclipse (plugin CDT)](http://docs.opencv.org/doc/tutorials/introduction/linux_eclipse/linux_eclipse.html#linux-eclipse-usage)
-  * [stackoverflow: see the second and third post](http://stackoverflow.com/questions/10860352/getting-started-with-opencv-2-4-and-mingw-on-windows-7)
+ * [Using OpenCV with Eclipse (plugin CDT)](http://docs.opencv.org/doc/tutorials/introduction/linux_eclipse/linux_eclipse.html#linux-eclipse-usage)
+ * [stackoverflow: see the second and third post](http://stackoverflow.com/questions/10860352/getting-started-with-opencv-2-4-and-mingw-on-windows-7)
