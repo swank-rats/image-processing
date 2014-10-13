@@ -10,15 +10,19 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <string>
+
+#include "Services/WebcamService.h"
 
 using namespace cv;
 using namespace std;
 
 char key;
 
-int main(int argc, char** argv)
-{
-	cvNamedWindow("Camera stream", CV_WINDOW_NORMAL);
+int main(int argc, char** argv) {
+	string windowName = "Camera stream";
+
+	cvNamedWindow(windowName.c_str(), CV_WINDOW_NORMAL);
 
 	Mat im = imread(argc == 2 ? argv[1] : "lena.png", 1);
 
@@ -27,34 +31,10 @@ int main(int argc, char** argv)
 		imshow("Lena", im);
 	}
 
-	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY);
+	WebcamService* webcamService = new WebcamService(windowName);
 
-	if(!capture){
-	        cout << "No camera found." << endl;
-	        return -1;
-	}
+	cout << "Start recording: " << webcamService->startRecording() << endl;
 
-	IplImage* frame;
-
-	//Create infinte loop for live streaming
-	//exit by pressing ESC
-	while(1){
-		//Create image frames from capture
-		frame = cvQueryFrame(capture);
-		//Show image frames on created window
-		cvShowImage("Camera stream", frame);
-
-		//sending data
-
-		//Capture Keyboard stroke
-		key = cvWaitKey(10);
-		if (char(key) == 27){
-			break; //If you hit ESC key loop will break.
-		}
-	}
-
-	//Release capture.
-	cvReleaseCapture(&capture);
 	//Destroy Window
 	destroyAllWindows();
 

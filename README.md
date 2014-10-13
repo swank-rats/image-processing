@@ -3,7 +3,7 @@ Image processing
 
 Installation and project setup
 -------------------
-To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We used [Eclipse](http://www.eclipse.org) as IDE and [MinGW](http://www.mingw.org/). The installation instructions are for [Eclipse](http://www.eclipse.org). You may also need to install [CMake](http://www.cmake.org/).
+To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We used [Eclipse  Kepler SR 1 with CDT](http://www.eclipse.org) as IDE and [MinGW](http://www.mingw.org/). The installation instructions are for [Eclipse](http://www.eclipse.org). You may also need to install [CMake](http://www.cmake.org/). The following instructions are for Windows:
 
 1. Download [OpenCV](http://opencv.org/)
 2. Install it on your computer: [installation instructions](http://docs.opencv.org/doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.html) 3. You have to build OpenCV with [MinGW](http://www.mingw.org/). Just follow the following instructions.
@@ -12,11 +12,12 @@ To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We used
 4. Clone this repository
 5. Create an Eclipse project with the sources of this repository.
 6. Go to the Properties page of your project and navigate to C/C++ Build -> Settings
- * Go to GCC C++ Compiler -> Includes. Here you need to add "PATH_TO_OPENCV\build\include\"
+ * Go to GCC C++ Compiler -> Includes. Here you need to add e.g. "PATH_TO_OPENCV\build\include\"
  ![Compiler includes](https://raw.githubusercontent.com/swank-rats/image-processing/master/doc/images/compiler_includes.png)
- * Go to MinGW C++ Linker -> Libraries. Here you add opencv_imgproc249, opencv_highgui249, opencv_core249 (one by one!) to Libraries (-I) and "PATH_TO_OPENCV\build\x86\mingw\lib" to Library search path (-L).
+ * Go to MinGW C++ Linker -> Libraries. Here you add opencv_imgproc249, opencv_highgui249, opencv_core249 (one by one!) to Libraries (-I) and e.g. "PATH_TO_OPENCV\build\x86\mingw\lib" to Library search path (-L).
 ![Linker includes](https://raw.githubusercontent.com/swank-rats/image-processing/master/doc/images/linker_includes.png)
-7. Now you can build the project and start it
+7. You have to add -std=c++11 as additional flag for the compiler. To do so open the Properties of your project -> 
+8. Now you can build the project and start it
 
 Maybe you get some help for troubleshooting here:
  * [Using OpenCV with Eclipse (plugin CDT)](http://docs.opencv.org/doc/tutorials/introduction/linux_eclipse/linux_eclipse.html#linux-eclipse-usage)
