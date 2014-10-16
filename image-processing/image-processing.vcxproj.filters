@@ -15,27 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="image-processing.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Services\NetworkService.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="Services\WebcamService.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Services\NetworkService.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Services\WebcamService.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="lena.png">
-      <Filter>Ressourcendateien</Filter>
-    </Image>
   </ItemGroup>
 </Project>

@@ -8,12 +8,12 @@
 #ifndef NETWORKSERVICE_H_
 #define NETWORKSERVICE_H_
 
-class NetworkService {
+class network_service {
 public:
-	NetworkService();
-	virtual ~NetworkService();
+	network_service();
+	virtual ~network_service();
 
-	void StartListening(int port);
+	void start_listening(int port);
 };
 
 #endif /* NETWORKSERVICE_H_ */

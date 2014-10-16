@@ -14,20 +14,20 @@
 using namespace std;
 using namespace cv;
 
-class WebcamService {
+class webcam_service {
 public:
-	WebcamService(string windowName);
-	virtual ~WebcamService();
+	webcam_service(string windowName);
+	virtual ~webcam_service();
 
 	/*
 	 * This method will start the recording from the webcam
 	 * Returns true if starting was successful, false otherwise
 	 */
-	bool startRecording();
+	bool start_recording();
 	/*
 	 * This method will stop the recodirng from the webcam
 	 */
-	bool stopRecording();
+	bool stop_recording();
 private:
     string windowName;
     CvCapture* capture;

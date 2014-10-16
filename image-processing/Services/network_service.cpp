@@ -5,17 +5,17 @@
  *      Author: Stefan
  */
 
-#include "NetworkService.h"
+#include "network_service.h"
 
-NetworkService::NetworkService() {
+network_service::network_service() {
 	// TODO Auto-generated constructor stub
 
 }
 
-NetworkService::~NetworkService() {
+network_service::~network_service() {
 	// TODO Auto-generated destructor stub
 }
 
-void NetworkService::StartListening(int port) {
+void network_service::start_listening(int port) {
 
 }

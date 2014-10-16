@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : image-processing.cpp
+// Name        : main.cpp
 // Author      : ITM13
 // Version     : 1.0
 // Copyright   : Copyright (c) 2014 Swank Rat, MIT License (MIT)
@@ -23,7 +23,6 @@ void output() {
 }
 
 
-//int _tmain(int argc, _TCHAR* argv[])
 int main(int argc, char** argv)
 {
 	string windowName = "Camera stream";
@@ -40,7 +39,7 @@ int main(int argc, char** argv)
 	WebcamService* webcamService = new WebcamService(windowName);
 
 	cout << "Start recording: " << webcamService->startRecording() << endl;
-	
+
 	char key;
 	while (1) {
 		key = cvWaitKey(10);
