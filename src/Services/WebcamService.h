@@ -8,7 +8,7 @@
 #ifndef WEBCAMSERVICE_H_
 #define WEBCAMSERVICE_H_
 
-#include <thread>
+#include <boost/thread.hpp>
 
 using namespace std;
 using namespace cv;
@@ -31,7 +31,7 @@ private:
     string windowName;
     CvCapture* capture;
     bool isStopRequested;
-    thread recordingThread;
+    boost::thread recordingThread;
 
     void recording();
 };

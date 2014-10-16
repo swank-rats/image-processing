@@ -13,8 +13,9 @@
 
 using namespace cv;
 
-WebcamService::WebcamService(string windowName) : windowName(windowName), capture(cvCaptureFromCAM(CV_CAP_ANY)) {
-
+WebcamService::WebcamService(string windowName) : windowName(windowName) {
+	isStopRequested = false;
+	capture = cvCaptureFromCAM(CV_CAP_ANY);
 }
 
 WebcamService::~WebcamService() {
@@ -28,6 +29,8 @@ bool WebcamService::startRecording() {
 	}
 
 	isStopRequested = false;
+
+
 
 	recording();
 
@@ -50,6 +53,8 @@ bool WebcamService::stopRecording() {
 }
 
 void WebcamService::recording() {
+	cout << "started recording" << endl;
+
 	IplImage* frame;
 
 	//Create infinte loop for live streaming
