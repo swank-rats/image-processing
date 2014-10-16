@@ -8,7 +8,8 @@
 #ifndef WEBCAMSERVICE_H_
 #define WEBCAMSERVICE_H_
 
-#include <boost/thread.hpp>
+//#include <boost/thread.hpp>
+#include <thread>
 
 using namespace std;
 using namespace cv;
@@ -22,18 +23,20 @@ public:
 	 * This method will start the recording from the webcam
 	 * Returns true if starting was successful, false otherwise
 	 */
-	bool startRecording();
+	bool StartRecording();
 	/*
 	 * This method will stop the recodirng from the webcam
 	 */
-	bool stopRecording();
+	bool StopRecording();
 private:
-    string windowName;
+	//members
     CvCapture* capture;
     bool isStopRequested;
-    boost::thread recordingThread;
+    thread recordingThread;
+	string windowName;
 
-    void recording();
+	//methods
+    void Recording();
 };
 
 #endif /* WEBCAMSERVICE_H_ */

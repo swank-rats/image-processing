@@ -1,28 +1,32 @@
-/*
- * WebcamService.cpp
- *
- *  Created on: 11.10.2014
- *      Author: Stefan
- */
+//============================================================================
+// Name        : web.cpp
+// Author      : ITM13
+// Version     : 1.0
+// Copyright   : Copyright (c) 2014 Swank Rat, MIT License (MIT)
+// Description : Image process start point
+//============================================================================
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <string>
 
 #include "WebcamService.h"
 
 using namespace cv;
+using namespace std;
 
-WebcamService::WebcamService(string windowName) : windowName(windowName) {
+WebcamService::WebcamService(string windowName) : windowName(windowName), capture(cvCaptureFromCAM(CV_CAP_ANY)) {
+
 	isStopRequested = false;
-	capture = cvCaptureFromCAM(CV_CAP_ANY);
+	cvNamedWindow(windowName.c_str(), CV_WINDOW_NORMAL);
 }
 
 WebcamService::~WebcamService() {
-	// TODO Auto-generated destructor stub
+	StopRecording();
 }
 
-bool WebcamService::startRecording() {
+bool WebcamService::StartRecording() {
 	if(!capture){
 		cout << "No camera found." << endl;
 		return false;
@@ -30,18 +34,16 @@ bool WebcamService::startRecording() {
 
 	isStopRequested = false;
 
-
-
-	recording();
+	thread recordingThread(&WebcamService::Recording, this);
 
 	return true;
 }
 
-bool WebcamService::stopRecording() {
+bool WebcamService::StopRecording() {
 	isStopRequested = true;
 
 	//wait till thread has been terminated
-
+	recordingThread.join();
 
 	//release resources
 	if(capture) {
@@ -52,13 +54,13 @@ bool WebcamService::stopRecording() {
 	return true;
 }
 
-void WebcamService::recording() {
+void WebcamService::Recording() {
 	cout << "started recording" << endl;
 
 	IplImage* frame;
 
 	//Create infinte loop for live streaming
-	while(1){
+	while (1){
 		//Create image frames from capture
 		frame = cvQueryFrame(capture);
 		//Show image frames on created window
@@ -69,5 +71,3 @@ void WebcamService::recording() {
 		}
 	}
 }
-
-
