@@ -3,7 +3,7 @@
 
 # User-specific files
 *.suo
-*.cxproj
+*.vcxproj
 *.filters
 *.user
 *.userosscache
