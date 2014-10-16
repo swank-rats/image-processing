@@ -32,11 +32,14 @@ int main(int argc, char** argv)
 {
 	cvNamedWindow("Camera stream", CV_WINDOW_NORMAL);
 
-	//Mat im = imread(argc == 2 ? argv[1] : "lena.png", 1);
-	//if (!im.empty())
-	//{
-	//	imshow("Lena", im);
-	//}
+	cv::namedWindow("Matches"); 
+
+	Mat im = imread(argc == 2 ? argv[1] : "lena.png", 1);
+	if (!im.empty())
+	{
+		//imshow("Lena", im);
+		cv::imshow("Matches", im);
+	}
 
 	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY);
 
