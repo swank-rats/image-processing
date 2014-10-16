@@ -18,8 +18,11 @@
 using namespace cv;
 using namespace std;
 
-WebcamService::WebcamService(string windowName) : streamWindowName(windowName.c_str()), capture(cvCaptureFromCAM(CV_CAP_ANY)) {
-	cvNamedWindow(streamWindowName, CV_WINDOW_NORMAL);
+static const char* windowName = "Webcam stream";
+
+WebcamService::WebcamService() {
+	capture = cvCaptureFromCAM(CV_CAP_ANY);
+	cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 }
 
 WebcamService::~WebcamService() {
@@ -65,5 +68,5 @@ void WebcamService::run() {
 	//Create image frames from capture
 	frame = cvQueryFrame(capture);
 	//Show image frames on created window
-	cvShowImage("Webcam stream", frame);
+	cvShowImage(windowName, frame);
 }

@@ -16,7 +16,7 @@ using namespace cv;
 
 class WebcamService : public Thread {
 public:
-	WebcamService(string windowName);
+	WebcamService();
 	virtual ~WebcamService();
 
 	/*
@@ -32,5 +32,4 @@ protected:
 	virtual void run();
 private:
     CvCapture* capture;
-	const char* streamWindowName;
 };

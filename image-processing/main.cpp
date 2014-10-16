@@ -45,7 +45,7 @@ void ShowLena() {
 int WithoutThread() {
 	Logger::addMessage("No threads were used");
 
-	cvNamedWindow("Camera stream", CV_WINDOW_NORMAL);
+	cvNamedWindow("Camera stream", CV_WINDOW_AUTOSIZE);
 
 	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY);
 
@@ -86,7 +86,7 @@ int WithThread()
 {
 	Logger::addMessage("Threads were used");
 
-	WebcamService* webcamService = new WebcamService("Webcam stream");
+	WebcamService* webcamService = new WebcamService();
 
 	webcamService->StartRecording();
 
