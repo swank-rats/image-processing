@@ -9,11 +9,12 @@
 #pragma once
 
 #include <windows.h>
+#include "..\shared\Thread.h"
 
 using namespace std;
 using namespace cv;
 
-class WebcamService {
+class WebcamService : public Thread {
 public:
 	WebcamService(string windowName);
 	virtual ~WebcamService();
@@ -27,15 +28,9 @@ public:
 	 * This method will stop the recodirng from the webcam
 	 */
 	bool StopRecording();
+protected:
+	virtual void run();
 private:
-	//members
     CvCapture* capture;
-    bool isStopRequested;
-	HANDLE recordingThread;
-	DWORD recordingThreadId;
 	const char* streamWindowName;
-
-	//methods
-	DWORD Recording();
-	static DWORD WINAPI StartRecordingThread(LPVOID param);
 };
