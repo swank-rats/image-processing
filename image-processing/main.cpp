@@ -6,11 +6,13 @@
 // Description : Image process start point
 //============================================================================
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/opencv.hpp>
+#include <opencv2\core\core.hpp>
+#include <opencv2\highgui\highgui.hpp>
+#include <opencv2\opencv.hpp>
 #include <iostream>
-#include "services/WebcamService.h"
+
+#include "services\WebcamService.h"
+#include "shared\Logger.h"
 
 using namespace cv;
 using namespace std;
@@ -23,7 +25,7 @@ int main(int argc, char** argv)
 {
 	ShowLena();
 
-	return WithoutThread();
+	return WithThread();
 }
 
 void ShowLena() {
@@ -33,16 +35,22 @@ void ShowLena() {
 		cvNamedWindow("Lena");
 		//imshow("Lena", im);
 		imshow("Lena", im);
+		Logger::addMessage("Hello Leno :)");
+	}
+	else {
+		Logger::addMessage("Lena could not be found! Go and find her!");
 	}
 }
 
 int WithoutThread() {
+	Logger::addMessage("No threads were used");
+
 	cvNamedWindow("Camera stream", CV_WINDOW_NORMAL);
 
 	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY);
 
 	if (!capture){
-		cout << "No camera found." << endl;
+		Logger::addError("No camera found");
 		return -1;
 	}
 
@@ -51,13 +59,11 @@ int WithoutThread() {
 
 	//Create infinte loop for live streaming
 	//exit by pressing ESC
-	while (1){
+	while (1) {
 		//Create image frames from capture
 		frame = cvQueryFrame(capture);
 		//Show image frames on created window
 		cvShowImage("Camera stream", frame);
-
-		//sending data
 
 		//Capture Keyboard stroke
 		key = cvWaitKey(10);
@@ -65,6 +71,8 @@ int WithoutThread() {
 			break; //If you hit ESC key loop will break.
 		}
 	}
+
+	Logger::addMessage("bye bye");
 
 	//Release capture.
 	cvReleaseCapture(&capture);
@@ -76,9 +84,11 @@ int WithoutThread() {
 
 int WithThread()
 {
+	Logger::addMessage("Threads were used");
+
 	WebcamService* webcamService = new WebcamService("Webcam stream");
 
-	cout << "Start recording: " << webcamService->StopRecording() << endl;
+	webcamService->StartRecording();
 
 	char key;
 	while (1) {

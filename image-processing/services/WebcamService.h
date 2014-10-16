@@ -1,15 +1,14 @@
-/*
- * WebcamService.h
- *
- *  Created on: 11.10.2014
- *      Author: Stefan
- */
+//============================================================================
+// Name        : WebcamService.h
+// Author      : ITM13
+// Version     : 1.0
+// Copyright   : Copyright (c) 2014 Swank Rat, MIT License (MIT)
+// Description : 
+//============================================================================
 
-#ifndef WEBCAMSERVICE_H_
-#define WEBCAMSERVICE_H_
+#pragma once
 
-//#include <boost/thread.hpp>
-#include <thread>
+#include <windows.h>
 
 using namespace std;
 using namespace cv;
@@ -32,11 +31,11 @@ private:
 	//members
     CvCapture* capture;
     bool isStopRequested;
-    thread recordingThread;
-	string windowName;
+	HANDLE recordingThread;
+	DWORD recordingThreadId;
+	const char* streamWindowName;
 
 	//methods
-    void Recording();
+	DWORD Recording();
+	static DWORD WINAPI StartRecordingThread(LPVOID param);
 };
-
-#endif /* WEBCAMSERVICE_H_ */
