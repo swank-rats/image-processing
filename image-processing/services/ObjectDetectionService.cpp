@@ -30,7 +30,39 @@ ObjectDetectionService::~ObjectDetectionService()
 
 }
 
-bool ObjectDetectionService::DetectObject(){
+Mat ObjectDetectionService::DetectObject(const Mat& src, int color){
 
-	return false;
+	assert(src.type() == CV_8UC3);
+
+	Mat redOnly;
+
+	int red = 0;
+	int blue = 0;
+	int green = 0;
+
+	switch (color)
+	{
+	case 0:
+		red = 255;
+		break;
+	case 1:
+		green = 255;
+		break;
+	case 2:
+		blue = 255;
+		break;
+	default:
+		red = 0;
+		green = 0;
+		blue = 0;
+	}
+
+	inRange(src, Scalar(0, 0, 0), Scalar(blue, green, red), redOnly);
+
+	return redOnly;
 }
+
+void ObjectDetectionService::run() {
+
+}
+

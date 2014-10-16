@@ -12,18 +12,24 @@
 #include <iostream>
 
 #include "services\WebcamService.h"
+#include "services\ObjectDetectionService.h"
 #include "shared\Logger.h"
 
 using namespace cv;
 using namespace std;
 
+enum Farbe { ROT = 0, GRUEN = 1, BLAU = 2 };
+
 void ShowLena();
 int WithoutThread();
 int WithThread();
+void FilterColor(Farbe color);
 
 int main(int argc, char** argv)
 {
-	ShowLena();
+	//ShowLena();
+
+	FilterColor(ROT);
 
 	return WithThread();
 }
@@ -40,6 +46,24 @@ void ShowLena() {
 	else {
 		Logger::addMessage("Lena could not be found! Go and find her!");
 	}
+}
+
+void FilterColor(Farbe color)
+{
+	Mat input = imread("img/colored_squares.png");
+
+	imshow("input", input);
+	waitKey();
+
+	ObjectDetectionService* detectService = new ObjectDetectionService();
+
+	Mat redOnly = detectService->DetectObject(input, color);
+
+	imshow("redOnly", redOnly);
+	waitKey();
+
+	// detect squares after filtering...
+
 }
 
 int WithoutThread() {

@@ -8,16 +8,23 @@
 
 #pragma once
 
+#include"..\shared\Thread.h"
+
 using namespace std;
 using namespace cv;
 
 
-class ObjectDetectionService
+
+
+class ObjectDetectionService : public Thread
 {
 public:
 	ObjectDetectionService();
 	virtual ~ObjectDetectionService();
 
-	bool DetectObject();
+	Mat DetectObject(const Mat& src, int color);
+
+protected:
+	virtual void run();
 };
 
