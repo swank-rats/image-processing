@@ -49,7 +49,7 @@ bool webcam_service::start_recording() {
 
 	isStopRequested = false;
 
-	thread recordingThread(&WebcamService::recording, this);
+	thread recordingThread(&webcam_service::recording, this);
 
 	return true;
 }
