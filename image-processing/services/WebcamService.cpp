@@ -9,21 +9,52 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <string>
 
-#include "webcam_service.h"
+#include "WebcamService.h"
 
 using namespace cv;
 using namespace std;
 
-webcam_service::webcam_service(string windowName) : windowName(windowName), capture(cvCaptureFromCAM(CV_CAP_ANY)) {
+WebcamService::WebcamService(string windowName) : windowName(windowName), capture(cvCaptureFromCAM(CV_CAP_ANY)) {
+
 	isStopRequested = false;
+	cvNamedWindow(windowName.c_str(), CV_WINDOW_NORMAL);
 }
 
-webcam_service::~webcam_service() {
-	// TODO Auto-generated destructor stub
+WebcamService::~WebcamService() {
+	StopRecording();
 }
 
-void webcam_service::recording() {
+bool WebcamService::StartRecording() {
+	if(!capture){
+		cout << "No camera found." << endl;
+		return false;
+	}
+
+	isStopRequested = false;
+
+	thread recordingThread(&WebcamService::Recording, this);
+
+	return true;
+}
+
+bool WebcamService::StopRecording() {
+	isStopRequested = true;
+
+	//wait till thread has been terminated
+	recordingThread.join();
+
+	//release resources
+	if(capture) {
+		//Release capture.
+		cvReleaseCapture(&capture);
+	}
+
+	return true;
+}
+
+void WebcamService::Recording() {
 	cout << "started recording" << endl;
 
 	IplImage* frame;
@@ -40,35 +71,3 @@ void webcam_service::recording() {
 		}
 	}
 }
-
-bool webcam_service::start_recording() {
-	if(!capture){
-		cout << "No camera found." << endl;
-		return false;
-	}
-
-	isStopRequested = false;
-
-	thread recordingThread(&webcam_service::recording, this);
-
-	return true;
-}
-
-bool webcam_service::stop_recording() {
-	isStopRequested = true;
-
-	//wait till thread has been terminated
-	recordingThread.join();
-
-	//release resources
-	if(capture) {
-		//Release capture.
-		cvReleaseCapture(&capture);
-	}
-
-	return true;
-}
-
-
-
-

@@ -10,28 +10,23 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <string>
-#include <thread>
-
-//#include "Services/WebcamService.h"
-
-
-using namespace std;
-
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/opencv.hpp>
-#include <iostream>
+#include "services/WebcamService.h"
 
 using namespace cv;
 using namespace std;
 
-char key;
+void ShowLena();
+int WithoutThread();
+int WithThread();
 
 int main(int argc, char** argv)
 {
-	cvNamedWindow("Camera stream", CV_WINDOW_NORMAL);
+	ShowLena();
 
+	return WithoutThread();
+}
+
+void ShowLena() {
 	Mat im = imread("img/lena.bmp", 1);
 	if (!im.empty())
 	{
@@ -39,6 +34,10 @@ int main(int argc, char** argv)
 		//imshow("Lena", im);
 		imshow("Lena", im);
 	}
+}
+
+int WithoutThread() {
+	cvNamedWindow("Camera stream", CV_WINDOW_NORMAL);
 
 	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY);
 
@@ -48,6 +47,7 @@ int main(int argc, char** argv)
 	}
 
 	IplImage* frame;
+	char key;
 
 	//Create infinte loop for live streaming
 	//exit by pressing ESC
@@ -74,34 +74,23 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-//int main(int argc, char** argv)
-//{
-//	string windowName = "Camera stream";
-//
-//	cvNamedWindow(windowName.c_str(), CV_WINDOW_NORMAL);
-//
-//	//Mat im = imread("lena.png", 1);
-//
-//	//if (!im.empty())
-//	//{
-//	//	imshow("Lena", im);
-//	//}
-//
-//	WebcamService* webcamService = new WebcamService(windowName);
-//
-//	cout << "Start recording: " << webcamService->startRecording() << endl;
-//
-//	char key;
-//	while (1) {
-//		key = cvWaitKey(10);
-//
-//		if (char(key) == 27){
-//			break; //If you hit ESC key loop will break.
-//		}
-//	}
-//
-//	webcamService->stopRecording();
-//	destroyAllWindows();
-//
-//	return 0;
-//}
+int WithThread()
+{
+	WebcamService* webcamService = new WebcamService("Webcam stream");
+
+	cout << "Start recording: " << webcamService->StopRecording() << endl;
+
+	char key;
+	while (1) {
+		key = cvWaitKey(10);
+
+		if (char(key) == 27){
+			break; //If you hit ESC key loop will break.
+		}
+	}
+
+	webcamService->StopRecording();
+	destroyAllWindows();
+
+	return 0;
+}
