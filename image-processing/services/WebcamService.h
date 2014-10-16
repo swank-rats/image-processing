@@ -7,12 +7,11 @@
 //============================================================================
 
 #pragma once
-
+#include <opencv2\core\core.hpp>
+#include <opencv2\highgui\highgui.hpp>
+#include <opencv2\opencv.hpp>
 #include <windows.h>
 #include "..\shared\Thread.h"
-
-using namespace std;
-using namespace cv;
 
 class WebcamService : public Thread {
 public:

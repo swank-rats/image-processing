@@ -11,7 +11,7 @@
 #include <opencv2\opencv.hpp>
 #include <iostream>
 
-#include "services\WebcamService.h"
+#include "controller\ImageProcessingController.h"
 #include "shared\Logger.h"
 
 using namespace cv;
@@ -86,9 +86,9 @@ int WithThread()
 {
 	Logger::addMessage("Threads were used");
 
-	WebcamService* webcamService = new WebcamService();
+	ImageProcessingController* controller = new ImageProcessingController();
 
-	webcamService->StartRecording();
+	controller->StartImageProcessing();
 
 	char key;
 	while (1) {
@@ -99,7 +99,7 @@ int WithThread()
 		}
 	}
 
-	webcamService->StopRecording();
+	controller->StopImageProcessing();
 	destroyAllWindows();
 
 	return 0;
