@@ -21,6 +21,7 @@ public:
 
 private:
 	WebcamService* webcamService;
+	void CreateTrackBarView();
 
 };
 
