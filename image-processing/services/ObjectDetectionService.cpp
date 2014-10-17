@@ -30,39 +30,31 @@ ObjectDetectionService::~ObjectDetectionService()
 
 }
 
-Mat ObjectDetectionService::DetectObject(const Mat& src, int color){
+Mat ObjectDetectionService::DetectObject(IplImage* src, int iLowH, int iLowS, int iLowV, int iHighH, int iHighS, int iHighV){
 
-	assert(src.type() == CV_8UC3);
+		Mat imgOriginal(src);
+		Mat imgHSV;
 
-	Mat redOnly;
+		cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
 
-	int red = 0;
-	int blue = 0;
-	int green = 0;
+		Mat imgThresholded;
 
-	switch (color)
-	{
-	case 0:
-		red = 255;
-		break;
-	case 1:
-		green = 255;
-		break;
-	case 2:
-		blue = 255;
-		break;
-	default:
-		red = 0;
-		green = 0;
-		blue = 0;
-	}
+		inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
 
-	inRange(src, Scalar(0, 0, 0), Scalar(blue, green, red), redOnly);
+		//morphological opening (removes small objects from the foreground)
+		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
-	return redOnly;
+		//morphological closing (removes small holes from the foreground)
+		dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+
+		return imgThresholded;
+		
+	
+
 }
 
 void ObjectDetectionService::run() {
 
 }
-

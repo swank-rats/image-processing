@@ -22,7 +22,7 @@ public:
 	ObjectDetectionService();
 	virtual ~ObjectDetectionService();
 
-	Mat DetectObject(const Mat& src, int color);
+	Mat DetectObject(IplImage* src, int iLowH, int iLowS, int iLowV, int iHighH, int iHighS, int iHighV);
 
 protected:
 	virtual void run();
