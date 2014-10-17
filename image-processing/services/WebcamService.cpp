@@ -6,20 +6,14 @@
 // Description : 
 //============================================================================
 
-#include <opencv2\core\core.hpp>
-#include <opencv2\highgui\highgui.hpp>
-#include <opencv2\opencv.hpp>
-#include <iostream>
-#include <string>
-
 #include "WebcamService.h"
 #include "..\shared\Logger.h"
 
-using namespace cv;
-using namespace std;
+static const char* windowName = "Webcam stream";
 
-WebcamService::WebcamService(string windowName) : streamWindowName(windowName.c_str()), capture(cvCaptureFromCAM(CV_CAP_ANY)) {
-	cvNamedWindow(streamWindowName, CV_WINDOW_NORMAL);
+WebcamService::WebcamService() {
+	capture = cvCaptureFromCAM(CV_CAP_ANY);
+	cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 }
 
 WebcamService::~WebcamService() {
@@ -65,5 +59,13 @@ void WebcamService::run() {
 	//Create image frames from capture
 	frame = cvQueryFrame(capture);
 	//Show image frames on created window
-	cvShowImage("Webcam stream", frame);
+	cvShowImage(windowName, frame);
+	//Clone image
+	lastImage = cvCloneImage(frame);
+
+	Notify();
+}
+
+IplImage* WebcamService::GetLastImage() {
+	return lastImage;
 }

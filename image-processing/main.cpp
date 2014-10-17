@@ -13,6 +13,7 @@
 
 #include "services\WebcamService.h"
 #include "services\ObjectDetectionService.h"
+#include "controller\ImageProcessingController.h"
 #include "shared\Logger.h"
 
 using namespace cv;
@@ -69,7 +70,7 @@ void FilterColor(Farbe color)
 int WithoutThread() {
 	Logger::addMessage("No threads were used");
 
-	cvNamedWindow("Camera stream", CV_WINDOW_NORMAL);
+	cvNamedWindow("Camera stream", CV_WINDOW_AUTOSIZE);
 
 	CvCapture* capture = cvCaptureFromCAM(1);
 
@@ -110,9 +111,9 @@ int WithThread()
 {
 	Logger::addMessage("Threads were used");
 
-	WebcamService* webcamService = new WebcamService("Webcam stream");
+	ImageProcessingController* controller = new ImageProcessingController();
 
-	webcamService->StartRecording();
+	controller->StartImageProcessing();
 
 	char key;
 	while (1) {
@@ -123,7 +124,7 @@ int WithThread()
 		}
 	}
 
-	webcamService->StopRecording();
+	controller->StopImageProcessing();
 	destroyAllWindows();
 
 	return 0;

@@ -7,16 +7,16 @@
 //============================================================================
 
 #pragma once
-
+#include <opencv2\core\core.hpp>
+#include <opencv2\highgui\highgui.hpp>
+#include <opencv2\opencv.hpp>
 #include <windows.h>
 #include "..\shared\Thread.h"
+#include "..\shared\observer\Observable.h"
 
-using namespace std;
-using namespace cv;
-
-class WebcamService : public Thread {
+class WebcamService : public Thread, public Observable<WebcamService> {
 public:
-	WebcamService(string windowName);
+	WebcamService();
 	virtual ~WebcamService();
 
 	/*
@@ -28,9 +28,11 @@ public:
 	 * This method will stop the recodirng from the webcam
 	 */
 	bool StopRecording();
+
+	IplImage* GetLastImage();
 protected:
 	virtual void run();
 private:
-    CvCapture* capture;
-	const char* streamWindowName;
+	CvCapture* capture;
+	IplImage* lastImage;
 };
