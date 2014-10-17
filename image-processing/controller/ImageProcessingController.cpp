@@ -33,4 +33,6 @@ bool ImageProcessingController::StopImageProcessing() {
 void ImageProcessingController::Update(WebcamService* observable) {
 	Logger::addMessage("New image available");
 	observable->GetLastImage();
+
+
 }
