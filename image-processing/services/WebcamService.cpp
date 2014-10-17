@@ -60,4 +60,12 @@ void WebcamService::run() {
 	frame = cvQueryFrame(capture);
 	//Show image frames on created window
 	cvShowImage(windowName, frame);
+	//Clone image
+	lastImage = cvCloneImage(frame);
+
+	Notify();
+}
+
+IplImage* WebcamService::GetLastImage() {
+	return lastImage;
 }

@@ -6,7 +6,7 @@
 // Description : 
 //============================================================================
 #include "ImageProcessingController.h"
-
+#include "..\shared\Logger.h"
 
 ImageProcessingController::ImageProcessingController()
 {
@@ -28,4 +28,9 @@ bool ImageProcessingController::StopImageProcessing() {
 	webcamService->StopRecording();
 
 	return true;
+}
+
+void ImageProcessingController::Update(WebcamService* observable) {
+	Logger::addMessage("New image available");
+	observable->GetLastImage();
 }

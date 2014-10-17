@@ -12,8 +12,9 @@
 #include <opencv2\opencv.hpp>
 #include <windows.h>
 #include "..\shared\Thread.h"
+#include "..\shared\observer\Observable.h"
 
-class WebcamService : public Thread {
+class WebcamService : public Thread, public Observable<WebcamService> {
 public:
 	WebcamService();
 	virtual ~WebcamService();
@@ -27,8 +28,11 @@ public:
 	 * This method will stop the recodirng from the webcam
 	 */
 	bool StopRecording();
+
+	IplImage* GetLastImage();
 protected:
 	virtual void run();
 private:
-    CvCapture* capture;
+	CvCapture* capture;
+	IplImage* lastImage;
 };

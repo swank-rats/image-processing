@@ -8,14 +8,17 @@
 #pragma once
 
 #include "..\services\WebcamService.h"
+#include "..\shared\observer\IObserver.h"
 
-class ImageProcessingController
+class ImageProcessingController : public IObserver<WebcamService>
 {
 public:
 	ImageProcessingController();
 	~ImageProcessingController();
 	void StartImageProcessing();
 	bool StopImageProcessing();
+	virtual void Update(WebcamService* observable);
+
 private:
 	WebcamService* webcamService;
 
