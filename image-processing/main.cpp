@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
 	FilterColor(ROT);
 
-	return WithThread();
+	return WithoutThread();
 }
 
 void ShowLena() {
@@ -71,7 +71,7 @@ int WithoutThread() {
 
 	cvNamedWindow("Camera stream", CV_WINDOW_NORMAL);
 
-	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY);
+	CvCapture* capture = cvCaptureFromCAM(1);
 
 	if (!capture){
 		Logger::addError("No camera found");
