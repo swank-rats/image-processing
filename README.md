@@ -3,7 +3,7 @@ Image processing
 
 Installation and project setup
 -------------------
-To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. You may also need to install [CMake](http://www.cmake.org/).
+To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. 
 
 1. Download [OpenCV](http://opencv.org/)
 2. Install OpenCV on your computer. The installation is quite easy because in case you are also using Windows you can use the pre-build libraries.
