@@ -3,22 +3,32 @@ Image processing
 
 Installation and project setup
 -------------------
-To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We used [Eclipse  Kepler SR 1 with CDT](http://www.eclipse.org) as IDE and [MinGW](http://www.mingw.org/). The installation instructions are for [Eclipse](http://www.eclipse.org). You may also need to install [CMake](http://www.cmake.org/). The following instructions are for Windows:
+To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. You may also need to install [CMake](http://www.cmake.org/).
 
 1. Download [OpenCV](http://opencv.org/)
-2. Install it on your computer: [installation instructions](http://docs.opencv.org/doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.html) 3. You have to build OpenCV with [MinGW](http://www.mingw.org/). Just follow the following instructions.
-  * [Install OpenCV on Windows](http://seevisionc.blogspot.co.uk/2011/09/linux-like-installation-of-opencv-230.html)
-  * [Build OpenCV under MinGW](http://sourceforge.net/p/opencvmingw/wiki/Build%20OpenCV%20under%20MinGW/)
-4. Clone this repository
-5. Create an Eclipse project with the sources of this repository.
-6. Go to the Properties page of your project and navigate to C/C++ Build -> Settings
- * Go to GCC C++ Compiler -> Includes. Here you need to add e.g. "PATH_TO_OPENCV\build\include\"
- ![Compiler includes](https://raw.githubusercontent.com/swank-rats/image-processing/master/doc/images/compiler_includes.png)
- * Go to MinGW C++ Linker -> Libraries. Here you add opencv_imgproc249, opencv_highgui249, opencv_core249 (one by one!) to Libraries (-I) and e.g. "PATH_TO_OPENCV\build\x86\mingw\lib" to Library search path (-L).
-![Linker includes](https://raw.githubusercontent.com/swank-rats/image-processing/master/doc/images/linker_includes.png)
-7. You have to add -std=c++11 as additional flag for the compiler. To do so open the Properties of your project -> 
+2. Install OpenCV on your computer. The installation is quite easy because in case you are also using Windows you can use the pre-build libraries.
+  * [install instructions windows](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-installation)
+  * [instruction for setting up the environment variables](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windowssetpathandenviromentvariable)
+  * [general install instructions](http://docs.opencv.org/doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.html)
+3. Clone this repository
+4. Create a Visual Studio 2013 project with the sources of this repository.
+5. Follow the following instructions for setting up the project properties. At the point, where you have to enter the linker input, add the following libraries:
+opencv_calib3d249d.lib
+opencv_contrib249d.lib
+opencv_core249d.lib
+opencv_features2d249d.lib
+opencv_flann249d.lib
+opencv_gpu249d.lib
+opencv_highgui249d.lib
+opencv_imgproc249d.lib
+opencv_legacy249d.lib
+opencv_ml249d.lib
+opencv_nonfree249d.lib
+opencv_objdetect249d.lib
+opencv_photo249d.lib
+opencv_stitching249d.lib
+opencv_superres249d.lib
+opencv_ts249d.lib
+opencv_video249d.lib
+opencv_videostab249d.lib. Here the instructions: [Installing & Configuring OpenCV with Visual Studio](http://opencv-srf.blogspot.co.at/2013/05/installing-configuring-opencv-with-vs.html)
 8. Now you can build the project and start it
-
-Maybe you get some help for troubleshooting here:
- * [Using OpenCV with Eclipse (plugin CDT)](http://docs.opencv.org/doc/tutorials/introduction/linux_eclipse/linux_eclipse.html#linux-eclipse-usage)
- * [stackoverflow: see the second and third post](http://stackoverflow.com/questions/10860352/getting-started-with-opencv-2-4-and-mingw-on-windows-7)
