@@ -17,15 +17,19 @@ ImageProcessingController::ImageProcessingController()
 ImageProcessingController::~ImageProcessingController()
 {
 	StopImageProcessing();
-	webcamService = NULL;
+	webcamService = nullptr;
 }
 
 void ImageProcessingController::StartImageProcessing() {
+	webcamService->AddObserver(this);
+
 	webcamService->StartRecording();
 }
 
 bool ImageProcessingController::StopImageProcessing() {
 	webcamService->StopRecording();
+
+	webcamService->RemoveObserver(this);
 
 	return true;
 }
