@@ -32,3 +32,8 @@ opencv_ts249d.lib
 opencv_video249d.lib
 opencv_videostab249d.lib. Here the instructions: [Installing & Configuring OpenCV with Visual Studio](http://opencv-srf.blogspot.co.at/2013/05/installing-configuring-opencv-with-vs.html)
 8. Now you can build the project and start it
+
+
+Project documentation
+-------------------
+The whole project documentation can be found [here](http://swank-rats.github.io/docs): http://swank-rats.github.io/docs/
