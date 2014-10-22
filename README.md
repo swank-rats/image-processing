@@ -6,7 +6,7 @@ Installation and project setup
 To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. 
 
 1. Download [OpenCV](http://opencv.org/)
-2. Install OpenCV on your computer. The installation is quite easy because in case you are also using Windows you can use the pre-build libraries.
+2. Install OpenCV on your computer. The installation is quite easy because in case you are also using Windows you can use the pre-build libraries. It is important to create a new system path variable called "OPENCV" (without ") and the value should be something like this  "C:\opencv\build\" ( "\" at the end!). This is the path to the OpenCV installation including the folder "build". The folder "build" must contain the folder "include" and "x86\vc12\lib". 
   * [install instructions windows](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-installation)
   * [instruction for setting up the environment variables](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windowssetpathandenviromentvariable)
   * [general install instructions](http://docs.opencv.org/doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.html)
