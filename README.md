@@ -12,9 +12,9 @@ To get this project running you need [OpenCV 2.4.9](http://opencv.org/) and [Boo
   4. Open command window and type in:
     1. bootstrap.bat
     2. b2 --toolset=msvc-12.0 --build-type=complete --abbreviate-paths architecture=x86 address-model=32 install -j4
-       The 1. will build the Boost.Build tool b2 and the second one will build Boost and copy the file to "C:\Boost". The second command will take some time
-    3. Make sure that the folder "C:\Boost" contains a folder "include" and "lib".
-    4. You can move the "C:\Boost" folder if you like. Just remember the location.
+    3. The 1st command will build the Boost.Build tool b2 and the 2nd one will build Boost and copy the file to "C:\Boost". The second command will take some time
+    4. Make sure that the folder "C:\Boost" contains a folder "include" and "lib".
+    5. You can move the "C:\Boost" folder if you like. Just remember the location.
   5. Add a new system environment variable. To do so open Control Panel -> System -> Advanced system settings -> Environment variables.
   6. At system variables press the "new" button and add a variable with name "BOOST" and path to "C:\Boost\" (or to your new location) (with "\" at the end!)
   7. Boost installation is finished.
