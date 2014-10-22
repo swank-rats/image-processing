@@ -16,6 +16,7 @@
 #include "controller\ImageProcessingController.h"
 #include "shared\Logger.h"
 
+
 using namespace cv;
 using namespace std;
 
