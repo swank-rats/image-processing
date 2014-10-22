@@ -3,35 +3,43 @@ Image processing
 
 Installation and project setup
 -------------------
-To get this project running you need [OpenCV 2.4.9](http://opencv.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. 
+To get this project running you need [OpenCV 2.4.9](http://opencv.org/) and [Boost 1.56.0](http://www.boost.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. 
 
-1. Download [OpenCV](http://opencv.org/)
-2. Install OpenCV on your computer. The installation is quite easy because in case you are also using Windows you can use the pre-build libraries. It is important to create a new system path variable called "OPENCV" (without ") and the value should be something like this  "C:\opencv\build\" ( "\" at the end!). This is the path to the OpenCV installation including the folder "build". The folder "build" must contain the folder "include" and "x86\vc12\lib". 
-  * [install instructions windows](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-installation)
+1. Install Boost
+  1. Download [Boost 1.56.0](http://www.boost.org/)
+  2. Unpack the archive file
+  3. Navigate into the unpacked folder
+  4. Open command window and type in:
+    1. bootstrap.bat
+    2. b2 --toolset=msvc-12.0 --build-type=complete --abbreviate-paths architecture=x86 address-model=32 install -j4
+       The 1. will build the Boost.Build tool b2 and the second one will build Boost and copy the file to "C:\Boost". The second command will take some time
+    3. Make sure that the folder "C:\Boost" contains a folder "include" and "lib".
+    4. You can move the "C:\Boost" folder if you like. Just remember the location.
+  5. Add a new system environment variable. To do so open Control Panel -> System -> Advanced system settings -> Environment variables.
+  6. At system variables press the "new" button and add a variable with name "BOOST" and path to "C:\Boost\" (or to your new location) (with "\" at the end!)
+  7. Boost installation is finished.
+2. Install OpenCV
+  1. Download [OpenCV 2.4.9](http://opencv.org/)
+  2. Unpack the archive file
+  3. Copy all the files to the location where you want it to have on your compute
+  4. OpenCV is already delivered with prebuild VS120 libs. So we have nothing to build.
+  5. Again add a new system environment variable. To do so open Control Panel -> System -> Advanced system settings -> Environment variables.
+  6. At system variables press the "new" button and add a variable with name "OPENCV" and path to e.g. "C:\opencv\build\" (with "\" at the end!). This is the path to the OpenCV installation including the folder "build". The folder "build" must contain the folder "include" and "x86\vc12\lib". 
+  7. Modify the PATH variable. Add "%OPENCV%\x86\vc12\bin;" (without ") at the end of the value of your PATH variable.
+  8. OpenCV installation is finished.,
+3. Clone this repository
+4. Open the solution with VS 2013
+5. Build the project
+6. Finish!
+  
+Troubleshooting
+-------------------
+  * [OpenCV install instructions windows](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-installation)
   * [instruction for setting up the environment variables](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windowssetpathandenviromentvariable)
   * [general install instructions](http://docs.opencv.org/doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.html)
-3. Clone this repository
-4. Create a Visual Studio 2013 project with the sources of this repository.
-5. Follow the following instructions for setting up the project properties. At the point, where you have to enter the linker input, add the following libraries:
-opencv_calib3d249d.lib
-opencv_contrib249d.lib
-opencv_core249d.lib
-opencv_features2d249d.lib
-opencv_flann249d.lib
-opencv_gpu249d.lib
-opencv_highgui249d.lib
-opencv_imgproc249d.lib
-opencv_legacy249d.lib
-opencv_ml249d.lib
-opencv_nonfree249d.lib
-opencv_objdetect249d.lib
-opencv_photo249d.lib
-opencv_stitching249d.lib
-opencv_superres249d.lib
-opencv_ts249d.lib
-opencv_video249d.lib
-opencv_videostab249d.lib. Here the instructions: [Installing & Configuring OpenCV with Visual Studio](http://opencv-srf.blogspot.co.at/2013/05/installing-configuring-opencv-with-vs.html)
-8. Now you can build the project and start it
+  * [Installing & Configuring OpenCV with Visual Studio](http://opencv-srf.blogspot.co.at/2013/05/installing-configuring-opencv-with-vs.html)
+  * [How to build Boost for Visual Studio 2013](http://choorucode.com/2014/06/06/how-to-build-boost-for-visual-studio-2013/)
+  * [How to use Boost in Visual Studio 2010 - see 2nd and 3rd post](http://stackoverflow.com/questions/2629421/how-to-use-boost-in-visual-studio-2010)
 
 
 Project documentation
