@@ -12,7 +12,7 @@
 static const char* windowName = "Webcam stream";
 
 WebcamService::WebcamService() {
-	capture = cvCaptureFromCAM(1);
+	capture = cvCaptureFromCAM(CV_CAP_ANY);
 	cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 }
 
