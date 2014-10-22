@@ -28,7 +28,9 @@ bool WebcamService::StartRecording() {
 		return false;
 	}
 
-	Start();
+	recordingThread = new boost::thread(boost::bind(&WebcamService::run, this));
+
+	//Start();
 
 	Logger::addMessage("started recording");
 
