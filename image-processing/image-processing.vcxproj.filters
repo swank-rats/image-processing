@@ -61,5 +61,8 @@
     <Image Include="img\lena.bmp">
       <Filter>Ressourcendateien</Filter>
     </Image>
+    <Image Include="img\colored_squares.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
   </ItemGroup>
 </Project>
