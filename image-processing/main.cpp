@@ -16,6 +16,8 @@
 #include "controller\ImageProcessingController.h"
 #include "shared\Logger.h"
 
+#include <boost\accumulators\accumulators.hpp>
+
 
 using namespace cv;
 using namespace std;
