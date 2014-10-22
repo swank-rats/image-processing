@@ -11,8 +11,8 @@ To get this project running you need [OpenCV 2.4.9](http://opencv.org/) and [Boo
   3. Navigate into the unpacked folder
   4. Open command window and type in:
     * bootstrap.bat
-    * b2 --toolset=msvc-12.0 --build-type=complete --abbreviate-paths architecture=x86 address-model=32 install -j4
-    1. The 1st command will build the Boost.Build tool b2 and the 2nd one will build Boost and copy the file to "C:\Boost". The second command will take some time
+    * b2 --toolset=msvc-12.0 --build-type=complete --abbreviate-paths architecture=x86 address-model=32 install -j4::
+    The 1st command will build the Boost.Build tool b2 and the 2nd one will build Boost and copy the file to "C:\Boost". The second command will take some time
     2. Make sure that the folder "C:\Boost" contains a folder "include" and "lib".
     3. You can move the "C:\Boost" folder if you like. Just remember the location.
   5. Add a new system environment variable. To do so open Control Panel -> System -> Advanced system settings -> Environment variables.
@@ -34,12 +34,12 @@ To get this project running you need [OpenCV 2.4.9](http://opencv.org/) and [Boo
   
 Troubleshooting
 -------------------
-  * [OpenCV install instructions windows](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-installation)
-  * [instruction for setting up the environment variables](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windowssetpathandenviromentvariable)
-  * [general install instructions](http://docs.opencv.org/doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.html)
-  * [Installing & Configuring OpenCV with Visual Studio](http://opencv-srf.blogspot.co.at/2013/05/installing-configuring-opencv-with-vs.html)
-  * [How to build Boost for Visual Studio 2013](http://choorucode.com/2014/06/06/how-to-build-boost-for-visual-studio-2013/)
-  * [How to use Boost in Visual Studio 2010 - see 2nd and 3rd post](http://stackoverflow.com/questions/2629421/how-to-use-boost-in-visual-studio-2010)
+  * [OpenCV: install instructions windows](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-installation)
+  * [OpenCV: instruction for setting up the environment variables](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windowssetpathandenviromentvariable)
+  * [OpenCV: general install instructions](http://docs.opencv.org/doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.html)
+  * [OpenCV: Installing & Configuring OpenCV with Visual Studio](http://opencv-srf.blogspot.co.at/2013/05/installing-configuring-opencv-with-vs.html)
+  * [Boost: How to build Boost for Visual Studio 2013](http://choorucode.com/2014/06/06/how-to-build-boost-for-visual-studio-2013/)
+  * [Boost: How to use Boost in Visual Studio 2010 - see 2nd and 3rd post](http://stackoverflow.com/questions/2629421/how-to-use-boost-in-visual-studio-2010)
 
 
 Project documentation
