@@ -12,7 +12,7 @@
 static const char* windowName = "Webcam stream";
 
 WebcamService::WebcamService() {
-	capture = cvCaptureFromCAM(1);
+	capture = cvCaptureFromCAM(CV_CAP_ANY);
 	cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 }
 
@@ -28,7 +28,9 @@ bool WebcamService::StartRecording() {
 		return false;
 	}
 
-	Start();
+	recordingThread = new boost::thread(boost::bind(&WebcamService::run, this));
+
+	//Start();
 
 	Logger::addMessage("started recording");
 

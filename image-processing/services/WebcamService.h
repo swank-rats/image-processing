@@ -11,6 +11,7 @@
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\opencv.hpp>
 #include <windows.h>
+#include <boost\thread.hpp>
 #include "..\shared\Thread.h"
 #include "..\shared\observer\Observable.h"
 
@@ -35,4 +36,5 @@ protected:
 private:
 	CvCapture* capture;
 	IplImage* lastImage;
+	boost::thread* recordingThread;
 };
