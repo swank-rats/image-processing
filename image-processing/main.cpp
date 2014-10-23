@@ -10,11 +10,11 @@
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\opencv.hpp>
 #include <iostream>
+#include <boost/log/trivial.hpp>
 
 #include "services\WebcamService.h"
 #include "services\ObjectDetectionService.h"
 #include "controller\ImageProcessingController.h"
-#include "shared\Logger.h"
 
 #include <boost\accumulators\accumulators.hpp>
 
@@ -44,22 +44,22 @@ void ShowLena() {
 		cvNamedWindow("Lena");
 		//imshow("Lena", im);
 		imshow("Lena", im);
-		Logger::addMessage("Hello Leno :)");
+		BOOST_LOG_TRIVIAL(info) << "Hello Leno :)";
 	}
 	else {
-		Logger::addMessage("Lena could not be found! Go and find her!");
+		BOOST_LOG_TRIVIAL(warning) << "Lena could not be found! Go and find her!";
 	}
 }
 
 int WithoutThread() {
-	Logger::addMessage("No threads were used");
+	BOOST_LOG_TRIVIAL(info) << "No threads were used";
 
 	cvNamedWindow("Camera stream", CV_WINDOW_AUTOSIZE);
 
 	CvCapture* capture = cvCaptureFromCAM(1);
 
 	if (!capture){
-		Logger::addError("No camera found");
+		BOOST_LOG_TRIVIAL(error) << "No camera found";
 		return -1;
 	}
 
@@ -81,7 +81,7 @@ int WithoutThread() {
 		}
 	}
 
-	Logger::addMessage("bye bye");
+	BOOST_LOG_TRIVIAL(info) << "bye bye";
 
 	//Release capture.
 	cvReleaseCapture(&capture);
@@ -93,7 +93,7 @@ int WithoutThread() {
 
 int WithThread()
 {
-	Logger::addMessage("Threads were used");
+	BOOST_LOG_TRIVIAL(info) << "Threads were used";
 
 	ImageProcessingController* controller = new ImageProcessingController();
 
@@ -120,7 +120,7 @@ int DetectWihoutServices(){
 
 	if (!cap.isOpened())  // if not success, exit program
 	{
-		cout << "Cannot open the web cam" << endl;
+		BOOST_LOG_TRIVIAL(error) << "Cannot open the web cam";
 		return -1;
 	}
 
@@ -153,7 +153,7 @@ int DetectWihoutServices(){
 
 		if (!bSuccess) //if not success, break loop
 		{
-			cout << "Cannot read a frame from video stream" << endl;
+			BOOST_LOG_TRIVIAL(warning) << "Cannot read a frame from video stream";
 			break;
 		}
 
@@ -178,7 +178,7 @@ int DetectWihoutServices(){
 
 		if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 		{
-			cout << "esc key is pressed by user" << endl;
+			BOOST_LOG_TRIVIAL(info) << "esc key is pressed by user";
 			break;
 		}
 	}

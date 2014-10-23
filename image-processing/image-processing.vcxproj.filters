@@ -21,12 +21,6 @@
     <ClCompile Include="services\WebcamService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="shared\Logger.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="shared\Thread.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="controller\ImageProcessingController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -36,12 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="services\WebcamService.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="shared\Logger.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="shared\Thread.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="controller\ImageProcessingController.h">

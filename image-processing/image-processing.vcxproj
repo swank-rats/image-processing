@@ -82,19 +82,15 @@
   <ItemGroup>
     <ClCompile Include="controller\ImageProcessingController.cpp" />
     <ClCompile Include="services\ObjectDetectionService.cpp" />
-    <ClCompile Include="shared\Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="services\WebcamService.cpp" />
-    <ClCompile Include="shared\Thread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />
-    <ClInclude Include="shared\Logger.h" />
     <ClInclude Include="services\WebcamService.h" />
     <ClInclude Include="shared\observer\IObserver.h" />
     <ClInclude Include="shared\observer\Observable.h" />
-    <ClInclude Include="shared\Thread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>

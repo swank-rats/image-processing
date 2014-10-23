@@ -12,7 +12,6 @@
 #include <iostream>
 
 #include "ImageProcessingController.h"
-#include "..\shared\Logger.h"
 #include "..\services\ObjectDetectionService.h"
 
 
