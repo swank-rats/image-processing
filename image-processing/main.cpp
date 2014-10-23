@@ -109,6 +109,7 @@ int WithThread()
 	}
 
 	controller->StopImageProcessing();
+
 	destroyAllWindows();
 
 	return 0;
