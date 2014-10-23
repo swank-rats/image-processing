@@ -81,16 +81,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="controller\ImageProcessingController.cpp" />
+    <ClCompile Include="controller\NetworkController.cpp" />
     <ClCompile Include="services\ObjectDetectionService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="services\WebcamService.cpp" />
+    <ClCompile Include="controller\WebSocketController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h" />
+    <ClInclude Include="controller\NetworkController.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />
     <ClInclude Include="services\WebcamService.h" />
     <ClInclude Include="shared\observer\IObserver.h" />
     <ClInclude Include="shared\observer\Observable.h" />
+    <ClInclude Include="controller\WebSocketController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>

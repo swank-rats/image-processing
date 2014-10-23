@@ -27,6 +27,12 @@
     <ClCompile Include="services\ObjectDetectionService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="controller\WebSocketController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="controller\NetworkController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="services\WebcamService.h">
@@ -42,6 +48,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="services\ObjectDetectionService.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\WebSocketController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\NetworkController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
