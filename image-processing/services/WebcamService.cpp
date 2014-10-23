@@ -5,9 +5,9 @@
 // Copyright   : Copyright (c) 2014 Swank Rat, MIT License (MIT)
 // Description : 
 //============================================================================
+#include <boost/log/trivial.hpp>
 
 #include "WebcamService.h"
-#include "..\shared\Logger.h"
 
 static const char* windowName = "Webcam stream";
 
@@ -21,29 +21,24 @@ WebcamService::~WebcamService() {
 }
 
 bool WebcamService::StartRecording() {
-	Logger::addMessage("starting recording...");
+	BOOST_LOG_TRIVIAL(info) << "starting recording...";
 
 	if(!capture){
-		Logger::addError("No camera found");
+		BOOST_LOG_TRIVIAL(error) << "No camera found";
 		return false;
 	}
 
-	recordingThread = new boost::thread(boost::bind(&WebcamService::run, this));
+	recordingThread = new boost::thread(boost::bind(&WebcamService::RecordingCore, this));
 
-	//Start();
-
-	Logger::addMessage("started recording");
+	BOOST_LOG_TRIVIAL(info) << "started recording";
 
 	return true;
 }
 
 bool WebcamService::StopRecording() {
-	Logger::addMessage("stopping recording...");
+	BOOST_LOG_TRIVIAL(info) << "stopping recording...";
 
-	if (!Stop()) {
-		Logger::addError("Could not stop recording thread");
-		return false;
-	}
+	recordingThread->join();
 
 	//release resources
 	if(capture) {
@@ -51,21 +46,29 @@ bool WebcamService::StopRecording() {
 		cvReleaseCapture(&capture);
 	}
 
-	Logger::addMessage("stopped recording");
+	BOOST_LOG_TRIVIAL(info) << "stopped recording";
 
 	return true;
 }
 
-void WebcamService::run() {
+void WebcamService::RecordingCore() {
 	IplImage* frame;
-	//Create image frames from capture
-	frame = cvQueryFrame(capture);
-	//Show image frames on created window
-	cvShowImage(windowName, frame);
-	//Clone image
-	lastImage = cvCloneImage(frame);
 
-	Notify();
+	try {
+		do {
+			//Create image frames from capture
+			frame = cvQueryFrame(capture);
+			//Show image frames on created window
+			cvShowImage(windowName, frame);
+			//Clone image
+			lastImage = cvCloneImage(frame);
+
+			Notify();
+		} while (!recordingThread->interruption_requested());
+	}
+	catch (boost::thread_interrupted const& e) {
+		BOOST_LOG_TRIVIAL(warning) << "recording thread stopped..";
+	}
 }
 
 IplImage* WebcamService::GetLastImage() {

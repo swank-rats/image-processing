@@ -12,10 +12,9 @@
 #include <opencv2\opencv.hpp>
 #include <windows.h>
 #include <boost\thread.hpp>
-#include "..\shared\Thread.h"
 #include "..\shared\observer\Observable.h"
 
-class WebcamService : public Thread, public Observable<WebcamService> {
+class WebcamService : public Observable<WebcamService> {
 public:
 	WebcamService();
 	virtual ~WebcamService();
@@ -31,10 +30,11 @@ public:
 	bool StopRecording();
 
 	IplImage* GetLastImage();
-protected:
-	virtual void run();
+
 private:
 	CvCapture* capture;
 	IplImage* lastImage;
 	boost::thread* recordingThread;
+
+	void RecordingCore();
 };

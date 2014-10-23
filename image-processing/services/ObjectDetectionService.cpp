@@ -14,7 +14,6 @@
 #include <string>
 
 #include "ObjectDetectionService.h"
-#include "..\shared\Logger.h"
 
 using namespace cv;
 using namespace std;
@@ -50,11 +49,4 @@ Mat ObjectDetectionService::DetectObject(IplImage* src, int iLowH, int iLowS, in
 		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
 		return imgThresholded;
-		
-	
-
-}
-
-void ObjectDetectionService::run() {
-
 }
