@@ -6,7 +6,6 @@
 // Description : 
 //============================================================================
 #include <boost/log/trivial.hpp>
-
 #include "WebcamService.h"
 
 static const char* windowName = "Webcam stream";
@@ -38,7 +37,20 @@ bool WebcamService::StartRecording() {
 bool WebcamService::StopRecording() {
 	BOOST_LOG_TRIVIAL(info) << "stopping recording...";
 
-	recordingThread->join();
+	if (recordingThread != NULL) {
+		while (recordingThread->timed_join(boost::posix_time::seconds(2)) == false)
+		{
+			// Interupt the thread
+			BOOST_LOG_TRIVIAL(info) << "recording thread interrupt request sent";
+			recordingThread->interrupt();
+		}
+
+		BOOST_LOG_TRIVIAL(info) << "recording thread stopped successfully";
+
+	}
+	else {
+		BOOST_LOG_TRIVIAL(error) << "recording thread is already disposed!";
+	}
 
 	//release resources
 	if(capture) {
@@ -55,7 +67,7 @@ void WebcamService::RecordingCore() {
 	IplImage* frame;
 
 	try {
-		do {
+		while(1) {
 			//Create image frames from capture
 			frame = cvQueryFrame(capture);
 			//Show image frames on created window
@@ -63,11 +75,14 @@ void WebcamService::RecordingCore() {
 			//Clone image
 			lastImage = cvCloneImage(frame);
 
-			Notify();
-		} while (!recordingThread->interruption_requested());
+			//Notify();
+
+			//here is the place where the thread can be interrupted with join
+			boost::this_thread::interruption_point();
+		}
 	}
 	catch (boost::thread_interrupted const& e) {
-		BOOST_LOG_TRIVIAL(warning) << "recording thread stopped..";
+		BOOST_LOG_TRIVIAL(warning) << "recording thread stopped by interrupt";
 	}
 }
 
