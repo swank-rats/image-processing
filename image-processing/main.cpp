@@ -2,7 +2,6 @@
 // Name        : main.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Copyright   : Copyright (c) 2014 Swank Rat, MIT License (MIT)
 // Description : Image process start point
 //============================================================================
 
@@ -10,12 +9,12 @@
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\opencv.hpp>
 #include <iostream>
-#include <boost/log/trivial.hpp>
+#include <boost\log\trivial.hpp>
 
-#include "services\WebcamService.h"
+#include "services\videostreaming\webcam\WebcamService.h"
 #include "services\ObjectDetectionService.h"
 #include "controller\ImageProcessingController.h"
-
+#include "controller\VideoStreamingController.h"
 
 using namespace cv;
 using namespace std;
@@ -30,7 +29,7 @@ int  DetectWihoutServices();
 
 int main(int argc, char** argv)
 {
-	//ShowLena();
+	ShowLena();
 
 	return WithThread();
 }
@@ -94,8 +93,10 @@ int WithThread()
 	BOOST_LOG_TRIVIAL(info) << "Threads were used";
 
 	ImageProcessingController* controller = new ImageProcessingController();
+	//controller->StartImageProcessing();
 
-	controller->StartImageProcessing();
+	VideoStreamingController* videoStreamingController = new VideoStreamingController();
+	videoStreamingController->StartNetworkService();
 
 	char key;
 	while (1) {

@@ -2,7 +2,6 @@
 // Name        : WebcamService.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Copyright   : Copyright (c) 2014 Swank Rat, MIT License (MIT)
 // Description : 
 //============================================================================
 #include <boost/log/trivial.hpp>
@@ -81,7 +80,7 @@ void WebcamService::RecordingCore() {
 			boost::this_thread::interruption_point();
 		}
 	}
-	catch (boost::thread_interrupted const& e) {
+	catch (boost::thread_interrupted) {
 		BOOST_LOG_TRIVIAL(warning) << "recording thread stopped by interrupt";
 	}
 }

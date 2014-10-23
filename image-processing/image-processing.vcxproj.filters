@@ -18,9 +18,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="services\WebcamService.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="controller\ImageProcessingController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -30,14 +27,26 @@
     <ClCompile Include="controller\WebSocketController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="controller\NetworkController.cpp">
+    <ClCompile Include="controller\VideoStreamingController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="services\videostreaming\webcam\WebcamService.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\VideoStreamingServer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\VideoStreamingRequestHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\ConnectionManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\Connection.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="services\WebcamService.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="controller\ImageProcessingController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -53,7 +62,22 @@
     <ClInclude Include="controller\WebSocketController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="controller\NetworkController.h">
+    <ClInclude Include="controller\VideoStreamingController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="services\videostreaming\webcam\WebcamService.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\VideoStreamingServer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\VideoStreamingRequestHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\ConnectionManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\Connection.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
