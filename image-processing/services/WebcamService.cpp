@@ -11,7 +11,7 @@
 static const char* windowName = "Webcam stream";
 
 WebcamService::WebcamService() {
-	capture = cvCaptureFromCAM(1);
+	capture = cvCaptureFromCAM(0);
 	cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 }
 
@@ -75,7 +75,7 @@ void WebcamService::RecordingCore() {
 			//Clone image
 			lastImage = cvCloneImage(frame);
 
-			//Notify();
+			Notify();
 
 			//here is the place where the thread can be interrupted with join
 			boost::this_thread::interruption_point();
