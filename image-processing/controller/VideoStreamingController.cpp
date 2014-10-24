@@ -18,7 +18,7 @@ VideoStreamingController::~VideoStreamingController()
 }
 
 void VideoStreamingController::StartNetworkService() {
-	streamingServer->StartVideoStreamingServer();
+	streamingServer->StartServer();
 }
 
 bool VideoStreamingController::StopNetworkService() {

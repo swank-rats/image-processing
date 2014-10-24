@@ -10,8 +10,6 @@
 static const char* windowName = "Webcam stream";
 
 WebcamService::WebcamService() {
-	capture = cvCaptureFromCAM(CV_CAP_ANY);
-	cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 }
 
 WebcamService::~WebcamService() {
@@ -20,6 +18,8 @@ WebcamService::~WebcamService() {
 
 bool WebcamService::StartRecording() {
 	BOOST_LOG_TRIVIAL(info) << "starting recording...";
+	capture = cvCaptureFromCAM(CV_CAP_ANY);
+	cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 
 	if(!capture){
 		BOOST_LOG_TRIVIAL(error) << "No camera found";

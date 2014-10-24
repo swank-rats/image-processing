@@ -5,24 +5,26 @@
 // Description : 
 //============================================================================
 
-//#pragma once
-//class ConnectionManager
-//{
-//public:
-//	ConnectionManager();
-//	~ConnectionManager();
-//
-//	/// Add the specified connection to the manager and start it.
-//	void Start(Connection_ptr c);
-//
-//	/// Stop the specified connection.
-//	void Stop(Connection_ptr c);
-//
-//	/// Stop all connections.
-//	void StopAll();
-//
-//private:
-//	/// The managed connections.
-//	std::set<connection_ptr> connections_;
-//};
-//
+#pragma once
+#include <set>
+#include "Connection.h"
+
+class ConnectionManager
+{
+public:
+	ConnectionManager();
+
+	/// Add the specified connection to the manager and start it.
+	void Start(ConnectionPtr c);
+
+	/// Stop the specified connection.
+	void Stop(ConnectionPtr c);
+
+	/// Stop all connections.
+	void StopAll();
+
+private:
+	/// The managed connections.
+	std::set<ConnectionPtr> connections;
+};
+

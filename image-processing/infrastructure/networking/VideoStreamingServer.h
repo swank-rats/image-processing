@@ -10,26 +10,27 @@
 #include <string>
 
 //#include "VideoStreamingRequestHandler.h"
-//#include "ConnectionManager.h"
+#include "ConnectionManager.h"
 
 class VideoStreamingServer
 {
 public:
-	VideoStreamingServer(std::string addr, std::string port);
+	VideoStreamingServer(const std::string& address, const std::string& port);
 	~VideoStreamingServer();
-	void StartVideoStreamingServer();
-	bool StopVideoStreamingServer();
+	void StartServer();
+	bool StopServer();
 
 private:
-	void HandleConnections();
+	void StartCore();
+	void AcceptConnection();
+
 	void WriteHandler(const boost::system::error_code &ec, std::size_t bytes_transferred);
 	void AcceptHandler(const boost::system::error_code &ec);
 
-	boost::asio::io_service ioService;
-	/// Acceptor used to listen for incoming connections.
-	boost::asio::ip::tcp::acceptor acceptor;
-	/// The next socket to be accepted.
-	boost::asio::ip::tcp::socket socket;
+	ConnectionManager connectionManager;
 	boost::thread* workerThread;
+	boost::asio::io_service ioService;
+	boost::asio::ip::tcp::acceptor acceptor;
+	boost::asio::ip::tcp::socket socket;
 };
 
