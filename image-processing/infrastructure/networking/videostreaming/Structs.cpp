@@ -246,19 +246,5 @@ namespace infrastructure {
 			rep.headers[1].value = "text/html";
 			return rep;
 		}
-
-
-		//std::string MimeType::ExtensionToType(const std::string& extension)
-		//{
-		//	for (MimeType m : MimeTypes)
-		//	{
-		//		if (m.extension == extension)
-		//		{
-		//			return m.mime_type;
-		//		}
-		//	}
-
-		//	return "text/plain";
-		//}
 	}
 }

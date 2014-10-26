@@ -62,8 +62,10 @@ namespace infrastructure {
 				if (!ec)
 				{
 					// Initiate graceful connection closure.
-					boost::system::error_code ignored_ec;
-					socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+					//boost::system::error_code ignored_ec;
+					//socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+
+					// DO NOTHING - KEEP ALIVE since it is a video stream
 				}
 
 				if (ec != boost::asio::error::operation_aborted)

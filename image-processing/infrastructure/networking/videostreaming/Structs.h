@@ -55,20 +55,5 @@ namespace infrastructure {
 			std::vector<boost::asio::const_buffer> Reply::ToBuffers();
 			static Reply GetStockReply(StatusType status);
 		};
-
-		//struct MimeType
-		//{
-		//	const char* extension;
-		//	const char* mime_type;
-
-		//	static std::string ExtensionToType(const std::string& extension);
-		//} MimeTypes[] =
-		//{
-		//	{ "gif", "image/gif" },
-		//	{ "htm", "text/html" },
-		//	{ "html", "text/html" },
-		//	{ "jpg", "image/jpeg" },
-		//	{ "png", "image/png" }
-		//};
 	}
 }

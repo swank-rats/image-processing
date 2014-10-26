@@ -10,6 +10,8 @@
 
 namespace infrastructure {
 	namespace video_streaming {
+		const unsigned int timeoutMilli = 10000;
+
 		VideoStreamingServer::VideoStreamingServer(const std::string& address, const std::string& port,
 			const std::string& uri, services::webcam::WebcamServicePtr webcamService)
 			: ioService(), acceptor(ioService), connectionManager(), socket(ioService), requestHandler(uri, webcamService)
@@ -22,7 +24,9 @@ namespace infrastructure {
 			acceptor.bind(endpoint);
 			acceptor.listen();
 
-			BOOST_LOG_TRIVIAL(info) << "using ip " << endpoint.address() << ":" << endpoint.port();
+			// Set keep-alive for TCP connection
+			boost::asio::socket_base::keep_alive option(true);
+			socket.set_option(option);
 
 			AcceptConnection();
 		}
@@ -47,6 +51,7 @@ namespace infrastructure {
 				// completion handler had a chance to run.
 				if (!acceptor.is_open())
 				{
+					BOOST_LOG_TRIVIAL(error) << "Streaming server acceptor closed!";
 					return;
 				}
 
@@ -58,17 +63,19 @@ namespace infrastructure {
 				AcceptConnection();
 			});
 		}
+		
+		//void VideoStreamingServer::AwaitStopRequest()
+		//{
+		//	signals.async_wait(
+		//		[this](boost::system::error_code /*ec*/, int /*signo*/)
+		//	{
+		//		// The server is stopped by cancelling all outstanding asynchronous
+		//		// operations. Once all operations have finished the io_service::run()
+		//		// call will exit.
+		//		//acceptor.close();
+		//		//connectionManager.StopAll();
+		//	});
+		//}
 	}
 }
-//void VideoStreamingServer::AwaitStopRequest()
-//{
-//	signals.async_wait(
-//		[this](boost::system::error_code /*ec*/, int /*signo*/)
-//	{
-//		// The server is stopped by cancelling all outstanding asynchronous
-//		// operations. Once all operations have finished the io_service::run()
-//		// call will exit.
-//		//acceptor.close();
-//		//connectionManager.StopAll();
-//	});
-//}
+
