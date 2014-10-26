@@ -33,16 +33,25 @@
     <ClCompile Include="services\videostreaming\webcam\WebcamService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\VideoStreamingServer.cpp">
+    <ClCompile Include="infrastructure\networking\videostreaming\Connection.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\VideoStreamingRequestHandler.cpp">
+    <ClCompile Include="infrastructure\networking\videostreaming\ConnectionManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\ConnectionManager.cpp">
+    <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingServer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\Connection.cpp">
+    <ClCompile Include="infrastructure\networking\videostreaming\RequestHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\videostreaming\RequestParser.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\videostreaming\Structs.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\videostreaming\MimeType.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,16 +77,25 @@
     <ClInclude Include="services\videostreaming\webcam\WebcamService.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\VideoStreamingServer.h">
+    <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingServer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\VideoStreamingRequestHandler.h">
+    <ClInclude Include="infrastructure\networking\videostreaming\Connection.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\ConnectionManager.h">
+    <ClInclude Include="infrastructure\networking\videostreaming\ConnectionManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\Connection.h">
+    <ClInclude Include="infrastructure\networking\videostreaming\RequestHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\videostreaming\RequestParser.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\videostreaming\Structs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\videostreaming\MimeType.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,21 +6,25 @@
 //============================================================================
 #include "VideoStreamingController.h"
 
+namespace controller {
+	namespace video_streaming {
+		VideoStreamingController::VideoStreamingController(WebcamServicePtr webcamService)
+		{
+			streamingServer = new VideoStreamingServer("127.0.0.1", "4711", "videostream", webcamService);
+		}
 
-VideoStreamingController::VideoStreamingController()
-{
-	streamingServer = new VideoStreamingServer("127.0.0.1", "80");
-}
 
+		VideoStreamingController::~VideoStreamingController()
+		{
+			StopNetworkService();
+		}
 
-VideoStreamingController::~VideoStreamingController()
-{
-}
+		void VideoStreamingController::StartStreamingServer() {
+			streamingServer->StartServer();
+		}
 
-void VideoStreamingController::StartNetworkService() {
-	streamingServer->StartServer();
-}
-
-bool VideoStreamingController::StopNetworkService() {
-	return true;
+		bool VideoStreamingController::StopNetworkService() {
+			return true;
+		}
+	}
 }

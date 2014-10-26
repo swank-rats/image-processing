@@ -7,84 +7,88 @@
 #include <boost/log/trivial.hpp>
 #include "WebcamService.h"
 
-static const char* windowName = "Webcam stream";
+namespace services {
+	namespace webcam {
+		static const char* windowName = "Webcam stream";
 
-WebcamService::WebcamService() {
-}
-
-WebcamService::~WebcamService() {
-	StopRecording();
-}
-
-bool WebcamService::StartRecording() {
-	BOOST_LOG_TRIVIAL(info) << "starting recording...";
-	capture = cvCaptureFromCAM(CV_CAP_ANY);
-	cvNamedWindow(windowName, CV_WINDOW_NORMAL);
-
-	if(!capture){
-		BOOST_LOG_TRIVIAL(error) << "No camera found";
-		return false;
-	}
-
-	recordingThread = new boost::thread(boost::bind(&WebcamService::RecordingCore, this));
-
-	BOOST_LOG_TRIVIAL(info) << "started recording";
-
-	return true;
-}
-
-bool WebcamService::StopRecording() {
-	BOOST_LOG_TRIVIAL(info) << "stopping recording...";
-
-	if (recordingThread != NULL) {
-		while (recordingThread->timed_join(boost::posix_time::seconds(2)) == false)
-		{
-			// Interupt the thread
-			BOOST_LOG_TRIVIAL(info) << "recording thread interrupt request sent";
-			recordingThread->interrupt();
+		WebcamService::WebcamService() {
 		}
 
-		BOOST_LOG_TRIVIAL(info) << "recording thread stopped successfully";
+		WebcamService::~WebcamService() {
+			StopRecording();
+		}
 
-	}
-	else {
-		BOOST_LOG_TRIVIAL(error) << "recording thread is already disposed!";
-	}
+		bool WebcamService::StartRecording() {
+			BOOST_LOG_TRIVIAL(info) << "starting recording...";
+			capture = cvCaptureFromCAM(CV_CAP_ANY);
+			cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 
-	//release resources
-	if(capture) {
-		//Release capture.
-		cvReleaseCapture(&capture);
-	}
+			if (!capture){
+				BOOST_LOG_TRIVIAL(error) << "No camera found";
+				return false;
+			}
 
-	BOOST_LOG_TRIVIAL(info) << "stopped recording";
+			recordingThread = new boost::thread(boost::bind(&WebcamService::RecordingCore, this));
 
-	return true;
-}
+			BOOST_LOG_TRIVIAL(info) << "started recording";
 
-void WebcamService::RecordingCore() {
-	IplImage* frame;
+			return true;
+		}
 
-	try {
-		while(1) {
-			//Create image frames from capture
-			frame = cvQueryFrame(capture);
-			//Show image frames on created window
-			cvShowImage(windowName, frame);
-			//Clone image
-			lastImage = cvCloneImage(frame);
+		bool WebcamService::StopRecording() {
+			BOOST_LOG_TRIVIAL(info) << "stopping recording...";
 
-			//Notify();
+			if (recordingThread != NULL) {
+				while (recordingThread->timed_join(boost::posix_time::seconds(2)) == false)
+				{
+					// Interupt the thread
+					BOOST_LOG_TRIVIAL(info) << "recording thread interrupt request sent";
+					recordingThread->interrupt();
+				}
 
-			//here is the place where the thread can be interrupted with join
-			boost::this_thread::interruption_point();
+				BOOST_LOG_TRIVIAL(info) << "recording thread stopped successfully";
+
+			}
+			else {
+				BOOST_LOG_TRIVIAL(error) << "recording thread is already disposed!";
+			}
+
+			//release resources
+			if (capture) {
+				//Release capture.
+				cvReleaseCapture(&capture);
+			}
+
+			BOOST_LOG_TRIVIAL(info) << "stopped recording";
+
+			return true;
+		}
+
+		void WebcamService::RecordingCore() {
+			IplImage* frame;
+
+			try {
+				while (1) {
+					//Create image frames from capture
+					frame = cvQueryFrame(capture);
+					//Show image frames on created window
+					cvShowImage(windowName, frame);
+					//Clone image
+					lastImage = cvCloneImage(frame);
+
+					Notify();
+
+					//here is the place where the thread can be interrupted with join
+					boost::this_thread::interruption_point();
+				}
+			}
+			catch (boost::thread_interrupted) {
+				BOOST_LOG_TRIVIAL(warning) << "recording thread stopped by interrupt";
+			}
+		}
+
+		IplImage* WebcamService::GetLastImage() {
+			return lastImage;
 		}
 	}
-	catch (boost::thread_interrupted) {
-		BOOST_LOG_TRIVIAL(warning) << "recording thread stopped by interrupt";
-	}
-}
-
-IplImage* WebcamService::GetLastImage() {
-	return lastImage;
 }

@@ -92,11 +92,11 @@ int WithThread()
 {
 	BOOST_LOG_TRIVIAL(info) << "Threads were used";
 
-	ImageProcessingController* controller = new ImageProcessingController();
-	//controller->StartImageProcessing();
+	controller::image_processing::ImageProcessingController imgProcCtrl(std::make_shared<services::webcam::WebcamService>());
+	imgProcCtrl.StartImageProcessing();
 
-	VideoStreamingController* videoStreamingController = new VideoStreamingController();
-	videoStreamingController->StartNetworkService();
+	controller::video_streaming::VideoStreamingController vidStreamCtrl(std::make_shared<services::webcam::WebcamService>());
+	vidStreamCtrl.StartStreamingServer();
 
 	char key;
 	while (1) {
@@ -107,7 +107,8 @@ int WithThread()
 		}
 	}
 
-	controller->StopImageProcessing();
+	imgProcCtrl.StopImageProcessing();
+	vidStreamCtrl.StopNetworkService();
 
 	destroyAllWindows();
 

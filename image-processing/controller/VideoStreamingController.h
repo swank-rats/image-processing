@@ -5,17 +5,26 @@
 // Description : 
 //============================================================================
 #pragma once
-#include "..\infrastructure\networking\VideoStreamingServer.h"
+#include "..\infrastructure\networking\videostreaming\VideoStreamingServer.h"
+#include "..\services\videostreaming\webcam\WebcamService.h"
 
-class VideoStreamingController
-{
-public:
-	VideoStreamingController();
-	~VideoStreamingController();
+using namespace services::webcam;
+using namespace infrastructure::video_streaming;
 
-	void StartNetworkService();
-	bool StopNetworkService();
-private:
-	VideoStreamingServer* streamingServer;
-};
+namespace controller {
+	namespace video_streaming {
 
+		class VideoStreamingController
+		{
+		public:
+			VideoStreamingController(WebcamServicePtr webcamService);
+			~VideoStreamingController();
+
+			void StartStreamingServer();
+			bool StopNetworkService();
+		private:
+			VideoStreamingServer* streamingServer;
+			WebcamServicePtr webcamService;
+		};
+	}
+}

@@ -5,22 +5,28 @@
 // Description : 
 //============================================================================
 #pragma once
+#include <memory>
+#include <opencv2\opencv.hpp>
 
 #include "..\services\videostreaming\webcam\WebcamService.h"
 #include "..\shared\observer\IObserver.h"
 
-class ImageProcessingController : public IObserver<WebcamService>
-{
-public:
-	ImageProcessingController();
-	~ImageProcessingController();
-	void StartImageProcessing();
-	bool StopImageProcessing();
-	virtual void Update(WebcamService* observable);
+using namespace services::webcam;
 
-private:
-	WebcamService* webcamService;
-	void CreateTrackBarView();
-
-};
-
+namespace controller {
+	namespace image_processing {
+		class ImageProcessingController : public IObserver <WebcamService>
+		{
+		public:
+			ImageProcessingController(WebcamServicePtr webcamService);
+			~ImageProcessingController();
+			void StartImageProcessing();
+			bool StopImageProcessing();
+			virtual void Update(WebcamService* observable);
+			IplImage* GetLastFrame();
+		private:
+			WebcamServicePtr webcamService;
+			void CreateTrackBarView();
+		};
+	}
+}
