@@ -57,6 +57,8 @@ namespace infrastructure {
 		void Connection::Response()
 		{
 			auto self(shared_from_this());
+
+
 			boost::asio::async_write(socket, reply.ToBuffers(), [this, self](boost::system::error_code ec, std::size_t)
 			{
 				if (!ec)

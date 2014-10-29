@@ -55,6 +55,18 @@ namespace infrastructure {
 			rep.headers[0].value = "hello";
 			rep.headers[1].name = "Content-Type";
 			rep.headers[1].value = mime_type::ExtensionToType(extension);
+
+
+			"HTTP/1.0 200 OK\r\n" +
+				"Server: YourServerName\r\n" +
+				"Connection: close\r\n" +
+				"Max-Age: 0\r\n" +
+				"Expires: 0\r\n" +
+				"Cache-Control: no-cache, private\r\n" +
+				"Pragma: no-cache\r\n" +
+				"Content-Type: multipart/x-mixed-replace; " +
+				"boundary=--BoundaryString\r\n\r\n").getBytes());
+
 		}
 
 		bool RequestHandler::UrlDecode(const std::string& in, std::string& out)

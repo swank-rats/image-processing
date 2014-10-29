@@ -45,7 +45,7 @@ namespace infrastructure {
 			const std::string service_unavailable =
 				"HTTP/1.0 503 Service Unavailable\r\n";
 
-			boost::asio::const_buffer to_buffer(Reply::StatusType status)
+			boost::asio::const_buffer ToBuffer(Reply::StatusType status)
 			{
 				switch (status)
 				{
@@ -220,7 +220,7 @@ namespace infrastructure {
 		std::vector<boost::asio::const_buffer> Reply::ToBuffers()
 		{
 			std::vector<boost::asio::const_buffer> buffers;
-			buffers.push_back(status_strings::to_buffer(status));
+			buffers.push_back(status_strings::ToBuffer(status));
 			for (std::size_t i = 0; i < headers.size(); ++i)
 			{
 				Header& h = headers[i];
