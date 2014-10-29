@@ -224,13 +224,19 @@ namespace infrastructure {
 			for (std::size_t i = 0; i < headers.size(); ++i)
 			{
 				Header& h = headers[i];
-				buffers.push_back(boost::asio::buffer(h.name));
-				buffers.push_back(boost::asio::buffer(misc_strings::name_value_separator));
+				if (!h.name.empty()) {
+					buffers.push_back(boost::asio::buffer(h.name));
+					buffers.push_back(boost::asio::buffer(misc_strings::name_value_separator));
+				}
+
 				buffers.push_back(boost::asio::buffer(h.value));
 				buffers.push_back(boost::asio::buffer(misc_strings::crlf));
 			}
 			buffers.push_back(boost::asio::buffer(misc_strings::crlf));
-			buffers.push_back(boost::asio::buffer(content));
+
+			if (!content.empty()) {
+				buffers.push_back(boost::asio::buffer(content));
+			}
 			return buffers;
 		}
 
@@ -238,12 +244,43 @@ namespace infrastructure {
 		{
 			Reply rep;
 			rep.status = status;
-			rep.content = stock_replies::to_string(status);
-			rep.headers.resize(2);
-			rep.headers[0].name = "Content-Length";
-			rep.headers[0].value = std::to_string(rep.content.size());
-			rep.headers[1].name = "Content-Type";
-			rep.headers[1].value = "text/html";
+
+			if (Reply::ok == status) {
+				//rep.headers.resize(6);
+				//rep.headers[0].name = "Connection";
+				//rep.headers[0].value = "close";
+				//rep.headers[1].name = "Max-Age";
+				//rep.headers[1].value = "0";
+				//rep.headers[2].name = "Expires";
+				//rep.headers[2].value = "0";
+				//rep.headers[3].name = "Cache-Control";
+				//rep.headers[3].value = "no-cache, private";
+				//rep.headers[4].name = "Pragma";
+				//rep.headers[4].value = "no-cache";
+				//rep.headers[5].name = "Content-Type";
+				//rep.headers[5].value = "multipart/x-mixed-replace; boundary=--BoundaryString";
+				rep.headers.resize(5);
+				rep.headers[0].name = "Max-Age";
+				rep.headers[0].value = "0";
+				rep.headers[1].name = "Expires";
+				rep.headers[1].value = "0";
+				rep.headers[2].name = "Cache-Control";
+				rep.headers[2].value = "no-cache, private";
+				rep.headers[3].name = "Pragma";
+				rep.headers[3].value = "no-cache";
+				rep.headers[4].name = "Content-Type";
+				rep.headers[4].value = "multipart/x-mixed-replace; boundary=--BoundaryString";
+
+			}
+			else {
+				rep.content = stock_replies::to_string(status);
+				rep.headers.resize(2);
+				rep.headers[0].name = "Content-Length";
+				rep.headers[0].value = std::to_string(rep.content.size());
+				rep.headers[1].name = "Content-Type";
+				rep.headers[1].value = "text/html";
+			}
+
 			return rep;
 		}
 	}

@@ -14,7 +14,8 @@ namespace infrastructure {
 
 		VideoStreamingServer::VideoStreamingServer(const std::string& address, const std::string& port,
 			const std::string& uri, services::webcam::WebcamServicePtr webcamService)
-			: ioService(), acceptor(ioService), connectionManager(), socket(ioService), requestHandler(uri, webcamService)
+			: ioService(), acceptor(ioService), connectionManager(), socket(ioService), requestHandler(uri),
+			  streamResponseHandler(webcamService)
 		{
 			// Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
 			boost::asio::ip::tcp::resolver resolver(ioService);
@@ -24,9 +25,7 @@ namespace infrastructure {
 			acceptor.bind(endpoint);
 			acceptor.listen();
 
-			// Set keep-alive for TCP connection
-			//boost::asio::socket_base::keep_alive option(true);
-			//socket.set_option(option);
+			BOOST_LOG_TRIVIAL(info) << "init video streaming server: " + address + ":" + port + "/" + uri;
 		}
 
 		void VideoStreamingServer::StartServer()
@@ -57,7 +56,10 @@ namespace infrastructure {
 
 				if (!ec)
 				{
-					connectionManager.Start(std::make_shared<Connection>(std::move(socket), connectionManager, requestHandler));
+					BOOST_LOG_TRIVIAL(info) << "accepted connection " + socket.remote_endpoint().address().to_string();
+
+					connectionManager.Start(std::make_shared<Connection>(std::move(socket), 
+						connectionManager, requestHandler, streamResponseHandler));
 				}
 
 				AcceptConnection();

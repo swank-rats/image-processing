@@ -15,7 +15,6 @@ namespace services {
 		}
 
 		WebcamService::~WebcamService() {
-			recordingThread = nullptr;
 		}
 
 		bool WebcamService::StartRecording() {
@@ -29,7 +28,7 @@ namespace services {
 				return false;
 			}
 
-			recordingThread = new boost::thread(boost::bind(&WebcamService::RecordingCore, this));
+			recordingThread = boost::thread(boost::bind(&WebcamService::RecordingCore, this));
 
 			BOOST_LOG_TRIVIAL(info) << "started recording";
 
@@ -39,12 +38,12 @@ namespace services {
 		bool WebcamService::StopRecording() {
 			BOOST_LOG_TRIVIAL(info) << "stopping recording...";
 
-			if (recordingThread != NULL) {
-				while (!recordingThread->timed_join(boost::posix_time::seconds(2)))
+			if (recordingThread.joinable()) {
+				while (!recordingThread.timed_join(boost::posix_time::seconds(2)))
 				{
 					// Interupt the thread
 					BOOST_LOG_TRIVIAL(info) << "recording thread interrupt request sent";
-					recordingThread->interrupt();
+					recordingThread.interrupt();
 				}
 
 				BOOST_LOG_TRIVIAL(info) << "recording thread stopped successfully";
@@ -53,13 +52,6 @@ namespace services {
 			else {
 				BOOST_LOG_TRIVIAL(error) << "recording thread is already disposed!";
 			}
-
-			////release resources
-			//if (capture.isOpened()) {
-			//	//Release capture.
-			//	cvReleaseCapture(capture);
-			//}
-			// VideoCapture will be closed in the destructor
 			
 			BOOST_LOG_TRIVIAL(info) << "stopped recording";
 
@@ -67,9 +59,10 @@ namespace services {
 		}
 
 		void WebcamService::RecordingCore() {
-			cv::Mat frame;
-
 			try {
+				cv::Mat frame;
+				boost::mutex mutex;
+
 				while (1) {
 					if (!capture.isOpened()) {
 						BOOST_LOG_TRIVIAL(error) << "Lost connection to webcam!";
@@ -82,7 +75,19 @@ namespace services {
 						//Show image frames on created window
 						cv::imshow(windowName, frame);
 						//Clone image
+						mutex.lock(); //make this operation thread safe
 						lastImage = frame.clone();
+						mutex.unlock();
+
+						//std::string str;
+
+						//for (int i = 0; i < lastImage.rows; i++)
+						//{
+						//	for (int j = 0; j < lastImage.cols; j++)
+						//	{
+						//		str.append(*(uchar*)(lastImage.data + i * lastImage.step + j), 1);
+						//	}
+						//}
 
 						Notify();
 					}

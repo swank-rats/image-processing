@@ -92,10 +92,12 @@ int WithThread()
 {
 	BOOST_LOG_TRIVIAL(info) << "Threads were used";
 
-	controller::image_processing::ImageProcessingController imgProcCtrl(std::make_shared<services::webcam::WebcamService>());
+	auto webcamService = std::make_shared<services::webcam::WebcamService>();
+
+	controller::image_processing::ImageProcessingController imgProcCtrl(webcamService);
 	imgProcCtrl.StartImageProcessing();
 
-	controller::video_streaming::VideoStreamingController vidStreamCtrl(std::make_shared<services::webcam::WebcamService>());
+	controller::video_streaming::VideoStreamingController vidStreamCtrl(webcamService);
 	vidStreamCtrl.StartStreamingServer();
 
 	char key;

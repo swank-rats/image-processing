@@ -11,6 +11,7 @@
 
 #include "ConnectionManager.h"
 #include "RequestHandler.h"
+#include "StreamResponseHandler.h"
 #include "..\..\..\services\videostreaming\webcam\WebcamService.h"
 
 namespace infrastructure {
@@ -32,6 +33,7 @@ namespace infrastructure {
 
 			ConnectionManager connectionManager;
 			RequestHandler requestHandler;
+			StreamResponseHandler streamResponseHandler;
 			boost::thread* workerThread;
 			boost::asio::io_service ioService;
 			boost::asio::ip::tcp::acceptor acceptor;

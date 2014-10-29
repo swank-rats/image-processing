@@ -54,6 +54,9 @@
     <ClCompile Include="infrastructure\networking\videostreaming\MimeType.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="infrastructure\networking\videostreaming\StreamResponseHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
@@ -96,6 +99,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="infrastructure\networking\videostreaming\MimeType.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\videostreaming\StreamResponseHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

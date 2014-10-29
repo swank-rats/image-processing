@@ -12,6 +12,7 @@
 #include <boost/asio.hpp>
 #include "RequestParser.h"
 #include "RequestHandler.h"
+#include "StreamResponseHandler.h"
 #include "Structs.h"
 
 namespace infrastructure {
@@ -21,17 +22,15 @@ namespace infrastructure {
 		class Connection : public std::enable_shared_from_this < Connection >
 		{
 		public:
-			Connection(boost::asio::ip::tcp::socket socket, ConnectionManager& manager, RequestHandler& handler);
-			/// Start the first asynchronous operation for the connection.
+			Connection(boost::asio::ip::tcp::socket socket, ConnectionManager& manager, 
+				RequestHandler& handler, StreamResponseHandler& streamHandler);
 			void Start();
-			/// Stop all asynchronous operations associated with the connection.
 			void Stop();
-
 		private:
-			/// Perform an asynchronous read operation.
 			void Receive();
-			/// Perform an asynchronous write operation.
 			void Response();
+			void StartSendingVideoStream();
+			void ShutdownConnection();
 
 			std::array<char, 8192> buffer;
 			boost::asio::ip::tcp::socket socket;
@@ -40,6 +39,8 @@ namespace infrastructure {
 			Reply reply;
 			RequestParser requestParser;
 			RequestHandler& requestHandler;
+			StreamResponseHandler& streamReponseHandler;
+			boost::thread streamingThread;
 		};
 
 		typedef std::shared_ptr<Connection> ConnectionPtr;

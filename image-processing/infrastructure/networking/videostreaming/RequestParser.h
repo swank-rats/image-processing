@@ -19,10 +19,10 @@ namespace infrastructure {
 			void Reset();
 			enum ResultType { good, bad, indeterminate };
 
-			/// Parse some data. The enum return value is good when a complete request has
-			/// been parsed, bad if the data is invalid, indeterminate when more data is
-			/// required. The InputIterator return value indicates how much of the input
-			/// has been consumed.
+			// Parse some data. The enum return value is good when a complete request has
+			// been parsed, bad if the data is invalid, indeterminate when more data is
+			// required. The InputIterator return value indicates how much of the input
+			// has been consumed.
 			template <typename InputIterator>
 			std::tuple<ResultType, InputIterator> Parse(Request& req, InputIterator begin, InputIterator end)
 			{
@@ -35,17 +35,17 @@ namespace infrastructure {
 				return std::make_tuple(indeterminate, begin);
 			}
 		private:
-			/// Handle the next character of input.
+			// Handle the next character of input.
 			ResultType Consume(Request& req, char input);
-			/// Check if a byte is an HTTP character.
+			// Check if a byte is an HTTP character.
 			static bool IsChar(int c);
-			/// Check if a byte is an HTTP control character.
+			// Check if a byte is an HTTP control character.
 			static bool IsCtl(int c);
-			/// Check if a byte is defined as an HTTP tspecial character.
+			// Check if a byte is defined as an HTTP tspecial character.
 			static bool IsTspecial(int c);
-			/// Check if a byte is a digit.
+			// Check if a byte is a digit.
 			static bool IsDigit(int c);
-			/// The current state of the parser.
+			// The current state of the parser.
 			enum State
 			{
 				method_start,

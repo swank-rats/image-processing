@@ -34,7 +34,7 @@ namespace services {
 		private:
 			cv::VideoCapture capture;
 			cv::Mat lastImage;
-			boost::thread* recordingThread;
+			boost::thread recordingThread;
 
 			void RecordingCore();
 		};

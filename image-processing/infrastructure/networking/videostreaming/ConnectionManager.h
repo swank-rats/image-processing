@@ -17,17 +17,17 @@ namespace infrastructure {
 		public:
 			ConnectionManager();
 
-			/// Add the specified connection to the manager and start it.
+			// Add the specified connection to the manager and start it.
 			void Start(ConnectionPtr c);
 
-			/// Stop the specified connection.
+			// Stop the specified connection.
 			void Stop(ConnectionPtr c);
 
-			/// Stop all connections.
+			// Stop all connections.
 			void StopAll();
 
 		private:
-			/// The managed connections.
+			// The managed connections.
 			std::set<ConnectionPtr> connections;
 		};
 	}
