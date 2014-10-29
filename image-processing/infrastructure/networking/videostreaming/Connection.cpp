@@ -89,6 +89,7 @@ namespace infrastructure {
 			boost::asio::async_write(socket, reply.ToBuffers(), [this, self](boost::system::error_code ec, std::size_t)
 			{
 				if (ec) {
+					//TODO FIX ME error here 
 					ShutdownConnection();
 				}
 			});
