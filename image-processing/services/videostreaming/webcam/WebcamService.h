@@ -29,11 +29,11 @@ namespace services {
 			 */
 			bool StopRecording();
 
-			IplImage* GetLastImage();
+			cv::Mat GetLastImage();
 
 		private:
-			CvCapture* capture;
-			IplImage* lastImage;
+			cv::VideoCapture capture;
+			cv::Mat lastImage;
 			boost::thread* recordingThread;
 
 			void RecordingCore();

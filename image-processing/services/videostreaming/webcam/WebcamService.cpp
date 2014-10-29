@@ -11,19 +11,20 @@ namespace services {
 	namespace webcam {
 		static const char* windowName = "Webcam stream";
 
-		WebcamService::WebcamService() {
+		WebcamService::WebcamService() : capture(cv::VideoCapture()) {
 		}
 
 		WebcamService::~WebcamService() {
-			StopRecording();
+			recordingThread = nullptr;
 		}
 
 		bool WebcamService::StartRecording() {
 			BOOST_LOG_TRIVIAL(info) << "starting recording...";
-			capture = cvCaptureFromCAM(CV_CAP_ANY);
 			cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 
-			if (!capture){
+			capture.open(CV_CAP_ANY);
+
+			if (!capture.isOpened()){
 				BOOST_LOG_TRIVIAL(error) << "No camera found";
 				return false;
 			}
@@ -39,7 +40,7 @@ namespace services {
 			BOOST_LOG_TRIVIAL(info) << "stopping recording...";
 
 			if (recordingThread != NULL) {
-				while (recordingThread->timed_join(boost::posix_time::seconds(2)) == false)
+				while (!recordingThread->timed_join(boost::posix_time::seconds(2)))
 				{
 					// Interupt the thread
 					BOOST_LOG_TRIVIAL(info) << "recording thread interrupt request sent";
@@ -53,30 +54,41 @@ namespace services {
 				BOOST_LOG_TRIVIAL(error) << "recording thread is already disposed!";
 			}
 
-			//release resources
-			if (capture) {
-				//Release capture.
-				cvReleaseCapture(&capture);
-			}
-
+			////release resources
+			//if (capture.isOpened()) {
+			//	//Release capture.
+			//	cvReleaseCapture(capture);
+			//}
+			// VideoCapture will be closed in the destructor
+			
 			BOOST_LOG_TRIVIAL(info) << "stopped recording";
 
 			return true;
 		}
 
 		void WebcamService::RecordingCore() {
-			IplImage* frame;
+			cv::Mat frame;
 
 			try {
 				while (1) {
+					if (!capture.isOpened()) {
+						BOOST_LOG_TRIVIAL(error) << "Lost connection to webcam!";
+						break;
+					}
 					//Create image frames from capture
-					frame = cvQueryFrame(capture);
-					//Show image frames on created window
-					cvShowImage(windowName, frame);
-					//Clone image
-					lastImage = cvCloneImage(frame);
+					capture >> frame;
 
-					Notify();
+					if (!frame.empty()) {
+						//Show image frames on created window
+						cv::imshow(windowName, frame);
+						//Clone image
+						lastImage = frame.clone();
+
+						Notify();
+					}
+					else {
+						BOOST_LOG_TRIVIAL(warning) << "Captured empty webcam frame!";
+					}
 
 					//here is the place where the thread can be interrupted with join
 					boost::this_thread::interruption_point();
@@ -87,8 +99,8 @@ namespace services {
 			}
 		}
 
-		IplImage* WebcamService::GetLastImage() {
-			return lastImage;
+		cv::Mat WebcamService::GetLastImage() {
+			return lastImage.clone();
 		}
 	}
 }

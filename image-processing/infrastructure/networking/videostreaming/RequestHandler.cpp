@@ -45,7 +45,7 @@ namespace infrastructure {
 
 			// Fill out the reply to be sent to the client.
 			rep.status = Reply::ok;
-			IplImage* frame = webcamService->GetLastImage();
+			cv::Mat frame = webcamService->GetLastImage();
 			//char buf[512];
 			//while (is.read(buf, sizeof(buf)).gcount() > 0)
 			//	rep.content.append(buf, is.gcount());
@@ -57,15 +57,15 @@ namespace infrastructure {
 			rep.headers[1].value = mime_type::ExtensionToType(extension);
 
 
-			"HTTP/1.0 200 OK\r\n" +
-				"Server: YourServerName\r\n" +
-				"Connection: close\r\n" +
-				"Max-Age: 0\r\n" +
-				"Expires: 0\r\n" +
-				"Cache-Control: no-cache, private\r\n" +
-				"Pragma: no-cache\r\n" +
-				"Content-Type: multipart/x-mixed-replace; " +
-				"boundary=--BoundaryString\r\n\r\n").getBytes());
+			//"HTTP/1.0 200 OK\r\n" +
+			//	"Server: YourServerName\r\n" +
+			//	"Connection: close\r\n" +
+			//	"Max-Age: 0\r\n" +
+			//	"Expires: 0\r\n" +
+			//	"Cache-Control: no-cache, private\r\n" +
+			//	"Pragma: no-cache\r\n" +
+			//	"Content-Type: multipart/x-mixed-replace; " +
+			//	"boundary=--BoundaryString\r\n\r\n").getBytes());
 
 		}
 

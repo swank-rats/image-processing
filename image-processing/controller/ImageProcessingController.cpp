@@ -30,7 +30,7 @@ namespace controller {
 
 		ImageProcessingController::~ImageProcessingController()
 		{
-			StopImageProcessing();
+			
 		}
 
 		void ImageProcessingController::StartImageProcessing() {
@@ -51,10 +51,9 @@ namespace controller {
 		}
 
 		void ImageProcessingController::Update(WebcamService* observable) {
-			IplImage* frame = observable->GetLastImage();
+			cv::Mat frame = observable->GetLastImage();
 
-			Mat input(frame);
-			imshow("input", input);
+			imshow("input", frame);
 			//waitKey();
 
 			/*
@@ -64,10 +63,10 @@ namespace controller {
 
 
 
-			IplImage* image2 = cvCloneImage(&(IplImage)input);
-			ObjectDetectionService* detectService = new ObjectDetectionService();
-			Mat redOnly = detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
-			imshow("redOnly", redOnly);
+			//IplImage* image2 = cvCloneImage(&(IplImage)input);
+			//ObjectDetectionService* detectService = new ObjectDetectionService();
+			//Mat redOnly = detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
+			//imshow("redOnly", redOnly);
 			//waitKey();
 		}
 

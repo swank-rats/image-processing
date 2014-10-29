@@ -25,15 +25,15 @@ namespace infrastructure {
 			acceptor.listen();
 
 			// Set keep-alive for TCP connection
-			boost::asio::socket_base::keep_alive option(true);
-			socket.set_option(option);
-
-			AcceptConnection();
+			//boost::asio::socket_base::keep_alive option(true);
+			//socket.set_option(option);
 		}
 
 		void VideoStreamingServer::StartServer()
 		{
 			BOOST_LOG_TRIVIAL(info) << "starting video streaming server...";
+			AcceptConnection();
+
 			workerThread = new boost::thread(boost::bind(&VideoStreamingServer::StartCore, this));
 		}
 
