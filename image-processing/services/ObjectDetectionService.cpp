@@ -57,11 +57,11 @@ void ObjectDetectionService::DetectObject(Mat src, int iLowH, int iLowS, int iLo
 	waitKey();
 
 
-	/// Convert image to gray and blur it
-	cvtColor(src, src_gray, COLOR_BGR2GRAY);
-	blur(src_gray, src_gray, Size(3, 3));
+	///// Convert image to gray and blur it
+	//cvtColor(imgThresholded, src_gray, COLOR_BGR2GRAY);
+	//blur(src_gray, src_gray, Size(3, 3));
 
-	ThreshCallback(0, 0, src, src_gray, thresh);
+	ThreshCallback(0, 0, src, imgThresholded, thresh);
 }
 
 
