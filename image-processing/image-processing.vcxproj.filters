@@ -51,9 +51,6 @@
     <ClCompile Include="infrastructure\networking\videostreaming\Structs.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\videostreaming\MimeType.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="infrastructure\networking\videostreaming\StreamResponseHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -96,9 +93,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="infrastructure\networking\videostreaming\Structs.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="infrastructure\networking\videostreaming\MimeType.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="infrastructure\networking\videostreaming\StreamResponseHandler.h">
