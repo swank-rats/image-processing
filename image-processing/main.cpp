@@ -22,6 +22,12 @@
 using namespace cv;
 using namespace std;
 
+
+Mat srcdetect2; Mat src_graydetect2;
+int threshdetect2 = 100;
+int max_threshdetect2 = 255;
+RNG rngdetect2(12345);
+
 enum Farbe { ROT = 0, GRUEN = 1, BLAU = 2 };
 
 void ShowLena();
@@ -30,16 +36,18 @@ int WithThread();
 void FilterColor(Farbe color);
 int  DetectWihoutServices();
 int DetectConture();
+int DetectConture2();
+void thresh_callbackdetect2(int, void*);
 
 int main(int argc, char** argv)
 {
 	//ShowLena();
 
 	//return DetectWihoutServices();
+	//return DetectConture();
+	//return DetectConture2();
 
-	return DetectConture();
-
-	//return WithThread();
+	return WithThread();
 }
 
 void ShowLena() {
@@ -119,6 +127,8 @@ int WithThread()
 
 	return 0;
 }
+
+
 
 int DetectWihoutServices(){
 
@@ -227,6 +237,7 @@ int DetectConture()
 		//finding all contours in the image
 		cvFindContours(imgGrayScale, storage, &contours, sizeof(CvContour), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, cvPoint(0, 0));
 
+
 		//iterating through each contour
 		while (contours)
 		{
@@ -275,6 +286,7 @@ int DetectConture()
 				}
 
 				//drawing lines around the heptagon
+
 				cvLine(img, *pt[0], *pt[1], cvScalar(0, 0, 255), 4);
 				cvLine(img, *pt[1], *pt[2], cvScalar(0, 0, 255), 4);
 				cvLine(img, *pt[2], *pt[3], cvScalar(0, 0, 255), 4);
@@ -310,7 +322,7 @@ int DetectConture()
 		}
 	}
 
-	
+
 
 	//cleaning up
 	cvDestroyAllWindows();
@@ -321,4 +333,70 @@ int DetectConture()
 	return 0;
 
 
+}
+
+
+int DetectConture2(){
+
+
+	CvCapture* capture = cvCaptureFromCAM(0);
+
+
+	while (true)
+	{
+
+		srcdetect2 = cvQueryFrame(capture);
+
+
+		/// Convert image to gray and blur it
+		cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
+		blur(src_graydetect2, src_graydetect2, Size(3, 3));
+
+		/// Create Window
+		const char* source_window = "Source";
+		namedWindow(source_window, WINDOW_AUTOSIZE);
+		imshow(source_window, srcdetect2);
+
+		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
+		thresh_callbackdetect2(0, 0);
+
+
+		if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+		{
+			BOOST_LOG_TRIVIAL(info) << "esc key is pressed by user";
+			break;
+		}
+	}
+
+	//cleaning up
+	cvDestroyAllWindows();
+
+	return 0;
+
+}
+/**
+* @function thresh_callback
+*/
+void thresh_callbackdetect2(int, void*)
+{
+	Mat canny_output;
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+
+	/// Detect edges using canny
+	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+	/// Find contours
+	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+
+	/// Draw contours
+	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
+	for (size_t i = 0; i< contours.size(); i++)
+	{
+		Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+		drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+	}
+
+	/// Show in a window
+	namedWindow("Contours", WINDOW_AUTOSIZE);
+	imshow("Contours", drawing);
 }

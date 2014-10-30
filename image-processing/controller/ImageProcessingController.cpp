@@ -28,6 +28,7 @@ int iHighV = 255;
 ImageProcessingController::ImageProcessingController()
 {
 	webcamService = new WebcamService();
+	detectService= new ObjectDetectionService();
 }
 
 
@@ -35,6 +36,7 @@ ImageProcessingController::~ImageProcessingController()
 {
 	StopImageProcessing();
 	webcamService = nullptr;
+	detectService = nullptr;
 }
 
 void ImageProcessingController::StartImageProcessing() {
@@ -59,23 +61,7 @@ bool ImageProcessingController::StopImageProcessing() {
 
 void ImageProcessingController::Update(WebcamService* observable) {
 	IplImage* frame= observable->GetLastImage();
-
-	Mat input(frame);
-	imshow("input", input);
-	waitKey();
-
-	/*
-	Mat input = imread("img/colored_squares.png");
-	imshow("input", input);
-	waitKey();*/
-
-	
-
-	IplImage* image2 = cvCloneImage(&(IplImage)input);
-	ObjectDetectionService* detectService = new ObjectDetectionService();
-	Mat redOnly = detectService->DetectObject(frame,  iLowH,  iLowS,  iLowV,  iHighH,  iHighS,  iHighV);
-	imshow("redOnly", redOnly);
-	waitKey();
+	detectService->DetectObject((Mat)frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
 }
 
 

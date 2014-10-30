@@ -12,14 +12,13 @@ using namespace std;
 using namespace cv;
 
 
-
-
 class ObjectDetectionService
 {
 public:
 	ObjectDetectionService();
 	virtual ~ObjectDetectionService();
 
-	Mat DetectObject(IplImage* src, int iLowH, int iLowS, int iLowV, int iHighH, int iHighS, int iHighV);
+	void DetectObject(Mat src, int iLowH, int iLowS, int iLowV, int iHighH, int iHighS, int iHighV);
+
 };
 
