@@ -15,16 +15,6 @@
 #include "..\services\ObjectDetectionService.h"
 
 
-
-int iLowH = 0;
-int iHighH = 179;
-
-int iLowS = 0;
-int iHighS = 255;
-
-int iLowV = 0;
-int iHighV = 255;
-
 ImageProcessingController::ImageProcessingController()
 {
 	webcamService = new WebcamService();
@@ -43,11 +33,8 @@ void ImageProcessingController::StartImageProcessing() {
 
 	webcamService->AddObserver(this);
 
-
 	CreateTrackBarView();
 	
-
-
 	webcamService->StartRecording();
 }
 

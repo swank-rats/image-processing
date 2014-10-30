@@ -8,6 +8,7 @@
 #pragma once
 
 #include "..\services\WebcamService.h"
+#include "..\services\ObjectDetectionService.h"
 #include "..\shared\observer\IObserver.h"
 
 class ImageProcessingController : public IObserver<WebcamService>
@@ -22,6 +23,12 @@ public:
 private:
 	WebcamService* webcamService;
 	ObjectDetectionService* detectService;
+	int iLowH = 0;
+	int iHighH = 179;
+	int iLowS = 0;
+	int iHighS = 255;
+	int iLowV = 0;
+	int iHighV = 255;
 	void CreateTrackBarView();
 
 };
