@@ -1,0 +1,38 @@
+//============================================================================
+// Name        : ConnectionManager.cpp
+// Author      : ITM13
+// Version     : 1.0
+// Description : Manages all connections
+//				 Code adapted, original source see http://www.boost.org/doc/libs/1_56_0/doc/html/boost_asio/examples/cpp11_examples.html
+//============================================================================
+
+#include "ConnectionManager.h"
+
+namespace infrastructure {
+	namespace video_streaming {
+		ConnectionManager::ConnectionManager()
+		{
+		}
+
+		void ConnectionManager::Start(ConnectionPtr c)
+		{
+			connections.insert(c);
+			c->Start();
+		}
+
+		void ConnectionManager::Stop(ConnectionPtr c)
+		{
+			connections.erase(c);
+			c->Stop();
+		}
+
+		void ConnectionManager::StopAll()
+		{
+			for (auto c : connections) {
+				c->Stop();
+			}
+
+			connections.clear();
+		}
+	}
+}

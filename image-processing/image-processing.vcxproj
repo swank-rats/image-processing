@@ -80,29 +80,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="infrastructure\networking\Connection.cpp" />
-    <ClCompile Include="infrastructure\networking\ConnectionManager.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\Structs.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\Connection.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\ConnectionManager.cpp" />
     <ClCompile Include="controller\ImageProcessingController.cpp" />
     <ClCompile Include="controller\VideoStreamingController.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\RequestParser.cpp" />
     <ClCompile Include="services\ObjectDetectionService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="services\videostreaming\webcam\WebcamService.cpp" />
     <ClCompile Include="controller\WebSocketController.cpp" />
-    <ClCompile Include="infrastructure\networking\VideoStreamingServer.cpp" />
-    <ClCompile Include="infrastructure\networking\VideoStreamingRequestHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingServer.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\RequestHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\StreamResponseHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="infrastructure\networking\Connection.h" />
-    <ClInclude Include="infrastructure\networking\ConnectionManager.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\Connection.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\ConnectionManager.h" />
     <ClInclude Include="controller\ImageProcessingController.h" />
     <ClInclude Include="controller\VideoStreamingController.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\Structs.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\RequestParser.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />
     <ClInclude Include="services\videostreaming\webcam\WebcamService.h" />
     <ClInclude Include="shared\observer\IObserver.h" />
     <ClInclude Include="shared\observer\Observable.h" />
     <ClInclude Include="controller\WebSocketController.h" />
-    <ClInclude Include="infrastructure\networking\VideoStreamingServer.h" />
-    <ClInclude Include="infrastructure\networking\VideoStreamingRequestHandler.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingServer.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\RequestHandler.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\StreamResponseHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>
