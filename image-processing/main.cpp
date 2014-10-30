@@ -47,6 +47,7 @@ int main(int argc, char** argv)
 	//return DetectConture();
 	return DetectConture2();
 
+
 	//return WithThread();
 }
 
