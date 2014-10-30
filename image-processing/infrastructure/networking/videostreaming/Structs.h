@@ -2,7 +2,8 @@
 // Name        : Structs.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description : Providing several structs like Reply, Request,...
+//				 Code adapted, original source see http://www.boost.org/doc/libs/1_56_0/doc/html/boost_asio/examples/cpp11_examples.html
 //============================================================================
 #pragma once
 

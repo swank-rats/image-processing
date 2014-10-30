@@ -2,7 +2,9 @@
 // Name        : VideoStreamingServer.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : Representing 
+// Description : Representing a steraming server instance that listens at a 
+//				 specific port on a specific address.
+//				 Code adapted, original source see http://www.boost.org/doc/libs/1_56_0/doc/html/boost_asio/examples/cpp11_examples.html
 //============================================================================
 #include "VideoStreamingServer.h"
 #include <boost\log\trivial.hpp>

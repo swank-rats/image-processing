@@ -3,6 +3,7 @@
 // Author      : ITM13
 // Version     : 1.0
 // Description : The common handler for all incoming requests.
+//				 Code adapted, original source see http://www.boost.org/doc/libs/1_56_0/doc/html/boost_asio/examples/cpp11_examples.html
 //============================================================================
 #pragma once
 #include <string>

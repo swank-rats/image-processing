@@ -3,7 +3,7 @@
 // Author      : ITM13
 // Version     : 1.0
 // Description : Represents a single connection from a client.
-//
+//				 Code adapted, original source see http://www.boost.org/doc/libs/1_56_0/doc/html/boost_asio/examples/cpp11_examples.html
 //============================================================================
 #pragma once
 

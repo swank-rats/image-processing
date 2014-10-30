@@ -16,7 +16,6 @@ namespace controller {
 
 		VideoStreamingController::~VideoStreamingController()
 		{
-			StopNetworkService();
 		}
 
 		void VideoStreamingController::StartStreamingServer() {

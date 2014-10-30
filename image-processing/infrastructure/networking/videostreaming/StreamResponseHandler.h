@@ -2,8 +2,7 @@
 // Name        : StreamResponseHandler.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : The common handler for all outgoing responses containing 
-//				 streaming data.
+// Description : The common handler for all outgoing responses containing streaming data.
 //============================================================================
 #pragma once
 #include <string>

@@ -14,9 +14,6 @@ namespace services {
 		WebcamService::WebcamService() : capture(cv::VideoCapture()) {
 		}
 
-		WebcamService::~WebcamService() {
-		}
-
 		bool WebcamService::StartRecording() {
 			BOOST_LOG_TRIVIAL(info) << "starting recording...";
 			cvNamedWindow(windowName, CV_WINDOW_NORMAL);

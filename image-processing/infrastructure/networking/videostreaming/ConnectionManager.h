@@ -1,8 +1,9 @@
 //============================================================================
-// Name        : VideoStreamingServer.h
+// Name        : ConnectionManager.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description : Manages all connections
+//				 Code adapted, original source see http://www.boost.org/doc/libs/1_56_0/doc/html/boost_asio/examples/cpp11_examples.html
 //============================================================================
 
 #pragma once

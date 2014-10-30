@@ -3,6 +3,7 @@
 // Author      : ITM13
 // Version     : 1.0
 // Description : The common handler for all incoming requests.
+//				 Code adapted, original source see http://www.boost.org/doc/libs/1_56_0/doc/html/boost_asio/examples/cpp11_examples.html
 //============================================================================
 #include "RequestHandler.h"
 #include "Structs.h"
@@ -31,8 +32,8 @@ namespace infrastructure {
 			}
 
 			// Determine the file extension.
-			std::size_t post_of_uri = requestPath.find(uri);
-			if (post_of_uri == std::string::npos)
+			std::size_t postOfUri = requestPath.find(uri);
+			if (postOfUri == std::string::npos)
 			{
 				rep = Reply::GetStockReply(Reply::bad_request);
 				return;
