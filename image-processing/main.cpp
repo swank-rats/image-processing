@@ -45,9 +45,9 @@ int main(int argc, char** argv)
 
 	//return DetectWihoutServices();
 	//return DetectConture();
-	//return DetectConture2();
+	return DetectConture2();
 
-	return WithThread();
+	//return WithThread();
 }
 
 void ShowLena() {
