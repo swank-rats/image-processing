@@ -13,11 +13,6 @@ namespace controller {
 			streamingServer = new VideoStreamingServer("127.0.0.1", "4711", "videostream", webcamService);
 		}
 
-
-		VideoStreamingController::~VideoStreamingController()
-		{
-		}
-
 		void VideoStreamingController::StartStreamingServer() {
 			streamingServer->StartServer();
 		}

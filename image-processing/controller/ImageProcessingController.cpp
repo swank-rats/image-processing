@@ -27,12 +27,6 @@ namespace controller {
 		{
 		}
 
-
-		ImageProcessingController::~ImageProcessingController()
-		{
-			
-		}
-
 		void ImageProcessingController::StartImageProcessing() {
 
 			webcamService->AddObserver(this);

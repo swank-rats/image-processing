@@ -40,8 +40,8 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(BOOST)\include\boost-1_56;$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST)\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(BOOST)\include\boost-1_56;$(WEBSOCKETPP)\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(BOOST)\lib;$(WEBSOCKETPP)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

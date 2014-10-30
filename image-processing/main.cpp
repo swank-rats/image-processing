@@ -100,6 +100,8 @@ int WithThread()
 	controller::video_streaming::VideoStreamingController vidStreamCtrl(webcamService);
 	vidStreamCtrl.StartStreamingServer();
 
+	controller:
+
 	char key;
 	while (1) {
 		key = cvWaitKey(10);
