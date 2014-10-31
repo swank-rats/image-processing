@@ -4,6 +4,11 @@
 // Version     : 1.0
 // Description : Image process start point
 //============================================================================
+#define _WEBSOCKETPP_CPP11_THREAD_
+#define _WEBSOCKETPP_CPP11_FUNCTIONAL_
+#define _WEBSOCKETPP_CPP11_SYSTEM_ERROR_
+#define _WEBSOCKETPP_CPP11_RANDOM_DEVICE_
+#define _WEBSOCKETPP_CPP11_MEMORY_
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
@@ -15,6 +20,7 @@
 #include "services\ObjectDetectionService.h"
 #include "controller\ImageProcessingController.h"
 #include "controller\VideoStreamingController.h"
+#include "controller\WebSocketController.h"
 
 using namespace cv;
 using namespace std;
@@ -100,7 +106,8 @@ int WithThread()
 	controller::video_streaming::VideoStreamingController vidStreamCtrl(webcamService);
 	vidStreamCtrl.StartStreamingServer();
 
-	controller:
+	controller::web_sockets::WebSocketController webSocketCtrl;
+	webSocketCtrl.StartWebSocketServer();
 
 	char key;
 	while (1) {
