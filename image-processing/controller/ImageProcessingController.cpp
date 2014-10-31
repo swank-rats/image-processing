@@ -57,8 +57,8 @@ namespace controller {
 
 		void ImageProcessingController::Update(WebcamService* observable) {
 
-		IplImage* frame= observable->GetLastImage();
-			detectService->DetectObject((Mat)frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
+			Mat frame= observable->GetLastImage();
+			detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
 			
 		}
 

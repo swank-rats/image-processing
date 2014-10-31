@@ -47,8 +47,8 @@ int main(int argc, char** argv)
 
 	//return DetectWihoutServices();
 	//return DetectConture();
-	//return DetectConture2();
-	return DetectConture3();
+	return DetectConture2();
+	//return DetectConture3();
 
 
 	//return WithThread();
