@@ -25,13 +25,16 @@ namespace controller {
 
 		ImageProcessingController::ImageProcessingController(WebcamServicePtr webcamService) : webcamService(webcamService)
 		{
+			detectService= new ObjectDetectionService();
+			
 		}
 
 
 		ImageProcessingController::~ImageProcessingController()
 		{
-			
+			detectService = nullptr;	
 		}
+
 
 		void ImageProcessingController::StartImageProcessing() {
 
@@ -50,41 +53,27 @@ namespace controller {
 			return true;
 		}
 
+
+
 		void ImageProcessingController::Update(WebcamService* observable) {
-			cv::Mat frame = observable->GetLastImage();
 
-			if (frame.empty()) return;
-
-			//imshow("input", frame);
-			//waitKey();
-
-			/*
-			Mat input = imread("img/colored_squares.png");
-			imshow("input", input);
-			waitKey();*/
-
-
-
-			//IplImage* image2 = cvCloneImage(&(IplImage)input);
-			//ObjectDetectionService* detectService = new ObjectDetectionService();
-			//Mat redOnly = detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
-			//imshow("redOnly", redOnly);
-			//waitKey();
+		IplImage* frame= observable->GetLastImage();
+			detectService->DetectObject((Mat)frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
+			
 		}
 
-
 		void ImageProcessingController::CreateTrackBarView(){
-			namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
+					namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
-			//Create trackbars in "Control" window
-			cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
-			cvCreateTrackbar("HighH", "Control", &iHighH, 179);
+					//Create trackbars in "Control" window
+					cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
+					cvCreateTrackbar("HighH", "Control", &iHighH, 179);
 
-			cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
-			cvCreateTrackbar("HighS", "Control", &iHighS, 255);
+					cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
+					cvCreateTrackbar("HighS", "Control", &iHighS, 255);
 
-			cvCreateTrackbar("LowV", "Control", &iLowV, 255);//Value (0 - 255)
-			cvCreateTrackbar("HighV", "Control", &iHighV, 255);
+					cvCreateTrackbar("LowV", "Control", &iLowV, 255);//Value (0 - 255)
+					cvCreateTrackbar("HighV", "Control", &iHighV, 255);
 		}
 	}
 }
