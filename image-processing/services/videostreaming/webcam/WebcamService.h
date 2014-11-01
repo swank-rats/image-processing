@@ -9,7 +9,12 @@
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\opencv.hpp>
-#include <boost\thread.hpp>
+#include <Poco\Thread.h>
+#include <Poco\Activity.h>
+#include <Poco\Logger.h>
+#include <Poco\RWLock.h>
+
+#include <memory>
 #include "..\..\..\shared\observer\Observable.h"
 
 namespace services {
@@ -28,14 +33,17 @@ namespace services {
 			 */
 			bool StopRecording();
 
-			cv::Mat GetLastImage();
+			cv::Mat* GetLastImage();
 
 		private:
+			void RecordingCore();
+
 			cv::VideoCapture capture;
 			cv::Mat lastImage;
-			boost::thread recordingThread;
+			Poco::Activity<WebcamService> recordingActivity;
+			Poco::RWLock rwLock; //reader writer lock
 
-			void RecordingCore();
+			static Poco::Logger& logger;
 		};
 
 		typedef std::shared_ptr<WebcamService> WebcamServicePtr;

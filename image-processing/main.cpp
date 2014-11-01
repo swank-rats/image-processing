@@ -4,12 +4,17 @@
 // Version     : 1.0
 // Description : Image process start point
 //============================================================================
+#include <iostream>
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\opencv.hpp>
-#include <iostream>
-#include <boost\log\trivial.hpp>
+
+#include <Poco/Logger.h>
+#include <Poco/AutoPtr.h>
+#include <Poco/WindowsConsoleChannel.h>
+#include <Poco/FormattingChannel.h>
+#include <Poco/PatternFormatter.h>
 
 #include "services\videostreaming\webcam\WebcamService.h"
 #include "services\ObjectDetectionService.h"
@@ -18,45 +23,63 @@
 
 using namespace cv;
 using namespace std;
+using Poco::Logger;
+using Poco::AutoPtr;
+using Poco::WindowsConsoleChannel;
+using Poco::FormattingChannel;
+using Poco::PatternFormatter;
 
 enum Farbe { ROT = 0, GRUEN = 1, BLAU = 2 };
 
-void ShowLena();
-int WithoutThread();
-int WithThread();
+void InitLoggers();
+void ShowLena(Logger& logger);
+int WithoutThread(Logger& logger);
+int WithThread(Logger& logger);
 void FilterColor(Farbe color);
-int  DetectWihoutServices();
+int  DetectWihoutServices(Logger& logger);
 
 int main(int argc, char** argv)
 {
-	ShowLena();
+	InitLoggers();
+	Logger& logger = Logger::get("image-processing");
 
-	return WithThread();
+	ShowLena(logger);
+
+	return WithThread(logger);
 }
 
-void ShowLena() {
+void InitLoggers() {
+	//setup logger
+	AutoPtr<WindowsConsoleChannel> pChannel(new WindowsConsoleChannel);
+	AutoPtr<PatternFormatter> pPF(new PatternFormatter);
+	pPF->setProperty("pattern", "%Y-%m-%d %H:%M:%S %s (%p): %t");
+	AutoPtr<FormattingChannel> pFC(new FormattingChannel(pPF, pChannel));
+	Logger::root().setChannel(pFC);
+}
+
+void ShowLena(Logger& logger) {
 	Mat im = imread("img/lena.bmp", 1);
 	if (!im.empty())
 	{
 		cvNamedWindow("Lena");
 		//imshow("Lena", im);
 		imshow("Lena", im);
-		BOOST_LOG_TRIVIAL(info) << "Hello Leno :)";
+		logger.information("Hello Leno :)");
 	}
 	else {
-		BOOST_LOG_TRIVIAL(warning) << "Lena could not be found! Go and find her!";
+		logger.warning("Lena could not be found! Go and find her!");
 	}
 }
 
-int WithoutThread() {
-	BOOST_LOG_TRIVIAL(info) << "No threads were used";
+int WithoutThread(Logger& logger) {
+	logger.information("No threads were used");
 
 	cvNamedWindow("Camera stream", CV_WINDOW_AUTOSIZE);
 
 	CvCapture* capture = cvCaptureFromCAM(1);
 
 	if (!capture){
-		BOOST_LOG_TRIVIAL(error) << "No camera found";
+		logger.critical("No camera found");
 		return -1;
 	}
 
@@ -78,8 +101,6 @@ int WithoutThread() {
 		}
 	}
 
-	BOOST_LOG_TRIVIAL(info) << "bye bye";
-
 	//Release capture.
 	cvReleaseCapture(&capture);
 	//Destroy Window
@@ -88,9 +109,9 @@ int WithoutThread() {
 	return 0;
 }
 
-int WithThread()
+int WithThread(Logger& logger)
 {
-	BOOST_LOG_TRIVIAL(info) << "Threads were used";
+	logger.information("Threads were used");
 
 	auto webcamService = std::make_shared<services::webcam::WebcamService>();
 
@@ -117,13 +138,13 @@ int WithThread()
 	return 0;
 }
 
-int DetectWihoutServices(){
+int DetectWihoutServices(Logger& logger){
 
 	VideoCapture cap(0); //capture the video from web cam
 
 	if (!cap.isOpened())  // if not success, exit program
 	{
-		BOOST_LOG_TRIVIAL(error) << "Cannot open the web cam";
+		logger.critical("Cannot open the web cam");
 		return -1;
 	}
 
@@ -156,7 +177,7 @@ int DetectWihoutServices(){
 
 		if (!bSuccess) //if not success, break loop
 		{
-			BOOST_LOG_TRIVIAL(warning) << "Cannot read a frame from video stream";
+			logger.warning("Cannot read a frame from video stream");
 			break;
 		}
 
@@ -181,15 +202,10 @@ int DetectWihoutServices(){
 
 		if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 		{
-			BOOST_LOG_TRIVIAL(info) << "esc key is pressed by user";
+			logger.information("esc key is pressed by user");
 			break;
 		}
 	}
 
 	return 0;
-
-
-
-
-
 }

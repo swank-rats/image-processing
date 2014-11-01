@@ -4,105 +4,88 @@
 // Version     : 1.0
 // Description : 
 //============================================================================
-#include <boost/log/trivial.hpp>
 #include "WebcamService.h"
 
 namespace services {
 	namespace webcam {
 		static const char* windowName = "Webcam stream";
+		Poco::Logger& WebcamService::logger = Poco::Logger::get("WebcamService");
 
-		WebcamService::WebcamService() : capture(cv::VideoCapture()) {
+		WebcamService::WebcamService() : capture(cv::VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
 		}
 
 		bool WebcamService::StartRecording() {
-			BOOST_LOG_TRIVIAL(info) << "starting recording...";
+			logger.information("starting recording...");
 			cvNamedWindow(windowName, CV_WINDOW_NORMAL);
 
 			capture.open(CV_CAP_ANY);
 
 			if (!capture.isOpened()){
-				BOOST_LOG_TRIVIAL(error) << "No camera found";
+				logger.error("No camera found");
 				return false;
 			}
 
-			recordingThread = boost::thread(boost::bind(&WebcamService::RecordingCore, this));
+			recordingActivity.start();
 
-			BOOST_LOG_TRIVIAL(info) << "started recording";
+			logger.information("started recording");
 
 			return true;
 		}
 
 		bool WebcamService::StopRecording() {
-			BOOST_LOG_TRIVIAL(info) << "stopping recording...";
+			logger.information("stopping recording...");
 
-			if (recordingThread.joinable()) {
-				while (!recordingThread.timed_join(boost::posix_time::seconds(2)))
-				{
-					// Interupt the thread
-					BOOST_LOG_TRIVIAL(info) << "recording thread interrupt request sent";
-					recordingThread.interrupt();
-				}
-
-				BOOST_LOG_TRIVIAL(info) << "recording thread stopped successfully";
+			if (recordingActivity.isRunning()) {
+				recordingActivity.stop();
+				logger.information("recording activity stop requested");
+				recordingActivity.wait();
+				logger.information("recording activity stopped successfully");
 
 			}
 			else {
-				BOOST_LOG_TRIVIAL(error) << "recording thread is already disposed!";
+				logger.error("recording activity is already stopped!");
 			}
 			
-			BOOST_LOG_TRIVIAL(info) << "stopped recording";
+			logger.information("stopped recording");
 
 			return true;
 		}
 
 		void WebcamService::RecordingCore() {
-			try {
-				cv::Mat frame;
-				boost::mutex mutex;
-
-				while (1) {
-					if (!capture.isOpened()) {
-						BOOST_LOG_TRIVIAL(error) << "Lost connection to webcam!";
-						break;
-					}
-					//Create image frames from capture
-					capture >> frame;
-
-					if (!frame.empty()) {
-						//Show image frames on created window
-						cv::imshow(windowName, frame);
-						//Clone image
-						mutex.lock(); //make this operation thread safe
-						lastImage = frame.clone();
-						mutex.unlock();
-
-						//std::string str;
-
-						//for (int i = 0; i < lastImage.rows; i++)
-						//{
-						//	for (int j = 0; j < lastImage.cols; j++)
-						//	{
-						//		str.append(*(uchar*)(lastImage.data + i * lastImage.step + j), 1);
-						//	}
-						//}
-
-						Notify();
-					}
-					else {
-						BOOST_LOG_TRIVIAL(warning) << "Captured empty webcam frame!";
-					}
-
-					//here is the place where the thread can be interrupted with join
-					boost::this_thread::interruption_point();
+			cv::Mat frame;
+				
+			while (1) {
+				if (!capture.isOpened()) {
+					logger.error("Lost connection to webcam!");
+					break;
 				}
-			}
-			catch (boost::thread_interrupted) {
-				BOOST_LOG_TRIVIAL(warning) << "recording thread stopped by interrupt";
+				//Create image frames from capture
+				capture >> frame;
+
+				if (!frame.empty()) {
+					//Show image frames on created window
+					cv::imshow(windowName, frame);
+					//Clone image
+					rwLock.writeLock(); //make this operation thread safe
+					lastImage = frame.clone();
+					rwLock.unlock();
+
+					Notify();
+				}
+				else {
+					logger.warning("Captured empty webcam frame!");
+				}
 			}
 		}
 
-		cv::Mat WebcamService::GetLastImage() {
-			return lastImage.clone();
+		cv::Mat* WebcamService::GetLastImage() {
+			Poco::ScopedReadLock lock(rwLock);
+
+			rwLock.readLock();
+			cv::Mat* clone = new cv::Mat(lastImage);
+			rwLock.unlock();
+
+			return clone;
 		}
 	}
 }

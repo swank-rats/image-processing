@@ -10,7 +10,7 @@ namespace controller {
 	namespace video_streaming {
 		VideoStreamingController::VideoStreamingController(WebcamServicePtr webcamService)
 		{
-			streamingServer = new VideoStreamingServer("127.0.0.1", "4711", "videostream", webcamService);
+			streamingServer = new VideoStreamingServer(4711, "/videostream", webcamService);
 		}
 
 
@@ -23,6 +23,7 @@ namespace controller {
 		}
 
 		bool VideoStreamingController::StopNetworkService() {
+			streamingServer->StopServer();
 			return true;
 		}
 	}

@@ -33,25 +33,16 @@
     <ClCompile Include="services\videostreaming\webcam\WebcamService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\videostreaming\Connection.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="infrastructure\networking\videostreaming\ConnectionManager.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingServer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\videostreaming\RequestHandler.cpp">
+    <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\videostreaming\RequestParser.cpp">
+    <ClCompile Include="infrastructure\networking\videostreaming\handler\StreamingHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\videostreaming\Structs.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="infrastructure\networking\videostreaming\StreamResponseHandler.cpp">
+    <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,22 +71,13 @@
     <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingServer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\videostreaming\Connection.h">
+    <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\videostreaming\ConnectionManager.h">
+    <ClInclude Include="infrastructure\networking\videostreaming\handler\StreamingHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\videostreaming\RequestHandler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="infrastructure\networking\videostreaming\RequestParser.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="infrastructure\networking\videostreaming\Structs.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="infrastructure\networking\videostreaming\StreamResponseHandler.h">
+    <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

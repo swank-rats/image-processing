@@ -2,18 +2,17 @@
 // Name        : VideoStreamingServer.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : Representing a steraming server instance that listens at a 
-//				 specific port on a specific address.
-//				 Code adapted, original source see http://www.boost.org/doc/libs/1_56_0/doc/html/boost_asio/examples/cpp11_examples.html
+// Description : Representing a HTTP streaming server that listens at a 
+//				 specific port and provides a video stream via MJPEG.
 //============================================================================
 #pragma once
-#include <boost\asio.hpp>
-#include <boost\thread.hpp>
 #include <string>
 
-#include "ConnectionManager.h"
-#include "RequestHandler.h"
-#include "StreamResponseHandler.h"
+#include <Poco\Net\HTTPServer.h>
+#include <Poco\Net\ServerSocket.h>
+#include <Poco\ThreadPool.h>
+#include <Poco\Logger.h>
+
 #include "..\..\..\services\videostreaming\webcam\WebcamService.h"
 
 namespace infrastructure {
@@ -21,25 +20,16 @@ namespace infrastructure {
 		class VideoStreamingServer
 		{
 		public:
-			VideoStreamingServer(const std::string& address, const std::string& port, 
-								 const std::string& uri, services::webcam::WebcamServicePtr webcamService);
+			VideoStreamingServer(unsigned short port, const std::string& uri, services::webcam::WebcamServicePtr webcamService);
 			void StartServer();
-			bool StopServer();
+			void StopServer();
 
 		private:
-			void StartCore();
-			void AcceptConnection();
+			Poco::Net::HTTPServer* server;
+			Poco::Net::ServerSocket socket;
+			Poco::ThreadPool threadPool;
 
-			void WriteHandler(const boost::system::error_code &ec, std::size_t bytes_transferred);
-			void AcceptHandler(const boost::system::error_code &ec);
-
-			ConnectionManager connectionManager;
-			RequestHandler requestHandler;
-			StreamResponseHandler streamResponseHandler;
-			boost::thread* workerThread;
-			boost::asio::io_service ioService;
-			boost::asio::ip::tcp::acceptor acceptor;
-			boost::asio::ip::tcp::socket socket;
+			static Poco::Logger& logger;
 		};
 	}
 }
