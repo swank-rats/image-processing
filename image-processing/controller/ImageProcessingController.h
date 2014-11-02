@@ -21,7 +21,7 @@ namespace controller {
 			ImageProcessingController(WebcamServicePtr webcamService);
 			~ImageProcessingController();
 			void StartImageProcessing();
-			bool StopImageProcessing();
+			void StopImageProcessing();
 			virtual void Update(WebcamService* observable);
 			IplImage* GetLastFrame();
 		private:
@@ -34,7 +34,6 @@ namespace controller {
 			int iLowV = 0;
 			int iHighV = 255;
 			void CreateTrackBarView();
-
 		};
 	}
 }

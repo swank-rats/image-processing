@@ -45,12 +45,10 @@ namespace controller {
 			webcamService->StartRecording();
 		}
 
-		bool ImageProcessingController::StopImageProcessing() {
+		void ImageProcessingController::StopImageProcessing() {
 			webcamService->StopRecording();
 
 			webcamService->RemoveObserver(this);
-
-			return true;
 		}
 
 

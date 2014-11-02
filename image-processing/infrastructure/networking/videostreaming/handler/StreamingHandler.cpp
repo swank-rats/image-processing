@@ -20,7 +20,6 @@ namespace infrastructure {
 
 			logger.information("Video streaming started for client " + request.clientAddress().toString());
 			
-			//rep.status = Reply::ok;
 			//response.setStatus(Poco::Net::HTTPResponse::HTTP_OK); //default not needed to be set
 			response.set("Max-Age", "0");
 			response.set("Expires", "0");
