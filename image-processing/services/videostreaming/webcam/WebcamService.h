@@ -33,7 +33,7 @@ namespace services {
 			 */
 			bool StopRecording();
 
-			cv::Mat* GetLastImage();
+			cv::Mat GetLastImage();
 
 		private:
 			void RecordingCore();

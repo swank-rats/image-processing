@@ -21,6 +21,7 @@ namespace infrastructure {
 			Poco::Net::HTTPServerParams* pParams = new Poco::Net::HTTPServerParams;
 			pParams->setMaxQueued(100);
 			pParams->setMaxThreads(16);
+			pParams->setKeepAlive(true);
 
 			server = new Poco::Net::HTTPServer(new VideoStreamingRequestHandlerFactory(webcamService, uri), threadPool, socket, pParams);
 			logger.information("init video streaming server " + socket.address().toString() + ":" + std::to_string(port) + uri);

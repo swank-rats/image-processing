@@ -78,14 +78,9 @@ namespace services {
 			}
 		}
 
-		cv::Mat* WebcamService::GetLastImage() {
-			Poco::ScopedReadLock lock(rwLock);
-
-			rwLock.readLock();
-			cv::Mat* clone = new cv::Mat(lastImage);
-			rwLock.unlock();
-
-			return clone;
+		cv::Mat WebcamService::GetLastImage() {
+			Poco::ScopedReadRWLock readLock(rwLock);
+			return lastImage.clone();
 		}
 	}
 }

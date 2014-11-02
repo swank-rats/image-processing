@@ -11,7 +11,3 @@ WebSocketController::WebSocketController()
 {
 }
 
-
-WebSocketController::~WebSocketController()
-{
-}

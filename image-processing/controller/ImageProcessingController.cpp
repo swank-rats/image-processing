@@ -51,9 +51,9 @@ namespace controller {
 		}
 
 		void ImageProcessingController::Update(WebcamService* observable) {
-			cv::Mat* frame = observable->GetLastImage();
+			cv::Mat& frame = observable->GetLastImage();
 
-			if (frame->empty()) return;
+			//if (frame.empty()) return;
 
 			//imshow("input", frame);
 			//waitKey();

@@ -41,7 +41,7 @@ int  DetectWihoutServices(Logger& logger);
 int main(int argc, char** argv)
 {
 	InitLoggers();
-	Logger& logger = Logger::get("image-processing");
+	Logger& logger = Logger::get("main");
 
 	ShowLena(logger);
 
