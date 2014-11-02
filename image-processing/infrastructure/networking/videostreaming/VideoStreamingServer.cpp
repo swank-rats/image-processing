@@ -2,84 +2,44 @@
 // Name        : VideoStreamingServer.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : Representing a steraming server instance that listens at a 
-//				 specific port on a specific address.
-//				 Code adapted, original source see http://www.boost.org/doc/libs/1_56_0/doc/html/boost_asio/examples/cpp11_examples.html
+// Description : Representing a HTTP streaming server that listens at a 
+//				 specific port and provides a video stream via MJPEG.
 //============================================================================
+#include <Poco\Net\HTTPServerParams.h>
 #include "VideoStreamingServer.h"
-#include <boost\log\trivial.hpp>
-#include <boost\thread.hpp>
+#include "VideoStreamingRequestHandlerFactory.h"
 
 namespace infrastructure {
 	namespace video_streaming {
 		const unsigned int timeoutMilli = 10000;
+		Poco::Logger& VideoStreamingServer::logger = Poco::Logger::get("VideoStreamingServer");
 
-		VideoStreamingServer::VideoStreamingServer(const std::string& address, const std::string& port,
-			const std::string& uri, services::webcam::WebcamServicePtr webcamService)
-			: ioService(), acceptor(ioService), connectionManager(), socket(ioService), requestHandler(uri),
-			  streamResponseHandler(webcamService)
+		VideoStreamingServer::VideoStreamingServer(unsigned short port, const std::string& uri, 
+			services::webcam::WebcamServicePtr webcamService)
+			: socket(port)
 		{
-			// Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
-			boost::asio::ip::tcp::resolver resolver(ioService);
-			boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve({ address, port });
-			acceptor.open(endpoint.protocol());
-			acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
-			acceptor.bind(endpoint);
-			acceptor.listen();
+			Poco::Net::HTTPServerParams* pParams = new Poco::Net::HTTPServerParams;
+			pParams->setMaxQueued(100);
+			pParams->setMaxThreads(16);
+			pParams->setKeepAlive(true);
 
-			BOOST_LOG_TRIVIAL(info) << "init video streaming server: " + address + ":" + port + "/" + uri;
+			server = new Poco::Net::HTTPServer(new VideoStreamingRequestHandlerFactory(webcamService, uri), threadPool, socket, pParams);
+			logger.information("init video streaming server " + socket.address().toString() + ":" + std::to_string(port) + uri);
 		}
 
 		void VideoStreamingServer::StartServer()
 		{
-			BOOST_LOG_TRIVIAL(info) << "starting video streaming server...";
-			AcceptConnection();
-
-			workerThread = new boost::thread(boost::bind(&VideoStreamingServer::StartCore, this));
+			logger.information("starting video streaming server...");
+			server->start();
 		}
 
-		void VideoStreamingServer::StartCore()
-		{
-			BOOST_LOG_TRIVIAL(info) << "started streaming worker thread";
-			ioService.run();
+		void VideoStreamingServer::StopServer() {
+			logger.information("stopping video streaming server " + socket.address().toString());
+			server->stop();
+			threadPool.stopAll();
+			logger.information("stopped video streaming server " + socket.address().toString());
 		}
 
-		void VideoStreamingServer::AcceptConnection() {
-			acceptor.async_accept(socket,
-				[this](boost::system::error_code ec)
-			{
-				// Check whether the server was stopped by a signal before this
-				// completion handler had a chance to run.
-				if (!acceptor.is_open())
-				{
-					BOOST_LOG_TRIVIAL(error) << "Streaming server acceptor closed!";
-					return;
-				}
-
-				if (!ec)
-				{
-					BOOST_LOG_TRIVIAL(info) << "accepted connection " + socket.remote_endpoint().address().to_string();
-
-					connectionManager.Start(std::make_shared<Connection>(std::move(socket), 
-						connectionManager, requestHandler, streamResponseHandler));
-				}
-
-				AcceptConnection();
-			});
-		}
-		
-		//void VideoStreamingServer::AwaitStopRequest()
-		//{
-		//	signals.async_wait(
-		//		[this](boost::system::error_code /*ec*/, int /*signo*/)
-		//	{
-		//		// The server is stopped by cancelling all outstanding asynchronous
-		//		// operations. Once all operations have finished the io_service::run()
-		//		// call will exit.
-		//		//acceptor.close();
-		//		//connectionManager.StopAll();
-		//	});
-		//}
 	}
 }
 
