@@ -40,7 +40,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(POCO)\Foundation\include;$(POCO)\Net\include;$(POCO)\NetSSL_OpenSSL\include;$(POCO)\XML\include;$(OPENSSL)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(POCO)\Foundation\include;$(POCO)\Net\include;$(POCO)\NetSSL_OpenSSL\include;$(POCO)\XML\include;$(POCO)\Util\include;$(OPENSSL)\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -90,6 +90,7 @@
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingServer.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\websockets\WebSocketServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h" />
@@ -103,6 +104,7 @@
     <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingServer.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.h" />
+    <ClInclude Include="infrastructure\networking\websockets\WebSocketServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>

@@ -45,6 +45,9 @@
     <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="infrastructure\networking\websockets\WebSocketServer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
@@ -78,6 +81,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\websockets\WebSocketServer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
