@@ -3,21 +3,28 @@ Image processing
 
 Installation and project setup
 -------------------
-To get this project running you need [OpenCV 2.4.9](http://opencv.org/) and [Boost 1.56.0](http://www.boost.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. 
+To get this project running you need [OpenCV 2.4.9](http://opencv.org/) and [Poco C++ Libraries 1.4.7](http://pocoproject.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. 
 
-1. Install Boost
-  1. Download [Boost 1.56.0](http://www.boost.org/)
-  2. Unpack the archive file
-  3. Navigate into the unpacked folder
-  4. Open command window and execute the following command
-    1. This command will build the Boost.Build tool
-      * bootstrap.bat
-    2. This one will build Boost and copy the file to "C:\Boost". The second command will take some time.
-      * b2 --toolset=msvc-12.0 --build-type=complete --abbreviate-paths architecture=x86 address-model=32 install -j4
-  5. Make sure that the folder "C:\Boost" contains a folder "include" and "lib". You can move the "C:\Boost" folder if you like. Just remember the location.
-  6. Add a new system environment variable. To do so open Control Panel -> System -> Advanced system settings -> Environment variables.
-  7. At system variables press the "new" button and add a variable with name "BOOST" and path to "C:\Boost\" (or to your new location) (with "\" at the end!)
-  8. Boost installation is finished.
+It is necessary to add new system environment variables. So do not close the window, if you have opened it during the installation process.
+
+1. Install OpenSSL
+  1. Download [OpenSSL Installer for Windows](https://slproweb.com/products/Win32OpenSSL.html)
+  2. Run installer
+  3. Add a new system environment variable. To do so open Control Panel -> System -> Advanced system settings -> Environment variables.
+  4. At system variables press the "new" button and add a variable with name "OPENSSL" and path to e.g. "C:\OpenSSL\" (or to your new location) (with "\" at the end!)
+  5. OpenSSL installation is finished
+2. Install Poco C++ Libraries
+  1. Download [Poco C++ Libraries 1.4.7 Complete Edition](http://pocoproject.org/download/index.html)
+  2. Unpack the archive file to e.g. C:\Poco
+  3. Navigate to the folder
+  4. Open the file "components" and remove "CppUnit", "Data", "Data/SQLite", "Data/ODBC", "Data/MySQL", "Zip"
+  4. Double click build_vs120.cmd -> this command will build the needed files
+  5. Make sure that the folder e.g."C:\Poco" contains a folder "bin" and "lib". 
+  6. Again add a new system environment variable. 
+  7. At system variables press the "new" button and add a variable with name "POCO" and path to "C:\Poco\" (or to your new location) (with "\" at the end!)
+  8. Edit the variable PATH
+  9. Add "C:\Poco\bin" at the end (between the last and the new entry must be a ";"!)
+  8. Poco installation is finished.
 2. Install OpenCV
   1. Download [OpenCV 2.4.9](http://opencv.org/)
   2. Unpack the archive file
@@ -38,9 +45,7 @@ Troubleshooting
   * [OpenCV: instruction for setting up the environment variables](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windowssetpathandenviromentvariable)
   * [OpenCV: general install instructions](http://docs.opencv.org/doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.html)
   * [OpenCV: Installing & Configuring OpenCV with Visual Studio](http://opencv-srf.blogspot.co.at/2013/05/installing-configuring-opencv-with-vs.html)
-  * [Boost: How to build Boost for Visual Studio 2013](http://choorucode.com/2014/06/06/how-to-build-boost-for-visual-studio-2013/)
-  * [Boost: How to use Boost in Visual Studio 2010 - see 2nd and 3rd post](http://stackoverflow.com/questions/2629421/how-to-use-boost-in-visual-studio-2010)
-
+  * [Poco: Building On Windows](http://pocoproject.org/docs/00200-GettingStarted.html#7)
 
 Project documentation
 -------------------
