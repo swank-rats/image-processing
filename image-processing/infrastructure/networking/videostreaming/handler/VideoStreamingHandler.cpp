@@ -1,21 +1,21 @@
 //============================================================================
-// Name        : StreamingHandler.cpp
+// Name        : VideoStreamingHandler.cpp
 // Author      : ITM13
 // Version     : 1.0
 // Description : 
 //============================================================================
-#include "StreamingHandler.h"
+#include "VideoStreamingHandler.h"
 #include <Poco\Net\MultipartWriter.h>
 #include <Poco\Net\MessageHeader.h>
 
 namespace infrastructure {
 	namespace video_streaming {
-		StreamingHandler::StreamingHandler(services::webcam::WebcamServicePtr webcamService) : webcamService(webcamService)
+		VideoStreamingHandler::VideoStreamingHandler(services::webcam::WebcamServicePtr webcamService) : webcamService(webcamService)
 		{
 		}
 
-		void StreamingHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
-			Poco::Logger& logger = Poco::Logger::get("StreamingHandler");
+		void VideoStreamingHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
+			Poco::Logger& logger = Poco::Logger::get("VideoStreamingHandler");
 			string boundary = "VIDEOSTREAM";
 
 			logger.information("Video streaming started for client " + request.clientAddress().toString());

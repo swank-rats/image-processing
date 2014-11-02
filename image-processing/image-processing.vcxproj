@@ -89,7 +89,7 @@
     <ClCompile Include="controller\WebSocketController.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingServer.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.cpp" />
-    <ClCompile Include="infrastructure\networking\videostreaming\handler\StreamingHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h" />
@@ -102,7 +102,7 @@
     <ClInclude Include="controller\WebSocketController.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingServer.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.h" />
-    <ClInclude Include="infrastructure\networking\videostreaming\handler\StreamingHandler.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>

@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : StreamingHandler.h
+// Name        : VideoStreamingHandler.h
 // Author      : ITM13
 // Version     : 1.0
 // Description : 
@@ -12,10 +12,10 @@
 
 namespace infrastructure {
 	namespace video_streaming {
-		class StreamingHandler : public Poco::Net::HTTPRequestHandler
+		class VideoStreamingHandler : public Poco::Net::HTTPRequestHandler
 		{
 		public:
-			StreamingHandler(services::webcam::WebcamServicePtr webcamService);
+			VideoStreamingHandler(services::webcam::WebcamServicePtr webcamService);
 			void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
 		private:
 			services::webcam::WebcamServicePtr webcamService;
