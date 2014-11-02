@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : InvalidUriHandler.h
+// Name        : VideoStreamingRequestHandler.h
 // Author      : ITM13
 // Version     : 1.0
 // Description : 
@@ -8,15 +8,18 @@
 #include <Poco\Net\HTTPServerRequest.h>
 #include <Poco\Net\HTTPServerResponse.h>
 #include <Poco\Net\HTTPRequestHandler.h>
+#include "..\..\..\..\services\videostreaming\webcam\WebcamService.h"
 
 namespace infrastructure {
 	namespace video_streaming {
-		class InvalidUriHandler : public Poco::Net::HTTPRequestHandler
+		class VideoStreamingRequestHandler : public Poco::Net::HTTPRequestHandler
 		{
 		public:
-			InvalidUriHandler();
+			VideoStreamingRequestHandler(services::webcam::WebcamServicePtr webcamService);
 			void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+		private:
+			services::webcam::WebcamServicePtr webcamService;
 		};
+
 	}
 }
-

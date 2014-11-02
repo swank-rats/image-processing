@@ -7,17 +7,18 @@
 #include "WebSocketController.h"
 
 namespace controller {
-	namespace web_sockets {
+	namespace websocket {
 		WebSocketController::WebSocketController()
 		{
+			webSocketServer = new WebSocketServer;
 		}
 
 		void WebSocketController::StartWebSocketServer() {
-
+			webSocketServer->StartServer();
 		}
 
 		void WebSocketController::StopWebSocketServer() {
-
+			webSocketServer->StopServer();
 		}
 
 	}

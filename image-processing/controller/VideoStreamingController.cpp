@@ -17,7 +17,7 @@ namespace controller {
 			streamingServer->StartServer();
 		}
 
-		bool VideoStreamingController::StopNetworkService() {
+		bool VideoStreamingController::StopStreamingServer() {
 			streamingServer->StopServer();
 			return true;
 		}

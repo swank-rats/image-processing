@@ -1,6 +1,6 @@
 #include "VideoStreamingRequestHandlerFactory.h"
-#include "handler\StreamingHandler.h"
-#include "handler\InvalidUriHandler.h"
+#include "handler\VideoStreamingRequestHandler.h"
+#include "handler\InvalidUriRequestHandler.h"
 
 namespace infrastructure {
 	namespace video_streaming {
@@ -11,10 +11,10 @@ namespace infrastructure {
 
 		Poco::Net::HTTPRequestHandler* VideoStreamingRequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest& request) {
 			if (request.getURI() == uri){
-				return new StreamingHandler(webcamService);
+				return new VideoStreamingRequestHandler(webcamService);
 			}
 			else {
-				return new InvalidUriHandler();
+				return new InvalidUriRequestHandler;
 			}
 		}
 	}

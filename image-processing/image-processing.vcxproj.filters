@@ -39,13 +39,22 @@
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriHandler.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="infrastructure\networking\websockets\WebSocketServer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\websockets\handler\PageRequestHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\websockets\handler\WebSocketRequestHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\websockets\WebSocketRequestHandlerFactory.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,13 +86,22 @@
     <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriHandler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="infrastructure\networking\websockets\WebSocketServer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\websockets\handler\PageRequestHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\websockets\handler\WebSocketRequestHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\websockets\WebSocketRequestHandlerFactory.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

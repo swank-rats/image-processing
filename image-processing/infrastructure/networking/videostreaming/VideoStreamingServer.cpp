@@ -11,7 +11,6 @@
 
 namespace infrastructure {
 	namespace video_streaming {
-		const unsigned int timeoutMilli = 10000;
 		Poco::Logger& VideoStreamingServer::logger = Poco::Logger::get("VideoStreamingServer");
 
 		VideoStreamingServer::VideoStreamingServer(unsigned short port, const std::string& uri, 

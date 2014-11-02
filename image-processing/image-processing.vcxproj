@@ -82,20 +82,26 @@
   <ItemGroup>
     <ClCompile Include="controller\ImageProcessingController.cpp" />
     <ClCompile Include="controller\VideoStreamingController.cpp" />
-    <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\websockets\handler\PageRequestHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\websockets\handler\WebSocketRequestHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\websockets\WebSocketRequestHandlerFactory.cpp" />
     <ClCompile Include="services\ObjectDetectionService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="services\videostreaming\webcam\WebcamService.cpp" />
     <ClCompile Include="controller\WebSocketController.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingServer.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.cpp" />
-    <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\WebSocketServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h" />
     <ClInclude Include="controller\VideoStreamingController.h" />
-    <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriHandler.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h" />
+    <ClInclude Include="infrastructure\networking\websockets\handler\PageRequestHandler.h" />
+    <ClInclude Include="infrastructure\networking\websockets\handler\WebSocketRequestHandler.h" />
+    <ClInclude Include="infrastructure\networking\websockets\WebSocketRequestHandlerFactory.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />
     <ClInclude Include="services\videostreaming\webcam\WebcamService.h" />
     <ClInclude Include="shared\observer\IObserver.h" />
@@ -103,7 +109,7 @@
     <ClInclude Include="controller\WebSocketController.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingServer.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.h" />
-    <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingHandler.h" />
+    <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.h" />
     <ClInclude Include="infrastructure\networking\websockets\WebSocketServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -19,6 +19,7 @@ namespace controller {
 		{
 		public:
 			ImageProcessingController(WebcamServicePtr webcamService);
+			~ImageProcessingController();
 			void StartImageProcessing();
 			void StopImageProcessing();
 			virtual void Update(WebcamService* observable);

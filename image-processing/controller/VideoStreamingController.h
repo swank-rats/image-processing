@@ -20,7 +20,7 @@ namespace controller {
 			VideoStreamingController(WebcamServicePtr webcamService);
 
 			void StartStreamingServer();
-			bool StopNetworkService();
+			bool StopStreamingServer();
 		private:
 			VideoStreamingServer* streamingServer;
 			WebcamServicePtr webcamService;

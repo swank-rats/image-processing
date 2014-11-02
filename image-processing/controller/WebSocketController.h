@@ -5,9 +5,11 @@
 // Description : 
 //============================================================================
 #pragma once
+#include "..\infrastructure\networking\websockets\WebSocketServer.h"
 
+using namespace infrastructure::websocket;
 namespace controller {
-	namespace web_sockets {
+	namespace websocket {
 
 		class WebSocketController
 		{
@@ -17,6 +19,7 @@ namespace controller {
 			void StopWebSocketServer();
 
 		private:
+			WebSocketServer* webSocketServer;
 
 		};
 

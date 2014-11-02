@@ -20,6 +20,7 @@
 #include "services\ObjectDetectionService.h"
 #include "controller\ImageProcessingController.h"
 #include "controller\VideoStreamingController.h"
+#include "controller\WebSocketController.h"
 
 
 using namespace cv;
@@ -138,6 +139,9 @@ int WithThread(Logger& logger)
 	controller::video_streaming::VideoStreamingController vidStreamCtrl(webcamService);
 	vidStreamCtrl.StartStreamingServer();
 
+	controller::websocket::WebSocketController webSocketCtrl;
+	webSocketCtrl.StartWebSocketServer();
+
 	char key;
 	while (1) {
 		key = cvWaitKey(10);
@@ -148,7 +152,8 @@ int WithThread(Logger& logger)
 	}
 
 	imgProcCtrl.StopImageProcessing();
-	vidStreamCtrl.StopNetworkService();
+	vidStreamCtrl.StopStreamingServer();
+	webSocketCtrl.StopWebSocketServer();
 
 	destroyAllWindows();
 
