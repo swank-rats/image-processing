@@ -106,11 +106,18 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="img\lena.bmp">
+    <Image Include="resources\images\colored_squares.png">
       <Filter>Ressourcendateien</Filter>
     </Image>
-    <Image Include="img\colored_squares.png">
+    <Image Include="resources\images\lena.bmp">
       <Filter>Ressourcendateien</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resources\AppConfig.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\openssl\privkey.pem" />
+    <None Include="resources\openssl\cert.pem" />
   </ItemGroup>
 </Project>

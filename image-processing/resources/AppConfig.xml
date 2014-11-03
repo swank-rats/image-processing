@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppConfig>
+  <openSSL>
+    <server>
+      <privateKeyFile>resources\openssl\privkey.pem</privateKeyFile>
+      <certificateFile>resources\openssl\cert.pem</certificateFile>
+      <caConfig>rootcert.pem</caConfig>
+      <verificationMode>none|relaxed|strict|once</verificationMode>
+      <verificationDepth>1..9</verificationDepth>
+      <loadDefaultCAFile>true|false</loadDefaultCAFile>
+      <cipherList>ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH</cipherList>
+      <privateKeyPassphraseHandler>
+        <name>KeyFileHandler</name>
+        <options>
+          <password>test</password>
+        </options>
+      </privateKeyPassphraseHandler>
+      <invalidCertificateHandler>
+        <name>ConsoleCertificateHandler</name>
+      </invalidCertificateHandler>
+      <cacheSessions>true|false</cacheSessions>
+      <sessionIdContext>someString</sessionIdContext>
+      <!-- server only -->
+      <sessionCacheSize>0..n</sessionCacheSize>
+      <!-- server only -->
+      <sessionTimeout>0..n</sessionTimeout>
+      <!-- server only -->
+      <extendedVerification>true|false</extendedVerification>
+      <requireTLSv1>true|false</requireTLSv1>
+    </server>
+    <fips>false</fips>
+  </openSSL>
+</AppConfig>
