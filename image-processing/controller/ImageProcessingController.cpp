@@ -29,12 +29,10 @@ namespace controller {
 			
 		}
 
-
 		ImageProcessingController::~ImageProcessingController()
 		{
 			detectService = nullptr;	
 		}
-
 
 		void ImageProcessingController::StartImageProcessing() {
 
@@ -51,27 +49,24 @@ namespace controller {
 			webcamService->RemoveObserver(this);
 		}
 
-
-
 		void ImageProcessingController::Update(WebcamService* observable) {
 
 			Mat frame= observable->GetLastImage();
-			detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
-			
+			//detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
 		}
 
 		void ImageProcessingController::CreateTrackBarView(){
-					namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
+			namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
-					//Create trackbars in "Control" window
-					cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
-					cvCreateTrackbar("HighH", "Control", &iHighH, 179);
+			//Create trackbars in "Control" window
+			cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
+			cvCreateTrackbar("HighH", "Control", &iHighH, 179);
 
-					cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
-					cvCreateTrackbar("HighS", "Control", &iHighS, 255);
+			cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
+			cvCreateTrackbar("HighS", "Control", &iHighS, 255);
 
-					cvCreateTrackbar("LowV", "Control", &iLowV, 255);//Value (0 - 255)
-					cvCreateTrackbar("HighV", "Control", &iHighV, 255);
+			cvCreateTrackbar("LowV", "Control", &iLowV, 255);//Value (0 - 255)
+			cvCreateTrackbar("HighV", "Control", &iHighV, 255);
 		}
 	}
 }

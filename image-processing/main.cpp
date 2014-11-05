@@ -21,6 +21,7 @@
 #include "services\ObjectDetectionService.h"
 #include "controller\ImageProcessingController.h"
 #include "controller\VideoStreamingController.h"
+#include "controller\WebSocketController.h"
 
 using namespace cv;
 using namespace std;
@@ -34,6 +35,39 @@ using Poco::ThreadPool;
 using Poco::Util::Application;
 using Poco::Util::Option;
 using Poco::Util::OptionSet;
+
+static Mat srcdetect2;
+static Mat src_graydetect2;
+static int threshdetect2;
+static int max_threshdetect2;
+static RNG rngdetect2;
+
+/**
+* @function thresh_callback
+*/
+static void thresh_callbackdetect2(int, void*)
+{
+	Mat canny_output;
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+
+	/// Detect edges using canny
+	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+	/// Find contours
+	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+
+	/// Draw contours
+	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+		drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+	}
+
+	/// Show in a window
+	namedWindow("Contours", WINDOW_AUTOSIZE);
+	imshow("Contours", drawing);
+}
 
 class ImageProcessingServerApplication : public Poco::Util::Application {
 public:
@@ -74,11 +108,6 @@ protected:
 	}
 private:
 	bool helpRequested;
-	Mat srcdetect2;
-	static Mat src_graydetect2;
-	static int threshdetect2;
-	int max_threshdetect2;
-	static RNG rngdetect2;
 
 	enum Farbe { ROT = 0, GRUEN = 1, BLAU = 2 };
 
@@ -155,6 +184,9 @@ private:
 		controller::video_streaming::VideoStreamingController vidStreamCtrl(webcamService);
 		vidStreamCtrl.StartStreamingServer();
 
+		controller::websocket::WebSocketController webSocketCtrl;
+		webSocketCtrl.StartWebSocketServer();
+
 		char key;
 		while (1) {
 			key = cvWaitKey(10);
@@ -166,6 +198,7 @@ private:
 
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();
+		webSocketCtrl.StopWebSocketServer();
 
 		destroyAllWindows();
 
@@ -389,7 +422,7 @@ private:
 			namedWindow(source_window, WINDOW_AUTOSIZE);
 			imshow(source_window, srcdetect2);
 
-			createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, ImageProcessingServerApplication::thresh_callbackdetect2);
+			createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
 			thresh_callbackdetect2(0, 0);
 
 
@@ -503,32 +536,7 @@ private:
 		return 0;
 	}
 
-	/**
-	* @function thresh_callback
-	*/
-	static void thresh_callbackdetect2(int, void*)
-	{
-		Mat canny_output;
-		vector<vector<Point> > contours;
-		vector<Vec4i> hierarchy;
 
-		/// Detect edges using canny
-		Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
-		/// Find contours
-		findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
-
-		/// Draw contours
-		Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
-		for (size_t i = 0; i < contours.size(); i++)
-		{
-			Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-			drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
-		}
-
-		/// Show in a window
-		namedWindow("Contours", WINDOW_AUTOSIZE);
-		imshow("Contours", drawing);
-	}
 
 	/**
 	* Helper function to find a cosine of angle between vectors

@@ -21,7 +21,8 @@ namespace infrastructure {
 
 		private:
 			Poco::Net::HTTPServer* server;
-			Poco::Net::SecureServerSocket socket;
+			//Poco::Net::SecureServerSocket socket;
+			Poco::Net::ServerSocket socket;
 			Poco::ThreadPool threadPool;
 
 			static Poco::Logger& logger;
