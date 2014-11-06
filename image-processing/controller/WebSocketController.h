@@ -6,10 +6,12 @@
 //============================================================================
 #pragma once
 #include <Poco\URI.h>
+#include <Poco\Net\Context.h>
 #include "..\infrastructure\networking\websockets\client\WebSocketClient.h"
 
 using namespace infrastructure::websocket;
 using Poco::URI;
+using Poco::Net::Context;
 
 namespace controller {
 	namespace websocket {
@@ -17,7 +19,7 @@ namespace controller {
 		class WebSocketController
 		{
 		public:
-			WebSocketController(URI uri);
+			WebSocketController(URI uri, Context::Ptr context);
 			void StartWebSocketClient();
 			void StopWebSocketClient();
 		private:

@@ -20,7 +20,7 @@ namespace infrastructure {
 	namespace websocket {
 		Poco::Logger& WebSocketClient::logger = Poco::Logger::get("WebSocketClient");
 
-		WebSocketClient::WebSocketClient(URI uri) : connection(new WebSocketClientConnection(uri))
+		WebSocketClient::WebSocketClient(URI uri, Context::Ptr context) : connection(new WebSocketClientConnection(uri, context))
 		{
 		}
 

@@ -8,7 +8,7 @@
 
 namespace controller {
 	namespace websocket {
-		WebSocketController::WebSocketController(URI uri) : webSocketClient(new WebSocketClient(uri))
+		WebSocketController::WebSocketController(URI uri, Context::Ptr context) : webSocketClient(new WebSocketClient(uri, context))
 		{
 		}
 

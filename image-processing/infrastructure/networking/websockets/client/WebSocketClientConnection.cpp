@@ -5,6 +5,7 @@
 // Description : 
 //============================================================================
 #pragma once
+#include <string>
 #include <Poco\Logger.h>
 #include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\WebSocket.h>
@@ -27,7 +28,8 @@ namespace infrastructure {
 	namespace websocket {
 		Poco::Logger& WebSocketClientConnection::logger = Poco::Logger::get("WebSocketClientConnection");
 
-		WebSocketClientConnection::WebSocketClientConnection(URI uri) : Task("WebSocketClientConnection"), uri(uri)
+		WebSocketClientConnection::WebSocketClientConnection(URI uri, Context::Ptr context)
+			: Task("WebSocketClientConnection"), uri(uri), context(context)
 		{
 		}
 
@@ -36,10 +38,10 @@ namespace infrastructure {
 		}
 
 		void WebSocketClientConnection::runTask() {
-			WebSocket* webSocket;
+			WebSocket* webSocket = nullptr;
 
 			try {
-				HTTPSClientSession session(uri.getHost(), uri.getPort());
+				HTTPSClientSession session(uri.getHost(), uri.getPort(), context);
 				HTTPRequest req(HTTPRequest::HTTP_GET, uri.getPath(), HTTPMessage::HTTP_1_1);
 				HTTPResponse res;
 
@@ -62,9 +64,7 @@ namespace infrastructure {
 				}
 			}
 			catch (Exception& e) {
-				std::cerr << "Exception: " << e.what() << std::endl;
-				std::cerr << "Message: " << e.message() << std::endl;
-				std::cerr << e.displayText() << std::endl;
+				logger.error("WebSocket Client exception: " + e.displayText());
 			}
 
 			if (webSocket != nullptr) {
