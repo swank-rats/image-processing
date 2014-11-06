@@ -51,6 +51,9 @@
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnection.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ThomasTestMethod.h">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
