@@ -12,11 +12,12 @@ namespace services {
 		Poco::Logger& WebcamService::logger = Poco::Logger::get("WebcamService");
 
 		WebcamService::WebcamService() : capture(cv::VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
+			//capture.set()
 		}
 
 		bool WebcamService::StartRecording() {
 			logger.information("starting recording...");
-			cvNamedWindow(windowName, CV_WINDOW_NORMAL);
+			cvNamedWindow(windowName, CV_WINDOW_AUTOSIZE);
 
 			capture.open(CV_CAP_ANY);
 
@@ -54,7 +55,7 @@ namespace services {
 		void WebcamService::RecordingCore() {
 			cv::Mat frame;
 				
-			while (1) {
+			while (!recordingActivity.isStopped()) {
 				if (!capture.isOpened()) {
 					logger.error("Lost connection to webcam!");
 					break;

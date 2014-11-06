@@ -11,7 +11,6 @@
 #include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\WebSocket.h>
 #include <Poco\Net\Context.h>
-#include <Poco\TaskManager.h>
 
 #include "WebSocketClientConnection.h"
 
@@ -20,7 +19,6 @@ using Poco::URI;
 using Poco::Net::HTTPSClientSession;
 using Poco::Net::Context;
 using Poco::Net::WebSocket;
-using Poco::TaskManager;
 
 
 namespace infrastructure {
@@ -33,7 +31,6 @@ namespace infrastructure {
 			void CloseConnection();
 		private:
 			WebSocketClientConnection* connection;
-			TaskManager taskManager;
 			static Poco::Logger& logger;
 		};
 	}

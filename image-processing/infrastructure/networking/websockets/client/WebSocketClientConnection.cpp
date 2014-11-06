@@ -29,7 +29,7 @@ namespace infrastructure {
 		Poco::Logger& WebSocketClientConnection::logger = Poco::Logger::get("WebSocketClientConnection");
 
 		WebSocketClientConnection::WebSocketClientConnection(URI uri, Context::Ptr context)
-			: Task("WebSocketClientConnection"), uri(uri), context(context)
+			: uri(uri), context(context), connectionActivity(this, &WebSocketClientConnection::HandleConnection)
 		{
 		}
 
@@ -37,7 +37,24 @@ namespace infrastructure {
 			return uri;
 		}
 
-		void WebSocketClientConnection::runTask() {
+		void WebSocketClientConnection::OpenConnection() {
+			connectionActivity.start();
+		}
+
+		void WebSocketClientConnection::CloseConnection() {
+			if (connectionActivity.isRunning()) {
+				connectionActivity.stop();
+				logger.information("websocket activity stop requested");
+				connectionActivity.wait();
+				logger.information("websocket activity stopped successfully");
+
+			}
+			else {
+				logger.error("websocket activity is not running!");
+			}
+		}
+
+		void WebSocketClientConnection::HandleConnection() {
 			WebSocket* webSocket = nullptr;
 
 			try {
@@ -55,7 +72,7 @@ namespace infrastructure {
 				webSocket->sendFrame(payload.data(), payload.size(), WebSocket::FRAME_TEXT);
 
 
-				while (!isCancelled()) {
+				while (connectionActivity.isStopped()) {
 					n = webSocket->receiveFrame(buffer, sizeof(buffer), flags);
 
 					if (n > 0) {
@@ -71,5 +88,7 @@ namespace infrastructure {
 				webSocket->close();
 			}
 		}
+
+
 	}
 }

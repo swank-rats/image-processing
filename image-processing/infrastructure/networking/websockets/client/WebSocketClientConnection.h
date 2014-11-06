@@ -11,26 +11,31 @@
 #include <Poco\Net\Context.h>
 #include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\WebSocket.h>
-#include <Poco\Task.h>
-#include <Poco\TaskManager.h>
+#include <Poco\Activity.h>
 
 using Poco::Logger;
 using Poco::URI;
 using Poco::Net::Context;
-using Poco::Task;
+using Poco::Activity;
+
 
 namespace infrastructure {
 	namespace websocket {
-		class WebSocketClientConnection : public Task
+		class WebSocketClientConnection
 		{
 		public:
 			WebSocketClientConnection(URI uri, Context::Ptr context);
-			void runTask();
 			URI GetURI();
+			void OpenConnection();
+			void CloseConnection();
 		private:
 			URI uri;
 			Context::Ptr context;
+			Activity<WebSocketClientConnection> connectionActivity;
+
 			static Poco::Logger& logger;
+
+			void HandleConnection();
 		};
 	}
 }

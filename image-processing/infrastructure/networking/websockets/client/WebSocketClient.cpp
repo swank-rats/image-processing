@@ -28,7 +28,7 @@ namespace infrastructure {
 			URI uri = connection->GetURI();
 
 			logger.information("Opening websocket connection to " + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
-			taskManager.start(connection);
+			connection->OpenConnection();
 		}
 
 		void WebSocketClient::CloseConnection() {
@@ -36,8 +36,7 @@ namespace infrastructure {
 				URI uri = connection->GetURI();
 
 				logger.information("Closing websocket connection to " + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
-
-				taskManager.joinAll();
+				connection->CloseConnection();
 			}
 			catch (Poco::SyntaxException& e) {
 				logger.error(e.displayText());
