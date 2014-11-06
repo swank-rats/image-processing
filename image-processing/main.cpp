@@ -253,26 +253,8 @@ private:
 	}
 
 	void WithThread()
-		{
-		Logger& logger = Logger::get("main");
-
-			//Capture Keyboard stroke
-			key = cvWaitKey(10);
-			if (char(key) == 27){
-				break; //If you hit ESC key loop will break.
-			}
-		}
-
-		//Release capture.
-		cvReleaseCapture(&capture);
-		//Destroy Window
-		destroyAllWindows();
-
-		return 0;
-	}
-
-	int WithThread(Logger& logger)
 	{
+		Logger& logger = Logger::get("main");
 		logger.information("Threads were used");
 
 		auto webcamService = std::make_shared<services::webcam::WebcamService>();
