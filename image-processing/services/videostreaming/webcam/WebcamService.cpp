@@ -80,7 +80,7 @@ namespace services {
 
 		cv::Mat WebcamService::GetLastImage() {
 			Poco::ScopedReadRWLock readLock(rwLock);
-			return lastImage.clone();
+			return lastImage;
 		}
 	}
 }

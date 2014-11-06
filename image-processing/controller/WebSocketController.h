@@ -5,7 +5,7 @@
 // Description : 
 //============================================================================
 #pragma once
-#include "..\infrastructure\networking\websockets\WebSocketServer.h"
+#include "..\infrastructure\networking\websockets\server\WebSocketServer.h"
 
 using namespace infrastructure::websocket;
 namespace controller {

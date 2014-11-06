@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AppConfig>
   <openSSL>
-    <server>
+    <client>
       <privateKeyFile>resources\openssl\privkey.pem</privateKeyFile>
       <certificateFile>resources\openssl\cert.pem</certificateFile>
       <caConfig>rootcert.pem</caConfig>
@@ -27,7 +27,7 @@
       <!-- server only -->
       <extendedVerification>true|false</extendedVerification>
       <requireTLSv1>true|false</requireTLSv1>
-    </server>
+    </client>
     <fips>false</fips>
   </openSSL>
 </AppConfig>
