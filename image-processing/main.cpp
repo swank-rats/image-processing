@@ -5,6 +5,7 @@
 // Description : Image process start point
 //============================================================================
 #include <iostream>
+#include <list>
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
@@ -87,28 +88,115 @@ static void thresh_callbackdetect3(int, void*)
 	/// Draw contours
 	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
 	std::vector<cv::Point> approx;
+	vector<vector<cv::Point>> rects;
+	vector<int> rectsIndex;
+	vector<vector<cv::Point>> tri;
 
-	for (size_t i = 0; i < contours.size(); i++)
+	try
 	{
 
-		// Approximate contour with accuracy proportional
-		// to the contour perimeter
-		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
-		// Skip small or non-convex objects 
-		if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
-			continue;
-
-		if (approx.size() == 4)
+		for (size_t i = 0; i < contours.size(); i++)
 		{
 
-			Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-			drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+			// Approximate contour with accuracy proportional
+			// to the contour perimeter
+			cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
+
+			// Skip small or non-convex objects 
+			if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+				continue;
+
+			// Rectangles
+			if (approx.size() == 4)
+			{
+
+				rects.push_back(contours[i]);
+				rectsIndex.push_back(i);
+			}
+
+			if (approx.size() == 3)
+			{
+				tri.push_back(approx);
+			}
+
 
 		}
 
+		int rectPos;
+		vector<int> drawingrectsIndex;
+
+		if (rects.size() == rectsIndex.size()){
+
+
+			for (size_t i = 0; i < tri.size(); i++)
+			{
+				std::vector<cv::Point> triSelected = tri[i];
+
+				for (size_t a = 0; a < rects.size(); a++)
+				{
+
+					if (triSelected.size() != 3)
+						break;
+
+					Point2f triPointOne;
+					Point2f triPointTwo;
+					Point2f triPointThree;
+
+					triPointOne.x = triSelected[0].x;
+					triPointOne.y = triSelected[0].y;
+
+					triPointTwo.x = triSelected[1].x;
+					triPointTwo.y = triSelected[1].y;
+
+					triPointThree.x = triSelected[2].x;
+					triPointThree.y = triSelected[2].y;
+
+					if (pointPolygonTest(Mat(rects[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointThree, true) > 0){
+
+						drawingrectsIndex.push_back(rectsIndex[a]);
+
+					}
+
+
+				}
+			}
+
+		}
+
+		for (size_t i = 0; i < contours.size(); i++)
+		{
+			for (size_t y = 0; y < drawingrectsIndex.size(); y++)
+			{
+				if (drawingrectsIndex[y] == i)
+				{
+
+					Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+					drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+				}
+			}
+
+		}
 
 	}
+	catch (Exception ex)
+	{
+		cout << ex.msg;
+	}
+
+	/*for (size_t i = 0; i < contours.size(); i++)
+	{
+		for (size_t y = 0; y < rectsIndex.size(); y++)
+		{
+			if (rectsIndex[y] == i)
+			{
+
+				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+			}
+		}
+
+	}*/
 
 	/// Show in a window
 	namedWindow("Contours", WINDOW_AUTOSIZE);
@@ -149,6 +237,7 @@ protected:
 		//return DetectConture(logger);
 		return DetectConture2(logger);
 		//return DetectConture3(logger);
+		//return Test4();
 
 		//return WithThread(logger);
 	}
@@ -616,6 +705,93 @@ private:
 		cv::rectangle(im, pt + cv::Point(0, baseline), pt + cv::Point(text.width, -text.height), CV_RGB(255, 255, 255), CV_FILLED);
 		cv::putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
 	}
+
+
+
+	int Test4()
+	{
+	
+		// create a RGB colour image (set it to a black background)
+
+		Mat img = Mat::zeros(400, 400, CV_8UC3);
+
+		// define a polygon (as a vector of points)
+
+		vector<Point> contour;
+		contour.push_back(Point(50, 50));
+		contour.push_back(Point(300, 50));
+		contour.push_back(Point(350, 200));
+		contour.push_back(Point(300, 150));
+		contour.push_back(Point(150, 350));
+		contour.push_back(Point(100, 100));
+
+		// create a pointer to the data as an array of points (via a conversion to 
+		// a Mat() object)
+
+		const cv::Point *pts = (const cv::Point*) Mat(contour).data;
+		int npts = Mat(contour).rows;
+
+		std::cout << "Number of polygon vertices: " << npts << std::endl;
+
+		// draw the polygon 
+
+		polylines(img, &pts, &npts, 1,
+			true, 			// draw closed contour (i.e. joint end to start) 
+			Scalar(0, 255, 0),// colour RGB ordering (here = green) 
+			3, 		        // line thickness
+			CV_AA, 0);
+
+
+		// do point in polygon test (by conversion/cast to a Mat() object)
+		// define and test point one (draw it in red)
+
+		Point2f test_pt;
+		test_pt.x = 150;
+		test_pt.y = 75;
+
+		rectangle(img, test_pt, test_pt, Scalar(0, 0, 255), 3, 8, 0); // RED point
+
+		if (pointPolygonTest(Mat(contour), test_pt, true) > 0){
+			std::cout << "RED {" << test_pt.x << "," << test_pt.y
+				<< "} is in the polygon (dist. "
+				<< pointPolygonTest(Mat(contour), test_pt, 1) << ")"
+				<< std::endl;
+		}
+
+		// define and test point two (draw it in blue)
+
+		test_pt.x = 50;
+		test_pt.y = 350;
+
+		rectangle(img, test_pt, test_pt, Scalar(255, 0, 0), 3, 8, 0); // BLUE point
+
+		if (pointPolygonTest(Mat(contour), test_pt, true) < 0){
+			std::cout << "BLUE {" << test_pt.x << "," << test_pt.y
+				<< "} is NOT in the polygon (dist. "
+				<< pointPolygonTest(Mat(contour), test_pt, 1) << ")"
+				<< std::endl;
+		}
+
+		// pointPolygonTest :- 
+		// "The function determines whether the point is inside a contour, outside, 
+		// or lies on an edge (or coincides with a vertex). It returns positive 
+		// (inside), negative (outside) or zero (on an edge) value, correspondingly. 
+		// When measureDist=false , the return value is +1, -1 and 0, respectively. 
+		// Otherwise, the return value it is a signed distance between the point 
+		// and the nearest contour edge." - OpenCV Manual version 2.1
+
+		// create an image and display the image
+
+		namedWindow("Polygon Test", 0);
+		imshow("Polygon Test", img);
+		waitKey(0);
+
+		return 0;
+	
+	
+	
+	}
+
 };
 
 POCO_APP_MAIN(ImageProcessingServerApplication);
