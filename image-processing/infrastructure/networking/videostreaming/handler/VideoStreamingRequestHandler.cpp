@@ -51,10 +51,11 @@ namespace infrastructure {
 				std::string content = std::string(buf.begin(), buf.end());
 
 				MessageHeader header = MessageHeader();
-				header.set("Content-Type", "image/jpeg");
 				header.set("Content-Length", std::to_string(content.size()));
+				header.set("Content-Type", "image/jpeg");
 				writer.nextPart(header);
 				out << content;
+				out << "\r\n\r\n";
 			}
 
 			logger.information("Video streaming stopped for client " + request.clientAddress().toString());
