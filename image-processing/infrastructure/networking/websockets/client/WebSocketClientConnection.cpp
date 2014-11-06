@@ -26,7 +26,6 @@ using Poco::Exception;
 
 namespace infrastructure {
 	namespace websocket {
-		Poco::Logger& WebSocketClientConnection::logger = Poco::Logger::get("WebSocketClientConnection");
 
 		WebSocketClientConnection::WebSocketClientConnection(URI uri, Context::Ptr context)
 			: uri(uri), context(context), connectionActivity(this, &WebSocketClientConnection::HandleConnection)
@@ -42,6 +41,8 @@ namespace infrastructure {
 		}
 
 		void WebSocketClientConnection::CloseConnection() {
+			Logger& logger = Logger::get("WebSocketClient");
+
 			if (connectionActivity.isRunning()) {
 				connectionActivity.stop();
 				logger.information("websocket activity stop requested");
@@ -55,6 +56,8 @@ namespace infrastructure {
 		}
 
 		void WebSocketClientConnection::HandleConnection() {
+			Logger& logger = Logger::get("WebSocketClient");
+
 			WebSocket* webSocket = nullptr;
 
 			try {
@@ -81,7 +84,7 @@ namespace infrastructure {
 				}
 			}
 			catch (Exception& e) {
-				logger.error("WebSocket Client exception: " + e.displayText());
+				logger.error(e.displayText());
 			}
 
 			if (webSocket != nullptr) {

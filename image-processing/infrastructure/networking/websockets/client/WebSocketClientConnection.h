@@ -33,8 +33,6 @@ namespace infrastructure {
 			Context::Ptr context;
 			Activity<WebSocketClientConnection> connectionActivity;
 
-			static Poco::Logger& logger;
-
 			void HandleConnection();
 		};
 	}

@@ -4,12 +4,12 @@
 
 namespace infrastructure {
 	namespace video_streaming {
-		VideoStreamingRequestHandlerFactory::VideoStreamingRequestHandlerFactory(services::webcam::WebcamServicePtr webcamService,
-			const std::string& uri) : webcamService(webcamService), uri(uri)
+		VideoStreamingRequestHandlerFactory::VideoStreamingRequestHandlerFactory(WebcamServicePtr webcamService,
+			const string& uri) : webcamService(webcamService), uri(uri)
 		{
 		}
 
-		Poco::Net::HTTPRequestHandler* VideoStreamingRequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest& request) {
+		HTTPRequestHandler* VideoStreamingRequestHandlerFactory::createRequestHandler(const HTTPServerRequest& request) {
 			if (request.getURI() == uri) {
 				return new VideoStreamingRequestHandler(webcamService);
 			}

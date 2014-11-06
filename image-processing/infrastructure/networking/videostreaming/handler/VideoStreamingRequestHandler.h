@@ -11,16 +11,21 @@
 #include <Poco\Net\HTTPRequestHandler.h>
 #include "..\..\..\..\services\videostreaming\webcam\WebcamService.h"
 
+using Poco::Net::HTTPRequestHandler;
+using Poco::Net::HTTPServerRequest;
+using Poco::Net::HTTPServerResponse;
+using Poco::Logger;
+using services::webcam::WebcamServicePtr;
+
 namespace infrastructure {
 	namespace video_streaming {
-		class VideoStreamingRequestHandler : public Poco::Net::HTTPRequestHandler
+		class VideoStreamingRequestHandler : public HTTPRequestHandler
 		{
 		public:
-			VideoStreamingRequestHandler(services::webcam::WebcamServicePtr webcamService);
-			void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+			VideoStreamingRequestHandler(WebcamServicePtr webcamService);
+			void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
 		private:
-			services::webcam::WebcamServicePtr webcamService;
-			static Poco::Logger& logger;
+			WebcamServicePtr webcamService;
 		};
 
 	}

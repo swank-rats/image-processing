@@ -53,6 +53,11 @@ using Poco::Util::OptionSet;
 using Poco::Util::OptionCallback;
 using Poco::Util::HelpFormatter;
 
+using controller::image_processing::ImageProcessingController;
+using controller::video_streaming::VideoStreamingController;
+using controller::websocket::WebSocketController;
+using services::webcam::WebcamService;
+
 class ImageProcessingServerApplication : public Poco::Util::Application {
 public:
 	ImageProcessingServerApplication() : helpRequested(false)
@@ -60,11 +65,11 @@ public:
 	}
 protected:
 	void initialize(Application& self) {
+		InitLoggers();
 
 		loadConfiguration();
 		Application::initialize(self);
 
-		InitLoggers();
 
 		//accept everything!
 		Poco::SharedPtr<InvalidCertificateHandler> pAcceptCertHandler = new AcceptCertificateHandler(true);
@@ -117,11 +122,11 @@ private:
 
 	void InitLoggers() {
 		//setup logger
-		AutoPtr<WindowsConsoleChannel> pChannel(new WindowsConsoleChannel);
-		AutoPtr<PatternFormatter> pPF(new PatternFormatter);
-		pPF->setProperty("pattern", "%Y-%m-%d %H:%M:%S %s (%p): %t");
-		AutoPtr<FormattingChannel> pFC(new FormattingChannel(pPF, pChannel));
-		Logger::root().setChannel(pFC);
+		AutoPtr<WindowsConsoleChannel> consoleChannel(new WindowsConsoleChannel);
+		AutoPtr<PatternFormatter> patternFormatter(new PatternFormatter);
+		patternFormatter->setProperty("pattern", "%Y-%m-%d %H:%M:%S %s (%p): %t");
+		AutoPtr<FormattingChannel> formattingChannel(new FormattingChannel(patternFormatter, consoleChannel));
+		Logger::root().setChannel(formattingChannel);
 	}
 
 	void WithThread()
@@ -129,15 +134,16 @@ private:
 		Logger& logger = Logger::get("main");
 		logger.information("Threads were used");
 
-		auto webcamService = std::make_shared<services::webcam::WebcamService>();
+		std::shared_ptr<WebcamService> webcamService = std::make_shared<WebcamService>();
 
-		controller::image_processing::ImageProcessingController imgProcCtrl(webcamService);
+
+		ImageProcessingController imgProcCtrl(webcamService);
 		imgProcCtrl.StartImageProcessing();
 
-		controller::video_streaming::VideoStreamingController vidStreamCtrl(webcamService);
+		VideoStreamingController vidStreamCtrl(webcamService);
 		vidStreamCtrl.StartStreamingServer();
 
-		controller::websocket::WebSocketController webSocketCtrl(uri, context);
+		WebSocketController webSocketCtrl(uri, context);
 		webSocketCtrl.StartWebSocketClient();
 
 		char key;

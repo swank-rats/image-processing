@@ -31,7 +31,6 @@ namespace infrastructure {
 			void CloseConnection();
 		private:
 			WebSocketClientConnection* connection;
-			static Poco::Logger& logger;
 		};
 	}
 }

@@ -9,13 +9,14 @@
 namespace services {
 	namespace webcam {
 		static const char* windowName = "Webcam stream";
-		Poco::Logger& WebcamService::logger = Poco::Logger::get("WebcamService");
 
-		WebcamService::WebcamService() : capture(cv::VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
+		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
 			//capture.set()
 		}
 
 		bool WebcamService::StartRecording() {
+			Logger& logger = Logger::get("WebcamService");
+
 			logger.information("starting recording...");
 			cvNamedWindow(windowName, CV_WINDOW_AUTOSIZE);
 
@@ -34,6 +35,8 @@ namespace services {
 		}
 
 		bool WebcamService::StopRecording() {
+			Logger& logger = Logger::get("WebcamService");
+
 			logger.information("stopping recording...");
 
 			if (recordingActivity.isRunning()) {
@@ -53,6 +56,8 @@ namespace services {
 		}
 
 		void WebcamService::RecordingCore() {
+			Logger& logger = Logger::get("WebcamService");
+
 			cv::Mat frame;
 				
 			while (!recordingActivity.isStopped()) {

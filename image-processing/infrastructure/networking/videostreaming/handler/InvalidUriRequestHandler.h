@@ -10,15 +10,18 @@
 #include <Poco\Net\HTTPRequestHandler.h>
 #include <Poco\Logger.h>
 
+using Poco::Net::HTTPRequestHandler;
+using Poco::Net::HTTPServerRequest;
+using Poco::Net::HTTPServerResponse;
+using Poco::Logger;
+
 namespace infrastructure {
 	namespace video_streaming {
-		class InvalidUriRequestHandler : public Poco::Net::HTTPRequestHandler
+		class InvalidUriRequestHandler : public HTTPRequestHandler
 		{
 		public:
 			InvalidUriRequestHandler();
-			void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
-		private:
-			static Poco::Logger& logger;
+			void handleRequest(HTTPServerRequest& request,HTTPServerResponse& response);
 		};
 	}
 }

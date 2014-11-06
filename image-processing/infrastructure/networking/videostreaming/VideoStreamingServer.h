@@ -15,21 +15,25 @@
 
 #include "..\..\..\services\videostreaming\webcam\WebcamService.h"
 
+using std::string;
+using Poco::Net::HTTPServer;
+using Poco::Net::ServerSocket;
+using Poco::ThreadPool;
+using Poco::Logger;
+using services::webcam::WebcamServicePtr;
+
 namespace infrastructure {
 	namespace video_streaming {
 		class VideoStreamingServer
 		{
 		public:
-			VideoStreamingServer(unsigned short port, const std::string& uri, services::webcam::WebcamServicePtr webcamService);
+			VideoStreamingServer(unsigned short port, const string& uri, WebcamServicePtr webcamService);
 			void StartServer();
 			void StopServer();
-
 		private:
-			Poco::Net::HTTPServer* server;
-			Poco::Net::ServerSocket socket;
-			Poco::ThreadPool threadPool;
-
-			static Poco::Logger& logger;
+			HTTPServer* server;
+			ServerSocket socket;
+			ThreadPool threadPool;
 		};
 	}
 }
