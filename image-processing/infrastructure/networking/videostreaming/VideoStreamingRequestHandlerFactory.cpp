@@ -10,7 +10,7 @@ namespace infrastructure {
 		}
 
 		Poco::Net::HTTPRequestHandler* VideoStreamingRequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest& request) {
-			if (request.getURI() == uri){
+			if (request.getURI() == uri) {
 				return new VideoStreamingRequestHandler(webcamService);
 			}
 			else {

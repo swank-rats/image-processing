@@ -9,7 +9,7 @@
 #include <Poco\Net\HTTPRequestHandlerFactory.h>
 #include <Poco\Net\HTTPServerRequest.h>
 
-#include "..\..\..\services\videostreaming\webcam\WebcamService.h"
+#include "..\..\..\..\services\videostreaming\webcam\WebcamService.h"
 
 namespace infrastructure {
 	namespace websocket {

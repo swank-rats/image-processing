@@ -17,7 +17,7 @@ namespace infrastructure {
 
 		void InvalidUriRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
 			Poco::Logger& logger = Poco::Logger::get("InvalidUriRequestHandler");
-			logger.information("Invalid uri call by " + request.clientAddress().toString());
+			logger.information("Invalid uri " + request.getURI() + " call by " + request.clientAddress().toString());
 
 			response.setStatus(Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 			response.send();

@@ -6,6 +6,7 @@
 //============================================================================
 #pragma once
 #include <Poco\Net\HTTPServer.h>
+#include <Poco\Net\HTTPClientSession.h>
 #include <Poco\Net\SecureServerSocket.h>
 #include <Poco\ThreadPool.h>
 #include <Poco\Logger.h>
@@ -21,8 +22,8 @@ namespace infrastructure {
 
 		private:
 			Poco::Net::HTTPServer* server;
-			//Poco::Net::SecureServerSocket socket;
 			Poco::Net::ServerSocket socket;
+			Poco::Net::HTTPClientSession session;
 			Poco::ThreadPool threadPool;
 
 			static Poco::Logger& logger;

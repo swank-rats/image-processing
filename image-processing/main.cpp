@@ -24,6 +24,8 @@
 #include "controller\VideoStreamingController.h"
 #include "controller\WebSocketController.h"
 
+#include "infrastructure\networking\websockets\client\WebSocketClient.h"
+
 using namespace cv;
 using namespace std;
 using Poco::Logger;
@@ -321,6 +323,9 @@ private:
 
 		controller::websocket::WebSocketController webSocketCtrl;
 		webSocketCtrl.StartWebSocketServer();
+
+		infrastructure::websocket::WebSocketClient webSocketClient;
+		webSocketClient.OpenConnection();
 
 		char key;
 		while (1) {
