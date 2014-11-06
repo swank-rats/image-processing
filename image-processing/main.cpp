@@ -69,6 +69,52 @@ static void thresh_callbackdetect2(int, void*)
 	imshow("Contours", drawing);
 }
 
+
+/**
+* @function thresh_callback
+*/
+static void thresh_callbackdetect3(int, void*)
+{
+	Mat canny_output;
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+
+	/// Detect edges using canny
+	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+	/// Find contours
+	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+
+	/// Draw contours
+	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
+	std::vector<cv::Point> approx;
+
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+
+		// Approximate contour with accuracy proportional
+		// to the contour perimeter
+		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
+
+		// Skip small or non-convex objects 
+		if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+			continue;
+
+		if (approx.size() == 4)
+		{
+
+			Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+			drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+
+		}
+
+
+	}
+
+	/// Show in a window
+	namedWindow("Contours", WINDOW_AUTOSIZE);
+	imshow("Contours", drawing);
+}
+
 class ImageProcessingServerApplication : public Poco::Util::Application {
 public:
 	ImageProcessingServerApplication() : helpRequested(false)
@@ -101,10 +147,10 @@ protected:
 
 		//return DetectWihoutServices(logger);
 		//return DetectConture(logger);
-		//return DetectConture2(logger);
+		return DetectConture2(logger);
 		//return DetectConture3(logger);
 
-		return WithThread(logger);
+		//return WithThread(logger);
 	}
 private:
 	bool helpRequested;
@@ -423,7 +469,9 @@ private:
 			imshow(source_window, srcdetect2);
 
 			createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
-			thresh_callbackdetect2(0, 0);
+			/*thresh_callbackdetect2*/(0, 0);
+			thresh_callbackdetect3(0, 0);
+
 
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
