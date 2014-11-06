@@ -23,8 +23,6 @@
 #include "controller\VideoStreamingController.h"
 #include "controller\WebSocketController.h"
 
-#include "infrastructure\networking\websockets\client\WebSocketClient.h"
-
 using namespace cv;
 using namespace std;
 using Poco::Logger;
@@ -71,7 +69,6 @@ static void thresh_callbackdetect2(int, void*)
 	imshow("Contours", drawing);
 }
 
-
 /**
 * @function thresh_callback
 */
@@ -117,6 +114,7 @@ static void thresh_callbackdetect3(int, void*)
 	imshow("Contours", drawing);
 }
 
+
 class ImageProcessingServerApplication : public Poco::Util::Application {
 public:
 	ImageProcessingServerApplication() : helpRequested(false)
@@ -144,15 +142,13 @@ protected:
 	int main(const std::vector<std::string>& args)
 	{
 		InitLoggers();
-		Logger& logger = Logger::get("main");
-		ShowLena(logger);
+		//DetectWihoutServices();
+		//DetectConture();
+		//DetectConture2();
+		//DetectConture3();
+		WithThread();
 
-		//return DetectWihoutServices(logger);
-		//return DetectConture(logger);
-		return DetectConture2(logger);
-		//return DetectConture3(logger);
-
-		//return WithThread(logger);
+		return EXIT_OK;
 	}
 private:
 	bool helpRequested;
@@ -168,60 +164,10 @@ private:
 		Logger::root().setChannel(pFC);
 	}
 
-	void ShowLena(Logger& logger) {
-		Mat im = imread("resources/images/lena.bmp", 1);
-		if (!im.empty())
-		{
-			cvNamedWindow("Lena");
-			//imshow("Lena", im);
-			imshow("Lena", im);
-			logger.information("Hello Leno :)");
-		}
-		else {
-			logger.warning("Lena could not be found! Go and find her!");
-		}
-	}
-
-	int WithoutThread(Logger& logger) {
-		logger.information("No threads were used");
-
-		cvNamedWindow("Camera stream", CV_WINDOW_AUTOSIZE);
-
-		CvCapture* capture = cvCaptureFromCAM(1);
-
-		if (!capture){
-			logger.critical("No camera found");
-			return -1;
-		}
-
-		IplImage* frame;
-		char key;
-
-		//Create infinte loop for live streaming
-		//exit by pressing ESC
-		while (1) {
-			//Create image frames from capture
-			frame = cvQueryFrame(capture);
-			//Show image frames on created window
-			cvShowImage("Camera stream", frame);
-
-			//Capture Keyboard stroke
-			key = cvWaitKey(10);
-			if (char(key) == 27){
-				break; //If you hit ESC key loop will break.
-			}
-		}
-
-		//Release capture.
-		cvReleaseCapture(&capture);
-		//Destroy Window
-		destroyAllWindows();
-
-		return 0;
-	}
-
-	int WithThread(Logger& logger)
+	void WithThread()
 	{
+		Logger& logger = Logger::get("main");
+
 		logger.information("Threads were used");
 
 		auto webcamService = std::make_shared<services::webcam::WebcamService>();
@@ -232,11 +178,8 @@ private:
 		controller::video_streaming::VideoStreamingController vidStreamCtrl(webcamService);
 		vidStreamCtrl.StartStreamingServer();
 
-		controller::websocket::WebSocketController webSocketCtrl;
-		webSocketCtrl.StartWebSocketServer();
-
-		infrastructure::websocket::WebSocketClient webSocketClient;
-		webSocketClient.OpenConnection();
+		controller::websocket::WebSocketController webSocketCtrl(URI("ws://172.16.50.41:3001/"));
+		webSocketCtrl.StartWebSocketClient();
 
 		char key;
 		while (1) {
@@ -249,21 +192,20 @@ private:
 
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();
-		webSocketCtrl.StopWebSocketServer();
+		webSocketCtrl.StopWebSocketClient();
 
 		destroyAllWindows();
-
-		return 0;
 	}
 
-	int DetectWihoutServices(Logger& logger){
+	void DetectWihoutServices(){
+		Logger& logger = Application::logger();
 
 		VideoCapture cap(0); //capture the video from web cam
 
 		if (!cap.isOpened())  // if not success, exit program
 		{
 			logger.critical("Cannot open the web cam");
-			return -1;
+			return;
 		}
 
 		namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
@@ -324,12 +266,11 @@ private:
 				break;
 			}
 		}
-
-		return 0;
 	}
 
-	int DetectConture(Logger& logger)
+	void DetectConture()
 	{
+		Logger& logger = Application::logger();
 
 		CvCapture* capture = cvCaptureFromCAM(0);
 		IplImage* img;
@@ -448,21 +389,16 @@ private:
 		cvReleaseMemStorage(&storage);
 		cvReleaseImage(&img);
 		cvReleaseImage(&imgGrayScale);
-
-		return 0;
 	}
 
-	int DetectConture2(Logger& logger){
-
+	void DetectConture2() {
+		Logger& logger = Application::logger();
 
 		CvCapture* capture = cvCaptureFromCAM(0);
-
-
+		
 		while (true)
 		{
-
 			srcdetect2 = cvQueryFrame(capture);
-
 
 			/// Convert image to gray and blur it
 			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
@@ -477,8 +413,6 @@ private:
 			/*thresh_callbackdetect2*/(0, 0);
 			thresh_callbackdetect3(0, 0);
 
-
-
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
 				logger.information("esc key is pressed by user");
@@ -488,15 +422,12 @@ private:
 
 		//cleaning up
 		cvDestroyAllWindows();
-
-		return 0;
 	}
 
-	int DetectConture3(Logger& logger){
-
+	void DetectConture3() {
+		Logger& logger = Application::logger();
 
 		CvCapture* capture = cvCaptureFromCAM(0);
-
 
 		while (true)
 		{
@@ -585,11 +516,7 @@ private:
 
 		//cleaning up
 		cvDestroyAllWindows();
-
-		return 0;
 	}
-
-
 
 	/**
 	* Helper function to find a cosine of angle between vectors

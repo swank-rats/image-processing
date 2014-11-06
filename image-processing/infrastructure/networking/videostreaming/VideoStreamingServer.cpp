@@ -23,7 +23,8 @@ namespace infrastructure {
 			pParams->setKeepAlive(true);
 
 			server = new Poco::Net::HTTPServer(new VideoStreamingRequestHandlerFactory(webcamService, uri), threadPool, socket, pParams);
-			logger.information("init video streaming server " + socket.address().toString() + ":" + std::to_string(port) + uri);
+			logger.information("init videostreaming server at port " + socket.address().port());
+
 		}
 
 		void VideoStreamingServer::StartServer()
@@ -33,10 +34,10 @@ namespace infrastructure {
 		}
 
 		void VideoStreamingServer::StopServer() {
-			logger.information("stopping video streaming server " + socket.address().toString());
+			logger.information("stopping video streaming server");
 			server->stop();
 			threadPool.stopAll();
-			logger.information("stopped video streaming server " + socket.address().toString());
+			logger.information("stopped video streaming server");
 		}
 
 	}

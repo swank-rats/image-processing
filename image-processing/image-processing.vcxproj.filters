@@ -45,19 +45,10 @@
     <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\server\WebSocketServer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\server\WebSocketRequestHandlerFactory.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\server\handler\PageRequestHandler.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\server\handler\WebSocketRequestHandler.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClient.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnection.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,19 +86,10 @@
     <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\server\WebSocketServer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\server\WebSocketRequestHandlerFactory.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\server\handler\PageRequestHandler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\server\handler\WebSocketRequestHandler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClient.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnection.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,6 +5,7 @@
 // Description : 
 //============================================================================
 #pragma once
+#include <Poco\Logger.h>
 #include <Poco\Net\HTTPServerRequest.h>
 #include <Poco\Net\HTTPServerResponse.h>
 #include <Poco\Net\HTTPRequestHandler.h>
@@ -19,6 +20,7 @@ namespace infrastructure {
 			void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
 		private:
 			services::webcam::WebcamServicePtr webcamService;
+			static Poco::Logger& logger;
 		};
 
 	}

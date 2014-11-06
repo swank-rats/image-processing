@@ -8,6 +8,7 @@
 #include <Poco\Net\HTTPServerRequest.h>
 #include <Poco\Net\HTTPServerResponse.h>
 #include <Poco\Net\HTTPRequestHandler.h>
+#include <Poco\Logger.h>
 
 namespace infrastructure {
 	namespace video_streaming {
@@ -16,6 +17,8 @@ namespace infrastructure {
 		public:
 			InvalidUriRequestHandler();
 			void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+		private:
+			static Poco::Logger& logger;
 		};
 	}
 }

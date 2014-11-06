@@ -10,12 +10,13 @@
 
 namespace infrastructure {
 	namespace video_streaming {
+		Poco::Logger& VideoStreamingRequestHandler::logger = Poco::Logger::get("VideoStreamingRequestHandler");
+
 		VideoStreamingRequestHandler::VideoStreamingRequestHandler(services::webcam::WebcamServicePtr webcamService) : webcamService(webcamService)
 		{
 		}
 
 		void VideoStreamingRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
-			Poco::Logger& logger = Poco::Logger::get("VideoStreamingHandler");
 			string boundary = "VIDEOSTREAM";
 
 			logger.information("Video streaming started for client " + request.clientAddress().toString());

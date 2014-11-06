@@ -5,22 +5,23 @@
 // Description : 
 //============================================================================
 #pragma once
-#include "..\infrastructure\networking\websockets\server\WebSocketServer.h"
+#include <Poco\URI.h>
+#include "..\infrastructure\networking\websockets\client\WebSocketClient.h"
 
 using namespace infrastructure::websocket;
+using Poco::URI;
+
 namespace controller {
 	namespace websocket {
 
 		class WebSocketController
 		{
 		public:
-			WebSocketController();
-			void StartWebSocketServer();
-			void StopWebSocketServer();
-
+			WebSocketController(URI uri);
+			void StartWebSocketClient();
+			void StopWebSocketClient();
 		private:
-			WebSocketServer* webSocketServer;
-
+			WebSocketClient* webSocketClient;
 		};
 
 	}

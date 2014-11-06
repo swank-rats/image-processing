@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : WebSocketClient.h
+// Name        : WebSocketClientConnection.h
 // Author      : ITM13
 // Version     : 1.0
 // Description : 
@@ -10,30 +10,24 @@
 #include <Poco\Net\HTTPServer.h>
 #include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\WebSocket.h>
+#include <Poco\Task.h>
 #include <Poco\TaskManager.h>
-
-#include "WebSocketClientConnection.h"
 
 using Poco::Logger;
 using Poco::URI;
-using Poco::Net::HTTPSClientSession;
-using Poco::Net::WebSocket;
-using Poco::TaskManager;
-
+using Poco::Task;
 
 namespace infrastructure {
 	namespace websocket {
-		class WebSocketClient
+		class WebSocketClientConnection : public Task
 		{
 		public:
-			WebSocketClient(URI uri);
-			void OpenConnection();
-			void CloseConnection();
+			WebSocketClientConnection(URI uri);
+			void runTask();
+			URI GetURI();
 		private:
-			WebSocketClientConnection* connection;
-			TaskManager taskManager;
+			URI uri;
 			static Poco::Logger& logger;
 		};
 	}
 }
-

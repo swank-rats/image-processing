@@ -7,69 +7,41 @@
 #include <string>
 
 #include <Poco\Exception.h>
-#include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\HTTPMessage.h>
 #include <Poco\Net\HTTPRequest.h>
 #include <Poco\Net\HTTPResponse.h>
-#include <Poco\Net\WebSocket.h>
 
 #include "WebSocketClient.h"
 
-using Poco::Net::HTTPSClientSession;
 using Poco::Net::HTTPRequest;
 using Poco::Net::HTTPResponse;
-using Poco::Net::WebSocket;
-
 
 namespace infrastructure {
 	namespace websocket {
-		WebSocketClient::WebSocketClient()
+		Poco::Logger& WebSocketClient::logger = Poco::Logger::get("WebSocketClient");
+
+		WebSocketClient::WebSocketClient(URI uri) : connection(new WebSocketClientConnection(uri))
 		{
 		}
 
 		void WebSocketClient::OpenConnection() {
-			char buffer[1024];
-			int flags;
-			int n;
-			std::string payload;
+			URI uri = connection->GetURI();
 
-			try
-			{
-				HTTPSClientSession session("172.16.50.41", 3001);
-				HTTPRequest req(Poco::Net::HTTPRequest::HTTP_GET, "/", Poco::Net::HTTPMessage::HTTP_1_1);
-				HTTPResponse res;
-				std::string cmd;
-
-				WebSocket * ws = new WebSocket(session, req, res);
-
-				payload = "{\"to\":\"test\",\"cmd\":\"echo\",\"params\":{\"toUpper\": true},\"data\":\"testdata\"}";
-				ws->sendFrame(payload.data(), payload.size(), WebSocket::FRAME_TEXT);
-				n = ws->receiveFrame(buffer, sizeof(buffer), flags);
-
-				while (cmd != "exit")
-				{
-					cmd = "";
-					std::cin >> cmd;
-					ws->sendFrame(cmd.data(), cmd.size(), WebSocket::FRAME_TEXT);
-					n = ws->receiveFrame(buffer, sizeof(buffer), flags);
-					if (n > 0)
-					{
-						std::cout << buffer << std::endl;
-					}
-				}
-
-				ws->shutdown();
-			}
-			catch (Poco::Exception& e)
-			{
-				std::cerr << "Exception: " << e.what() << std::endl;
-				std::cerr << "Message: " << e.message() << std::endl;
-				std::cerr << e.displayText() << std::endl;
-			}
+			logger.information("Opening websocket connection to " + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
+			taskManager.start(connection);
 		}
 
 		void WebSocketClient::CloseConnection() {
+			try {
+				URI uri = connection->GetURI();
 
+				logger.information("Closing websocket connection to " + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
+
+				taskManager.joinAll();
+			}
+			catch (Poco::SyntaxException& e) {
+				logger.error(e.displayText());
+			}
 		}
 	}
 }

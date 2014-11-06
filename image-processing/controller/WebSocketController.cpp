@@ -8,18 +8,16 @@
 
 namespace controller {
 	namespace websocket {
-		WebSocketController::WebSocketController()
+		WebSocketController::WebSocketController(URI uri) : webSocketClient(new WebSocketClient(uri))
 		{
-			webSocketServer = new WebSocketServer;
 		}
 
-		void WebSocketController::StartWebSocketServer() {
-			webSocketServer->StartServer();
+		void WebSocketController::StartWebSocketClient() {
+			webSocketClient->OpenConnection();
 		}
 
-		void WebSocketController::StopWebSocketServer() {
-			webSocketServer->StopServer();
+		void WebSocketController::StopWebSocketClient() {
+			webSocketClient->CloseConnection();
 		}
-
 	}
 }
