@@ -95,20 +95,20 @@ static void thresh_callbackdetect3(int, void*)
 	{
 
 
-	for (size_t i = 0; i < contours.size(); i++)
-	{
+		for (size_t i = 0; i < contours.size(); i++)
+		{
 
-		// Approximate contour with accuracy proportional
-		// to the contour perimeter
-		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
+			// Approximate contour with accuracy proportional
+			// to the contour perimeter
+			cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
-		// Skip small or non-convex objects 
-		if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
-			continue;
+			// Skip small or non-convex objects 
+			if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+				continue;
 
 			// Rectangles
-		if (approx.size() == 4)
-		{
+			if (approx.size() == 4)
+			{
 
 				rects.push_back(contours[i]);
 				rectsIndex.push_back(i);
@@ -170,8 +170,8 @@ static void thresh_callbackdetect3(int, void*)
 				if (drawingrectsIndex[y] == i)
 				{
 
-			Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-			drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+					Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+					drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
 				}
 			}
 
@@ -185,15 +185,15 @@ static void thresh_callbackdetect3(int, void*)
 
 	/*for (size_t i = 0; i < contours.size(); i++)
 	{
-		for (size_t y = 0; y < rectsIndex.size(); y++)
-		{
-			if (rectsIndex[y] == i)
-			{
+	for (size_t y = 0; y < rectsIndex.size(); y++)
+	{
+	if (rectsIndex[y] == i)
+	{
 
-				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+	Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+	drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
 	}
-		}
+	}
 
 	}*/
 
@@ -234,7 +234,7 @@ protected:
 		//DetectConture();
 		//DetectConture2();
 		//DetectConture3();
-		WithThread();
+		//WithThread();
 
 		return EXIT_OK;
 	}
@@ -640,7 +640,7 @@ private:
 
 	int Test4()
 	{
-	
+
 		// create a RGB colour image (set it to a black background)
 
 		Mat img = Mat::zeros(400, 400, CV_8UC3);
@@ -717,9 +717,9 @@ private:
 		waitKey(0);
 
 		return 0;
-	
-	
-	
+
+
+
 	}
 
 };
