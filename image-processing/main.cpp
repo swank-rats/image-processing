@@ -187,7 +187,7 @@ private:
 		ThomasTest th;
 
 		//th.DetectWihoutServices();
-		//DetectConture();
+		//th.DetectConture();
 		th.DetectConture2();
 		//DetectConture3();
 	}

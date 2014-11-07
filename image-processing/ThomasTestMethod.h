@@ -505,8 +505,10 @@ public:
 			namedWindow(source_window, WINDOW_AUTOSIZE);
 			imshow(source_window, srcdetect2);
 
-			createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
-			/*thresh_callbackdetect2*/(0, 0);
+			//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
+			//thresh_callbackdetect2(0, 0);
+
+			createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect3);
 			thresh_callbackdetect3(0, 0);
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
