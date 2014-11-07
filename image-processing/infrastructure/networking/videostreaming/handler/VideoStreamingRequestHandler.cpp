@@ -20,6 +20,7 @@ namespace infrastructure {
 		}
 
 		void VideoStreamingRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response) {
+			static std::vector<int> params = { CV_IMWRITE_JPEG_QUALITY, 30 };
 			Poco::Logger& logger = Poco::Logger::get("VideoStreamingRequestHandler");
 
 			string boundary = "VIDEOSTREAM";
@@ -47,7 +48,7 @@ namespace infrastructure {
 
 				// encode mat to jpg and copy it to content
 				std::vector<uchar> buf;
-				cv::imencode(".jpg", image, buf, std::vector<int>({ CV_IMWRITE_JPEG_QUALITY, 30}));
+				cv::imencode(".jpg", image, buf, params);
 				std::string content = std::string(buf.begin(), buf.end());
 
 				MessageHeader header = MessageHeader();
