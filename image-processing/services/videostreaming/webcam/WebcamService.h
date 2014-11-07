@@ -46,7 +46,6 @@ namespace services {
 			VideoCapture capture;
 			Mat lastImage;
 			Activity<WebcamService> recordingActivity;
-			Poco::RWLock rwLock; //reader writer lock
 		};
 
 		typedef std::shared_ptr<WebcamService> WebcamServicePtr;

@@ -83,9 +83,7 @@ namespace services {
 					//Show image frames on created window
 					cv::imshow(windowName, frame);
 					//Clone image
-					rwLock.writeLock(); //make this operation thread safe
-					lastImage = frame.clone();
-					rwLock.unlock();
+					lastImage = frame;
 
 					Notify();
 				}
@@ -96,7 +94,6 @@ namespace services {
 		}
 
 		cv::Mat WebcamService::GetLastImage() {
-			Poco::ScopedReadRWLock readLock(rwLock);
 			return lastImage;
 		}
 	}
