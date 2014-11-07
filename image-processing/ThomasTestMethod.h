@@ -24,7 +24,6 @@
 
 using namespace cv;
 using namespace std;
-using Poco::HashMap;
 
 static Mat srcdetect2;
 static Mat src_graydetect2;
@@ -169,24 +168,16 @@ static void thresh_callbackdetect3(int, void*)
 {
 	//Drawing and contours 
 	Mat canny_output;
-	vector<vector<Point>> contours;
+	vector<vector<Point> > contours;
 	vector<Vec4i> hierarchy;
 
 	// Finding rects,tris and pentagons
 	std::vector<cv::Point> approx;
 
-
-	typedef HashMap<int, vector<vector<Point>>> IntMap;
-	IntMap rects;
-	IntMap pentagon;
-
-
-
-
-	//vector<vector<cv::Point>> rects;
-	//vector<vector<cv::Point>> pentagon;
-	//vector<int> rectsIndex;
-	//vector<int> pentagonIndex;
+	vector<vector<cv::Point>> rects;
+	vector<vector<cv::Point>> pentagon;
+	vector<int> rectsIndex;
+	vector<int> pentagonIndex;
 	vector<vector<cv::Point>> tri;
 
 	//Found correct elements
@@ -222,10 +213,9 @@ static void thresh_callbackdetect3(int, void*)
 		// Rectangles
 		if (approx.size() == 4)
 		{
-			rects.insert(IntMap::ValueType(i, contours[i]));
 
-		/*	rects.push_back(contours[i]);
-			rectsIndex.push_back(i);*/
+			rects.push_back(contours[i]);
+			rectsIndex.push_back(i);
 		}
 
 		if (approx.size() == 3)
@@ -238,8 +228,6 @@ static void thresh_callbackdetect3(int, void*)
 			pentagon.push_back(contours[i]);
 			pentagonIndex.push_back(i);
 		}
-
-
 	}
 
 
