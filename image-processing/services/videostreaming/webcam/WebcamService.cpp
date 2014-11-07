@@ -11,7 +11,9 @@ namespace services {
 		static const char* windowName = "Webcam stream";
 
 		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
-			//capture.set()
+			capture.set(CV_CAP_PROP_FPS, 20);
+			capture.set(CV_CAP_PROP_FRAME_WIDTH, 440);
+			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 330);
 		}
 
 		bool WebcamService::StartRecording() {
@@ -27,6 +29,12 @@ namespace services {
 				return false;
 			}
 
+			logger.information("Camera settings: ");
+			logger.information("FPS: " + std::to_string(capture.get(CV_CAP_PROP_FPS)));
+			logger.information("Dimension: " + std::to_string(capture.get(CV_CAP_PROP_FRAME_WIDTH)) + "x" + std::to_string(capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
+			logger.information("Codec: " + std::to_string(capture.get(CV_CAP_PROP_FOURCC)));
+			logger.information("Format: " + std::to_string(capture.get(CV_CAP_PROP_FORMAT)));
+			
 			recordingActivity.start();
 
 			logger.information("started recording");
