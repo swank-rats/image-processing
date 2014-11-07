@@ -29,8 +29,8 @@ namespace services {
 			//camera settings
 			capture.set(CV_CAP_PROP_FPS, 60);
 			//Possible resolutions : 640x480; 440x330
-			capture.set(CV_CAP_PROP_FRAME_WIDTH, 440); 
-			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 330);
+			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640); 
+			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 
 			logger.information("Camera settings: ");
 			logger.information("FPS: " + std::to_string(capture.get(CV_CAP_PROP_FPS)));
