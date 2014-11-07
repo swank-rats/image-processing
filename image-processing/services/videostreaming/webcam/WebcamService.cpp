@@ -11,9 +11,6 @@ namespace services {
 		static const char* windowName = "Webcam stream";
 
 		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
-			capture.set(CV_CAP_PROP_FPS, 20);
-			capture.set(CV_CAP_PROP_FRAME_WIDTH, 440);
-			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 330);
 		}
 
 		bool WebcamService::StartRecording() {
@@ -29,9 +26,15 @@ namespace services {
 				return false;
 			}
 
+			//camera settings
+			capture.set(CV_CAP_PROP_FPS, 60);
+			//Possible resolutions : 640x480; 440x330
+			capture.set(CV_CAP_PROP_FRAME_WIDTH, 440); 
+			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 330);
+
 			logger.information("Camera settings: ");
 			logger.information("FPS: " + std::to_string(capture.get(CV_CAP_PROP_FPS)));
-			logger.information("Dimension: " + std::to_string(capture.get(CV_CAP_PROP_FRAME_WIDTH)) + "x" + std::to_string(capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
+			logger.information("Resolution: " + std::to_string(capture.get(CV_CAP_PROP_FRAME_WIDTH)) + "x" + std::to_string(capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
 			logger.information("Codec: " + std::to_string(capture.get(CV_CAP_PROP_FOURCC)));
 			logger.information("Format: " + std::to_string(capture.get(CV_CAP_PROP_FORMAT)));
 			
@@ -80,9 +83,7 @@ namespace services {
 					//Show image frames on created window
 					cv::imshow(windowName, frame);
 					//Clone image
-					rwLock.writeLock(); //make this operation thread safe
-					lastImage = frame.clone();
-					rwLock.unlock();
+					lastImage = frame;
 
 					Notify();
 				}
@@ -93,7 +94,6 @@ namespace services {
 		}
 
 		cv::Mat WebcamService::GetLastImage() {
-			Poco::ScopedReadRWLock readLock(rwLock);
 			return lastImage;
 		}
 	}
