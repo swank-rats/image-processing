@@ -60,9 +60,26 @@ static void thresh_callbackdetect2(int, void*)
 */
 static void thresh_callbackdetect3(int, void*)
 {
+	//Drawing and contours 
 	Mat canny_output;
 	vector<vector<Point> > contours;
 	vector<Vec4i> hierarchy;
+
+	// Finding rects,tris and pentagons
+	std::vector<cv::Point> approx;
+	vector<vector<cv::Point>> rects;
+	vector<vector<cv::Point>> pentagon;
+	vector<int> rectsIndex;
+	vector<int> pentagonIndex;
+	vector<vector<cv::Point>> tri;
+
+	//Found correct elements
+	vector<int> drawingrectsIndex;
+	vector<int> drawingPentagonIndex;
+
+
+
+
 
 	/// Detect edges using canny
 	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
@@ -71,116 +88,163 @@ static void thresh_callbackdetect3(int, void*)
 
 	/// Draw contours
 	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
-	std::vector<cv::Point> approx;
-	vector<vector<cv::Point>> rects;
-	vector<int> rectsIndex;
-	vector<vector<cv::Point>> tri;
 
-	try
+
+
+	/*
+	*	Starting detection process
+	*/
+
+	for (size_t i = 0; i < contours.size(); i++)
 	{
 
+		// Approximate contour with accuracy proportional
+		// to the contour perimeter
+		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
-		for (size_t i = 0; i < contours.size(); i++)
+		// Skip small or non-convex objects 
+		if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+			continue;
+
+		// Rectangles
+		if (approx.size() == 4)
 		{
 
-			// Approximate contour with accuracy proportional
-			// to the contour perimeter
-			cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
-
-			// Skip small or non-convex objects 
-			if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
-				continue;
-
-			// Rectangles
-			if (approx.size() == 4)
-			{
-
-				rects.push_back(contours[i]);
-				rectsIndex.push_back(i);
-			}
-
-			if (approx.size() == 3)
-			{
-				tri.push_back(approx);
-			}
-
-
+			rects.push_back(contours[i]);
+			rectsIndex.push_back(i);
 		}
 
-		int rectPos;
-		vector<int> drawingrectsIndex;
-
-		if (rects.size() == rectsIndex.size()){
-
-
-			for (size_t i = 0; i < tri.size(); i++)
-			{
-				std::vector<cv::Point> triSelected = tri[i];
-
-				for (size_t a = 0; a < rects.size(); a++)
-				{
-
-					if (triSelected.size() != 3)
-						break;
-
-					Point2f triPointOne;
-					Point2f triPointTwo;
-					Point2f triPointThree;
-
-					triPointOne.x = triSelected[0].x;
-					triPointOne.y = triSelected[0].y;
-
-					triPointTwo.x = triSelected[1].x;
-					triPointTwo.y = triSelected[1].y;
-
-					triPointThree.x = triSelected[2].x;
-					triPointThree.y = triSelected[2].y;
-
-					if (pointPolygonTest(Mat(rects[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointThree, true) > 0){
-
-						drawingrectsIndex.push_back(rectsIndex[a]);
-
-					}
-
-
-				}
-			}
-
-		}
-
-		for (size_t i = 0; i < contours.size(); i++)
+		if (approx.size() == 3)
 		{
-			for (size_t y = 0; y < drawingrectsIndex.size(); y++)
+			tri.push_back(approx);
+		}
+
+		if (approx.size() == 5)
+		{
+			pentagon.push_back(contours[i]);
+			pentagonIndex.push_back(i);
+		}
+
+
+	}
+
+
+
+	int rectPos;
+	
+	if (rects.size() == rectsIndex.size()){
+
+
+		for (size_t i = 0; i < tri.size(); i++)
+		{
+			std::vector<cv::Point> triSelected = tri[i];
+
+			for (size_t a = 0; a < rects.size(); a++)
 			{
-				if (drawingrectsIndex[y] == i)
-				{
 
-					Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-					drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+				if (triSelected.size() != 3)
+					break;
+
+				Point2f triPointOne;
+				Point2f triPointTwo;
+				Point2f triPointThree;
+
+				triPointOne.x = triSelected[0].x;
+				triPointOne.y = triSelected[0].y;
+
+				triPointTwo.x = triSelected[1].x;
+				triPointTwo.y = triSelected[1].y;
+
+				triPointThree.x = triSelected[2].x;
+				triPointThree.y = triSelected[2].y;
+
+				if (pointPolygonTest(Mat(rects[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointThree, true) > 0){
+
+					drawingrectsIndex.push_back(rectsIndex[a]);
+
 				}
-			}
 
+
+			}
 		}
 
 	}
-	catch (Exception ex)
-	{
-		cout << ex.msg;
+
+
+
+
+	int pentagonPos;
+
+	if (pentagon.size() == pentagonIndex.size()){
+
+
+		for (size_t i = 0; i < tri.size(); i++)
+		{
+			std::vector<cv::Point> triSelected = tri[i];
+
+			for (size_t a = 0; a < pentagon.size(); a++)
+			{
+
+				if (triSelected.size() != 3)
+					break;
+
+				Point2f triPointOne;
+				Point2f triPointTwo;
+				Point2f triPointThree;
+
+				triPointOne.x = triSelected[0].x;
+				triPointOne.y = triSelected[0].y;
+
+				triPointTwo.x = triSelected[1].x;
+				triPointTwo.y = triSelected[1].y;
+
+				triPointThree.x = triSelected[2].x;
+				triPointThree.y = triSelected[2].y;
+
+				if (pointPolygonTest(Mat(pentagon[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(pentagon[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(pentagon[a]), triPointThree, true) > 0){
+
+					drawingPentagonIndex.push_back(pentagonIndex[a]);
+
+				}
+
+
+			}
+		}
+
 	}
 
-	/*for (size_t i = 0; i < contours.size(); i++)
-	{
-	for (size_t y = 0; y < rectsIndex.size(); y++)
-	{
-	if (rectsIndex[y] == i)
-	{
 
-	Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-	drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
-	}
+
+
+
+
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		for (size_t y = 0; y < drawingrectsIndex.size(); y++)
+		{
+			if (drawingrectsIndex[y] == i)
+			{
+
+				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+			}
+		}
+
+		for (size_t y = 0; y < drawingPentagonIndex.size(); y++)
+		{
+			if (drawingPentagonIndex[y] == i)
+			{
+
+				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+			}
+		}
+
 	}
 
-	}*/
+
+
+
 
 	/// Show in a window
 	namedWindow("Contours", WINDOW_AUTOSIZE);
