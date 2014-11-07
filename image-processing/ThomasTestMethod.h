@@ -18,6 +18,9 @@
 #include "controller\ImageProcessingController.h"
 
 
+#include "Poco/HashMap.h"
+
+
 
 using namespace cv;
 using namespace std;
@@ -27,6 +30,109 @@ static Mat src_graydetect2;
 static int threshdetect2;
 static int max_threshdetect2;
 static RNG rngdetect2;
+
+
+
+static vector<int> CheckForPentagons(vector<vector<cv::Point>> pentagon, vector<vector<cv::Point>> tri, vector<int> pentagonIndex)
+{
+
+	int pentagonPos;
+	vector<int> drawingPentagonIndex;
+
+	if (pentagon.size() == pentagonIndex.size()){
+
+
+		for (size_t i = 0; i < tri.size(); i++)
+		{
+			std::vector<cv::Point> triSelected = tri[i];
+
+			for (size_t a = 0; a < pentagon.size(); a++)
+			{
+
+				if (triSelected.size() != 3)
+					break;
+
+				Point2f triPointOne;
+				Point2f triPointTwo;
+				Point2f triPointThree;
+
+				triPointOne.x = triSelected[0].x;
+				triPointOne.y = triSelected[0].y;
+
+				triPointTwo.x = triSelected[1].x;
+				triPointTwo.y = triSelected[1].y;
+
+				triPointThree.x = triSelected[2].x;
+				triPointThree.y = triSelected[2].y;
+
+				if (pointPolygonTest(Mat(pentagon[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(pentagon[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(pentagon[a]), triPointThree, true) > 0){
+
+					drawingPentagonIndex.push_back(pentagonIndex[a]);
+
+				}
+
+
+			}
+		}
+
+	}
+
+	return  drawingPentagonIndex;
+
+}
+
+
+static vector<int> CheckForRectangles(vector<vector<cv::Point>> rects, vector<vector<cv::Point>> tri, vector<int> rectsIndex)
+{
+
+	int rectPos;
+	vector<int> drawingrectsIndex;
+
+	if (rects.size() == rectsIndex.size()){
+
+
+		for (size_t i = 0; i < tri.size(); i++)
+		{
+			std::vector<cv::Point> triSelected = tri[i];
+
+			for (size_t a = 0; a < rects.size(); a++)
+			{
+
+				if (triSelected.size() != 3)
+					break;
+
+				Point2f triPointOne;
+				Point2f triPointTwo;
+				Point2f triPointThree;
+
+				triPointOne.x = triSelected[0].x;
+				triPointOne.y = triSelected[0].y;
+
+				triPointTwo.x = triSelected[1].x;
+				triPointTwo.y = triSelected[1].y;
+
+				triPointThree.x = triSelected[2].x;
+				triPointThree.y = triSelected[2].y;
+
+				if (pointPolygonTest(Mat(rects[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointThree, true) > 0){
+
+					drawingrectsIndex.push_back(rectsIndex[a]);
+
+				}
+
+
+			}
+
+
+		}
+
+
+	}
+
+	return drawingrectsIndex;
+
+
+}
 
 /**
 * @function thresh_callback
@@ -78,9 +184,6 @@ static void thresh_callbackdetect3(int, void*)
 	vector<int> drawingPentagonIndex;
 
 
-
-
-
 	/// Detect edges using canny
 	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
 	/// Find contours
@@ -129,95 +232,11 @@ static void thresh_callbackdetect3(int, void*)
 	}
 
 
+	drawingrectsIndex= CheckForRectangles(rects, tri, rectsIndex);
+	drawingPentagonIndex = CheckForPentagons(pentagon, tri, pentagonIndex);
 
-	int rectPos;
+
 	
-	if (rects.size() == rectsIndex.size()){
-
-
-		for (size_t i = 0; i < tri.size(); i++)
-		{
-			std::vector<cv::Point> triSelected = tri[i];
-
-			for (size_t a = 0; a < rects.size(); a++)
-			{
-
-				if (triSelected.size() != 3)
-					break;
-
-				Point2f triPointOne;
-				Point2f triPointTwo;
-				Point2f triPointThree;
-
-				triPointOne.x = triSelected[0].x;
-				triPointOne.y = triSelected[0].y;
-
-				triPointTwo.x = triSelected[1].x;
-				triPointTwo.y = triSelected[1].y;
-
-				triPointThree.x = triSelected[2].x;
-				triPointThree.y = triSelected[2].y;
-
-				if (pointPolygonTest(Mat(rects[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointThree, true) > 0){
-
-					drawingrectsIndex.push_back(rectsIndex[a]);
-
-				}
-
-
-			}
-		}
-
-	}
-
-
-
-
-	int pentagonPos;
-
-	if (pentagon.size() == pentagonIndex.size()){
-
-
-		for (size_t i = 0; i < tri.size(); i++)
-		{
-			std::vector<cv::Point> triSelected = tri[i];
-
-			for (size_t a = 0; a < pentagon.size(); a++)
-			{
-
-				if (triSelected.size() != 3)
-					break;
-
-				Point2f triPointOne;
-				Point2f triPointTwo;
-				Point2f triPointThree;
-
-				triPointOne.x = triSelected[0].x;
-				triPointOne.y = triSelected[0].y;
-
-				triPointTwo.x = triSelected[1].x;
-				triPointTwo.y = triSelected[1].y;
-
-				triPointThree.x = triSelected[2].x;
-				triPointThree.y = triSelected[2].y;
-
-				if (pointPolygonTest(Mat(pentagon[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(pentagon[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(pentagon[a]), triPointThree, true) > 0){
-
-					drawingPentagonIndex.push_back(pentagonIndex[a]);
-
-				}
-
-
-			}
-		}
-
-	}
-
-
-
-
-
-
 	for (size_t i = 0; i < contours.size(); i++)
 	{
 		for (size_t y = 0; y < drawingrectsIndex.size(); y++)
@@ -250,6 +269,8 @@ static void thresh_callbackdetect3(int, void*)
 	namedWindow("Contours", WINDOW_AUTOSIZE);
 	imshow("Contours", drawing);
 }
+
+
 
 /**
 * Helper function to find a cosine of angle between vectors
