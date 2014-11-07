@@ -17,6 +17,12 @@
 #include <memory>
 #include "..\..\..\shared\observer\Observable.h"
 
+
+using cv::VideoCapture;
+using cv::Mat;
+using Poco::Activity;
+using Poco::Logger;
+
 namespace services {
 	namespace webcam {
 		class WebcamService : public Observable<WebcamService>, public std::enable_shared_from_this < WebcamService > {
@@ -33,17 +39,14 @@ namespace services {
 			 */
 			bool StopRecording();
 
-			cv::Mat GetLastImage();
-
+			Mat GetLastImage();
 		private:
 			void RecordingCore();
 
-			cv::VideoCapture capture;
-			cv::Mat lastImage;
-			Poco::Activity<WebcamService> recordingActivity;
+			VideoCapture capture;
+			Mat lastImage;
+			Activity<WebcamService> recordingActivity;
 			Poco::RWLock rwLock; //reader writer lock
-
-			static Poco::Logger& logger;
 		};
 
 		typedef std::shared_ptr<WebcamService> WebcamServicePtr;

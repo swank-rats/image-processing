@@ -10,15 +10,15 @@
 #include <Poco\Net\HTTPServer.h>
 #include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\WebSocket.h>
-#include <Poco\TaskManager.h>
+#include <Poco\Net\Context.h>
 
 #include "WebSocketClientConnection.h"
 
 using Poco::Logger;
 using Poco::URI;
 using Poco::Net::HTTPSClientSession;
+using Poco::Net::Context;
 using Poco::Net::WebSocket;
-using Poco::TaskManager;
 
 
 namespace infrastructure {
@@ -26,13 +26,11 @@ namespace infrastructure {
 		class WebSocketClient
 		{
 		public:
-			WebSocketClient(URI uri);
+			WebSocketClient(URI uri, Context::Ptr context);
 			void OpenConnection();
 			void CloseConnection();
 		private:
 			WebSocketClientConnection* connection;
-			TaskManager taskManager;
-			static Poco::Logger& logger;
 		};
 	}
 }

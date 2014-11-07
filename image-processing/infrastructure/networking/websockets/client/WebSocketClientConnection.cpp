@@ -5,6 +5,7 @@
 // Description : 
 //============================================================================
 #pragma once
+#include <string>
 #include <Poco\Logger.h>
 #include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\WebSocket.h>
@@ -25,9 +26,9 @@ using Poco::Exception;
 
 namespace infrastructure {
 	namespace websocket {
-		Poco::Logger& WebSocketClientConnection::logger = Poco::Logger::get("WebSocketClientConnection");
 
-		WebSocketClientConnection::WebSocketClientConnection(URI uri) : Task("WebSocketClientConnection"), uri(uri)
+		WebSocketClientConnection::WebSocketClientConnection(URI uri, Context::Ptr context)
+			: uri(uri), context(context), connectionActivity(this, &WebSocketClientConnection::HandleConnection)
 		{
 		}
 
@@ -35,11 +36,32 @@ namespace infrastructure {
 			return uri;
 		}
 
-		void WebSocketClientConnection::runTask() {
-			WebSocket* webSocket;
+		void WebSocketClientConnection::OpenConnection() {
+			connectionActivity.start();
+		}
+
+		void WebSocketClientConnection::CloseConnection() {
+			Logger& logger = Logger::get("WebSocketClient");
+
+			if (connectionActivity.isRunning()) {
+				connectionActivity.stop();
+				logger.information("websocket activity stop requested");
+				connectionActivity.wait();
+				logger.information("websocket activity stopped successfully");
+
+			}
+			else {
+				logger.error("websocket activity is not running!");
+			}
+		}
+
+		void WebSocketClientConnection::HandleConnection() {
+			Logger& logger = Logger::get("WebSocketClient");
+
+			WebSocket* webSocket = nullptr;
 
 			try {
-				HTTPSClientSession session(uri.getHost(), uri.getPort());
+				HTTPSClientSession session(uri.getHost(), uri.getPort(), context);
 				HTTPRequest req(HTTPRequest::HTTP_GET, uri.getPath(), HTTPMessage::HTTP_1_1);
 				HTTPResponse res;
 
@@ -53,7 +75,7 @@ namespace infrastructure {
 				webSocket->sendFrame(payload.data(), payload.size(), WebSocket::FRAME_TEXT);
 
 
-				while (!isCancelled()) {
+				while (connectionActivity.isStopped()) {
 					n = webSocket->receiveFrame(buffer, sizeof(buffer), flags);
 
 					if (n > 0) {
@@ -62,14 +84,14 @@ namespace infrastructure {
 				}
 			}
 			catch (Exception& e) {
-				std::cerr << "Exception: " << e.what() << std::endl;
-				std::cerr << "Message: " << e.message() << std::endl;
-				std::cerr << e.displayText() << std::endl;
+				logger.error(e.displayText());
 			}
 
 			if (webSocket != nullptr) {
 				webSocket->close();
 			}
 		}
+
+
 	}
 }

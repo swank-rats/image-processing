@@ -9,14 +9,18 @@
 namespace services {
 	namespace webcam {
 		static const char* windowName = "Webcam stream";
-		Poco::Logger& WebcamService::logger = Poco::Logger::get("WebcamService");
 
-		WebcamService::WebcamService() : capture(cv::VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
+		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
+			capture.set(CV_CAP_PROP_FPS, 20);
+			capture.set(CV_CAP_PROP_FRAME_WIDTH, 440);
+			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 330);
 		}
 
 		bool WebcamService::StartRecording() {
+			Logger& logger = Logger::get("WebcamService");
+
 			logger.information("starting recording...");
-			cvNamedWindow(windowName, CV_WINDOW_NORMAL);
+			cvNamedWindow(windowName, CV_WINDOW_AUTOSIZE);
 
 			capture.open(CV_CAP_ANY);
 
@@ -25,6 +29,12 @@ namespace services {
 				return false;
 			}
 
+			logger.information("Camera settings: ");
+			logger.information("FPS: " + std::to_string(capture.get(CV_CAP_PROP_FPS)));
+			logger.information("Dimension: " + std::to_string(capture.get(CV_CAP_PROP_FRAME_WIDTH)) + "x" + std::to_string(capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
+			logger.information("Codec: " + std::to_string(capture.get(CV_CAP_PROP_FOURCC)));
+			logger.information("Format: " + std::to_string(capture.get(CV_CAP_PROP_FORMAT)));
+			
 			recordingActivity.start();
 
 			logger.information("started recording");
@@ -33,6 +43,8 @@ namespace services {
 		}
 
 		bool WebcamService::StopRecording() {
+			Logger& logger = Logger::get("WebcamService");
+
 			logger.information("stopping recording...");
 
 			if (recordingActivity.isRunning()) {
@@ -52,9 +64,11 @@ namespace services {
 		}
 
 		void WebcamService::RecordingCore() {
+			Logger& logger = Logger::get("WebcamService");
+
 			cv::Mat frame;
 				
-			while (1) {
+			while (!recordingActivity.isStopped()) {
 				if (!capture.isOpened()) {
 					logger.error("Lost connection to webcam!");
 					break;
