@@ -24,7 +24,6 @@
 
 using namespace cv;
 using namespace std;
-using Poco::HashMap;
 
 static Mat srcdetect2;
 static Mat src_graydetect2;
@@ -34,41 +33,41 @@ static RNG rngdetect2;
 
 
 
-static vector<int> CheckForPentagons(vector<vector<cv::Point>> pentagon, vector<vector<cv::Point>> tri, vector<int> pentagonIndex)
+static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons, vector<vector<cv::Point>> triangles, vector<int> pentagonContourPositions)
 {
 
 	int pentagonPos;
-	vector<int> drawingPentagonIndex;
+	vector<int> allowedPentagonsContourPosition;
 
-	if (pentagon.size() == pentagonIndex.size()){
+	if (pentagons.size() == pentagonContourPositions.size()){
 
 
-		for (size_t i = 0; i < tri.size(); i++)
+		for (size_t i = 0; i < triangles.size(); i++)
 		{
-			std::vector<cv::Point> triSelected = tri[i];
+			std::vector<cv::Point> triangleSelected = triangles[i];
 
-			for (size_t a = 0; a < pentagon.size(); a++)
+			for (size_t a = 0; a < pentagons.size(); a++)
 			{
 
-				if (triSelected.size() != 3)
+				if (triangleSelected.size() != 3)
 					break;
 
 				Point2f triPointOne;
 				Point2f triPointTwo;
 				Point2f triPointThree;
 
-				triPointOne.x = triSelected[0].x;
-				triPointOne.y = triSelected[0].y;
+				triPointOne.x = triangleSelected[0].x;
+				triPointOne.y = triangleSelected[0].y;
 
-				triPointTwo.x = triSelected[1].x;
-				triPointTwo.y = triSelected[1].y;
+				triPointTwo.x = triangleSelected[1].x;
+				triPointTwo.y = triangleSelected[1].y;
 
-				triPointThree.x = triSelected[2].x;
-				triPointThree.y = triSelected[2].y;
+				triPointThree.x = triangleSelected[2].x;
+				triPointThree.y = triangleSelected[2].y;
 
-				if (pointPolygonTest(Mat(pentagon[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(pentagon[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(pentagon[a]), triPointThree, true) > 0){
+				if (pointPolygonTest(Mat(pentagons[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(pentagons[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(pentagons[a]), triPointThree, true) > 0){
 
-					drawingPentagonIndex.push_back(pentagonIndex[a]);
+					allowedPentagonsContourPosition.push_back(pentagonContourPositions[a]);
 
 				}
 
@@ -78,25 +77,25 @@ static vector<int> CheckForPentagons(vector<vector<cv::Point>> pentagon, vector<
 
 	}
 
-	return  drawingPentagonIndex;
+	return  allowedPentagonsContourPosition;
 
 }
 
 
-static vector<int> CheckForRectangles(vector<vector<cv::Point>> rects, vector<vector<cv::Point>> tri, vector<int> rectsIndex)
+static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangles, vector<vector<cv::Point>> triangles, vector<int> rectanglesContourPositions)
 {
 
 	int rectPos;
-	vector<int> drawingrectsIndex;
+	vector<int> allowedRectanglesContourPositions;
 
-	if (rects.size() == rectsIndex.size()){
+	if (rectangles.size() == rectanglesContourPositions.size()){
 
 
-		for (size_t i = 0; i < tri.size(); i++)
+		for (size_t i = 0; i < triangles.size(); i++)
 		{
-			std::vector<cv::Point> triSelected = tri[i];
+			std::vector<cv::Point> triSelected = triangles[i];
 
-			for (size_t a = 0; a < rects.size(); a++)
+			for (size_t a = 0; a < rectangles.size(); a++)
 			{
 
 				if (triSelected.size() != 3)
@@ -115,9 +114,9 @@ static vector<int> CheckForRectangles(vector<vector<cv::Point>> rects, vector<ve
 				triPointThree.x = triSelected[2].x;
 				triPointThree.y = triSelected[2].y;
 
-				if (pointPolygonTest(Mat(rects[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rects[a]), triPointThree, true) > 0){
+				if (pointPolygonTest(Mat(rectangles[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rectangles[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rectangles[a]), triPointThree, true) > 0){
 
-					drawingrectsIndex.push_back(rectsIndex[a]);
+					allowedRectanglesContourPositions.push_back(rectanglesContourPositions[a]);
 
 				}
 
@@ -130,7 +129,7 @@ static vector<int> CheckForRectangles(vector<vector<cv::Point>> rects, vector<ve
 
 	}
 
-	return drawingrectsIndex;
+	return allowedRectanglesContourPositions;
 
 
 }
@@ -169,29 +168,21 @@ static void thresh_callbackdetect3(int, void*)
 {
 	//Drawing and contours 
 	Mat canny_output;
-	vector<vector<Point>> contours;
+	vector<vector<Point> > contours;
 	vector<Vec4i> hierarchy;
 
 	// Finding rects,tris and pentagons
 	std::vector<cv::Point> approx;
 
-
-	typedef HashMap<int, vector<vector<Point>>> IntMap;
-	IntMap rects;
-	IntMap pentagon;
-
-
-
-
-	//vector<vector<cv::Point>> rects;
-	//vector<vector<cv::Point>> pentagon;
-	//vector<int> rectsIndex;
-	//vector<int> pentagonIndex;
-	vector<vector<cv::Point>> tri;
+	vector<vector<cv::Point>> rectangles;
+	vector<vector<cv::Point>> pentagons;
+	vector<int> rectanglesContourPositions;
+	vector<int> pentagonsContourPositions;
+	vector<vector<cv::Point>> triangles;
 
 	//Found correct elements
-	vector<int> drawingrectsIndex;
-	vector<int> drawingPentagonIndex;
+	vector<int> allowedRectanglesContourPositions;
+	vector<int> allowedPentagonsContourPosition;
 
 
 	/// Detect edges using canny
@@ -222,37 +213,34 @@ static void thresh_callbackdetect3(int, void*)
 		// Rectangles
 		if (approx.size() == 4)
 		{
-			rects.insert(IntMap::ValueType(i, contours[i]));
 
-		/*	rects.push_back(contours[i]);
-			rectsIndex.push_back(i);*/
+			rectangles.push_back(contours[i]);
+			rectanglesContourPositions.push_back(i);
 		}
 
 		if (approx.size() == 3)
 		{
-			tri.push_back(approx);
+			triangles.push_back(approx);
 		}
 
 		if (approx.size() == 5)
 		{
-			pentagon.push_back(contours[i]);
-			pentagonIndex.push_back(i);
+			pentagons.push_back(contours[i]);
+			pentagonsContourPositions.push_back(i);
 		}
-
-
 	}
 
 
-	drawingrectsIndex= CheckForRectangles(rects, tri, rectsIndex);
-	drawingPentagonIndex = CheckForPentagons(pentagon, tri, pentagonIndex);
+	allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions);
+	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions);
 
 
 	
 	for (size_t i = 0; i < contours.size(); i++)
 	{
-		for (size_t y = 0; y < drawingrectsIndex.size(); y++)
+		for (size_t y = 0; y < allowedRectanglesContourPositions.size(); y++)
 		{
-			if (drawingrectsIndex[y] == i)
+			if (allowedRectanglesContourPositions[y] == i)
 			{
 
 				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
@@ -260,9 +248,9 @@ static void thresh_callbackdetect3(int, void*)
 			}
 		}
 
-		for (size_t y = 0; y < drawingPentagonIndex.size(); y++)
+		for (size_t y = 0; y < allowedPentagonsContourPosition.size(); y++)
 		{
-			if (drawingPentagonIndex[y] == i)
+			if (allowedPentagonsContourPosition[y] == i)
 			{
 
 				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
