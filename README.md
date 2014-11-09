@@ -18,13 +18,14 @@ It is necessary to add new system environment variables. So do not close the win
   2. Unpack the archive file to e.g. C:\Poco
   3. Navigate to the folder
   4. Open the file "components" and remove "CppUnit", "Data", "Data/SQLite", "Data/ODBC", "Data/MySQL", "Zip"
-  4. Double click build_vs120.cmd -> this command will build the needed files
-  5. Make sure that the folder e.g."C:\Poco" contains a folder "bin" and "lib". 
-  6. Again add a new system environment variable. 
-  7. At system variables press the "new" button and add a variable with name "POCO" and path to "C:\Poco\" (or to your new location) (with "\" at the end!)
-  8. Edit the variable PATH
-  9. Add "C:\Poco\bin" at the end (between the last and the new entry must be a ";"!)
-  8. Poco installation is finished.
+  5. You have to edit the path to your OpenSSL installation in the file "buildwin.cmd", if it is not "C:\OpenSSL"
+  6. Double click build_vs120.cmd -> this command will build the needed files
+  7. Make sure that the folder e.g."C:\Poco" contains a folder "bin" and "lib". 
+  8. Again add a new system environment variable. 
+  9. At system variables press the "new" button and add a variable with name "POCO" and path to "C:\Poco\" (or to your new location) (with "\" at the end!)
+  10. Edit the variable PATH
+  11. Add "C:\Poco\bin" at the end (between the last and the new entry must be a ";"!)
+  12. Poco installation is finished.
 2. Install OpenCV
   1. Download [OpenCV 2.4.9](http://opencv.org/)
   2. Unpack the archive file
