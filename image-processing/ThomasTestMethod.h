@@ -134,6 +134,21 @@ static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangle
 
 }
 
+static void setLabel2(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour)
+{
+	int fontface = cv::FONT_HERSHEY_SIMPLEX;
+	double scale = 0.4;
+	int thickness = 1;
+	int baseline = 0;
+
+	cv::Size text = cv::getTextSize(label, fontface, scale, thickness, &baseline);
+	cv::Rect r = cv::boundingRect(contour);
+
+	cv::Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
+	cv::rectangle(im, pt + cv::Point(0, baseline), pt + cv::Point(text.width, -text.height), CV_RGB(0, 0, 0), CV_FILLED);
+	cv::putText(im, label, pt, fontface, scale, CV_RGB(255, 255, 255), thickness, 8);
+}
+
 /**
 * @function thresh_callback
 */
@@ -159,6 +174,11 @@ static void thresh_callbackdetect2(int, void*)
 	/// Show in a window
 	namedWindow("Contours", WINDOW_AUTOSIZE);
 	imshow("Contours", drawing);
+}
+
+static void calcPosition()
+{
+
 }
 
 /**
@@ -213,7 +233,6 @@ static void thresh_callbackdetect3(int, void*)
 		// Rectangles
 		if (approx.size() == 4)
 		{
-
 			rectangles.push_back(contours[i]);
 			rectanglesContourPositions.push_back(i);
 		}
@@ -245,6 +264,28 @@ static void thresh_callbackdetect3(int, void*)
 
 				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
 				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+
+				cv::Moments mom;
+
+				mom = cv::moments(cv::Mat(contours[i]));
+
+				cv::Point point = Point(mom.m10 / mom.m00, mom.m01 / mom.m00);
+				// draw mass center
+				cv::circle(drawing,point
+					// position of mass center converted to integer
+					,
+					2, cv::Scalar(255, 255, 255), 2);// draw white dot
+
+				
+
+				string xAsString = static_cast<ostringstream*>(&(ostringstream() << point.x))->str();
+				string yAsString = static_cast<ostringstream*>(&(ostringstream() << point.y))->str();
+
+				std::string zeichenkette= "x: " + xAsString + "y: " + yAsString;
+
+				setLabel2(drawing, zeichenkette, contours[i]);
+			
+				
 			}
 		}
 
