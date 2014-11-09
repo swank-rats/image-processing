@@ -12,7 +12,7 @@
 #include <Poco\Net\WebSocket.h>
 #include <Poco\Net\Context.h>
 
-#include "WebSocketClientConnection.h"
+#include "WebSocketClientConnectionHandler.h"
 
 using Poco::Logger;
 using Poco::URI;
@@ -30,7 +30,7 @@ namespace infrastructure {
 			void OpenConnection();
 			void CloseConnection();
 		private:
-			WebSocketClientConnection* connection;
+			WebSocketClientConnectionHandler* connHandler;
 		};
 	}
 }

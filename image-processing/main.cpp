@@ -70,7 +70,6 @@ protected:
 		loadConfiguration();
 		Application::initialize(self);
 
-
 		//accept everything!
 		Poco::SharedPtr<InvalidCertificateHandler> pAcceptCertHandler = new AcceptCertificateHandler(true);
 		context = new Context(Context::CLIENT_USE, "", "", "", Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");

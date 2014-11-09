@@ -48,10 +48,13 @@
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClient.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnection.cpp">
+    <ClCompile Include="ThomasTestMethod.h">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ThomasTestMethod.h">
+    <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\websockets\WebSocketMessage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,7 +95,10 @@
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClient.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnection.h">
+    <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\websockets\WebSocketMessage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
