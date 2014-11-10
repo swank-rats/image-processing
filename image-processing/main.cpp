@@ -166,8 +166,7 @@ private:
 		HelpFormatter helpFormatter(options());
 		helpFormatter.setCommand(commandName());
 		helpFormatter.setUsage("OPTIONS");
-		helpFormatter.setHeader(
-			"Websocket Performance testing client");
+		helpFormatter.setHeader("Websocket Performance testing client");
 		helpFormatter.format(std::cout);
 	}
 	void HandleHelp(const std::string& name, const std::string& value)

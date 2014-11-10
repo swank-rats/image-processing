@@ -11,6 +11,7 @@
 #include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\WebSocket.h>
 #include <Poco\Net\Context.h>
+#include <Poco\NotificationQueue.h>
 
 #include "WebSocketClientConnectionHandler.h"
 
@@ -19,6 +20,7 @@ using Poco::URI;
 using Poco::Net::HTTPSClientSession;
 using Poco::Net::Context;
 using Poco::Net::WebSocket;
+using Poco::NotificationQueue;
 
 
 namespace infrastructure {
@@ -29,8 +31,10 @@ namespace infrastructure {
 			WebSocketClient(URI uri, Context::Ptr context);
 			void OpenConnection();
 			void CloseConnection();
+			void Send(WebSocketMessage message);
 		private:
 			WebSocketClientConnectionHandler* connHandler;
+			NotificationQueue queue;
 		};
 	}
 }

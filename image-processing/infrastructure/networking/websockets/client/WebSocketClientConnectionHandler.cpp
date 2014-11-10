@@ -8,19 +8,20 @@
 #include <string>
 #include <Poco\Logger.h>
 #include <Poco\Exception.h>
+#include <Poco\AutoPtr.h>
 #include <Poco\Net\HTTPRequest.h>
 #include <Poco\Net\HTTPMessage.h>
 #include <Poco\Net\HTTPResponse.h>
 #include <Poco\Net\HTTPCredentials.h>
 
 #include "WebSocketClientConnectionHandler.h"
-#include "..\WebSocketMessage.h"
 
 using std::string;
 using Poco::Logger;
 using Poco::URI;
 using Poco::TimeoutException;
 using Poco::Exception;
+using Poco::AutoPtr;
 using Poco::Net::HTTPMessage;
 using Poco::Net::HTTPRequest;
 using Poco::Net::HTTPResponse;
@@ -31,9 +32,9 @@ using infrastructure::websocket::WebSocketMessage;
 namespace infrastructure {
 	namespace websocket {
 
-		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context)
-			: uri(uri), context(context), receiveActity(this, &WebSocketClientConnectionHandler::Listen),
-			session(uri.getHost(), uri.getPort(), context), webSocket(nullptr), timeout(1000)
+		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue& queue)
+			: uri(uri), context(context), session(uri.getHost(), uri.getPort(), context), webSocket(nullptr), timeout(1000), queue(queue),
+			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send)
 		{
 		}
 
@@ -62,6 +63,7 @@ namespace infrastructure {
 
 					logger.information("Connection established");
 					receiveActity.start();
+					sendActity.start();
 				}
 			}
 			catch (Exception& e) {
@@ -77,8 +79,10 @@ namespace infrastructure {
 					receiveActity.stop();
 					receiveActity.wait();
 				}
-				else {
-					logger.information("websocket activity was not running");
+
+				if (sendActity.isRunning()) {
+					sendActity.stop();
+					sendActity.wait();
 				}
 
 				if (session.connected()) {
@@ -90,11 +94,48 @@ namespace infrastructure {
 			}
 		}
 
-		void WebSocketClientConnectionHandler::Send(WebSocketMessage &message) {
-			//TODO since this should be done async and the response should be evaluated 
-			//add event,.. for notification of success/failure
-			//run in own task
+		void WebSocketClientConnectionHandler::Send() {
+			Logger& logger = Logger::get("WebSocketClient");
+			int flags = WebSocket::FRAME_TEXT;
+			int length;
+			const char* buffer;
+
+			while (!sendActity.isStopped()) {
+				AutoPtr<Notification> notification(queue.waitDequeueNotification());
+
+				while (notification)
+				{
+					WebSocketMessageNotification* messageNotification = dynamic_cast<WebSocketMessageNotification*>(notification.get());
+					if (messageNotification)
+					{
+						try {
+							//TODO WTF WHY DOES buffer = messageNotification->GetData().ToString().c_str() NOT WORK??
+							string temp = messageNotification->GetData().ToString();
+							buffer = temp.c_str();
+
+							length = webSocket->sendFrame(buffer, sizeof(buffer), flags);
+
+							logger.information((length > 0) ? "message send!" : "message send failed");
+						}
+						catch (TimeoutException) {
+							logger.error("send failed cause of timeout");
+						}
+						catch (Exception& e)
+						{
+							logger.error(e.displayText());
+
+							if (!session.connected()) {
+								logger.error("Connection was closed!");
+								break;
+							}
+						}
+					}
+
+					notification = queue.waitDequeueNotification();
+				}
+			}
 		}
+
 
 		void WebSocketClientConnectionHandler::Listen() {
 			Logger& logger = Logger::get("WebSocketClient");

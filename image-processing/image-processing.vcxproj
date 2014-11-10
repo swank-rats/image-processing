@@ -127,12 +127,12 @@
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClient.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp" />
     <ClCompile Include="ThomasTestMethod.h" />
-    <ClCompile Include="infrastructure\networking\websockets\WebSocketMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h" />
     <ClInclude Include="controller\VideoStreamingController.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h" />
+    <ClInclude Include="infrastructure\networking\websockets\client\WebSocketMessage.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />
     <ClInclude Include="services\videostreaming\webcam\WebcamService.h" />
     <ClInclude Include="shared\observer\IObserver.h" />
@@ -143,7 +143,6 @@
     <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.h" />
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClient.h" />
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.h" />
-    <ClInclude Include="infrastructure\networking\websockets\WebSocketMessage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>

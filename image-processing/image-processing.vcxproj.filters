@@ -54,9 +54,6 @@
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\WebSocketMessage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
@@ -98,7 +95,7 @@
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\WebSocketMessage.h">
+    <ClInclude Include="infrastructure\networking\websockets\client\WebSocketMessage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
