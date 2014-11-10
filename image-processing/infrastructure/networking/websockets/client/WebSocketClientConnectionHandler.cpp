@@ -113,7 +113,7 @@ namespace infrastructure {
 							string temp = messageNotification->GetData().ToString();
 							buffer = temp.c_str();
 
-							length = webSocket->sendFrame(buffer, sizeof(buffer), flags);
+							length = webSocket->sendFrame(buffer, temp.length(), flags);
 
 							logger.information((length > 0) ? "message send!" : "message send failed");
 						}

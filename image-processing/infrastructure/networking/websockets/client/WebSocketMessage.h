@@ -15,7 +15,6 @@
 #include <Poco\Notification.h>
 
 using std::string;
-using std::endl;
 using std::stringstream;
 using std::vector;
 using Poco::JSON::Parser;
@@ -48,9 +47,9 @@ namespace infrastructure {
 				stringstream stream;
 
 				stream << "{";
-				stream << "\"to\":\"" << to << "\"," << endl;
-				stream << "\"cmd\":\"" << cmd << "\"," << endl;
-				stream << "\"params\": {" << endl;
+				stream << "\"to\":\"" << to << "\",\n";
+				stream << "\"cmd\":\"" << cmd << "\",\n";
+				stream << "\"params\": {\n";
 
 				StringMap::Iterator iter = params->begin();
 				while (iter != params->end())
@@ -59,12 +58,15 @@ namespace infrastructure {
 
 					++iter;
 
-					stream << (iter == params->end()) ? "" : ",";
-					stream << endl;
+					if (iter != params->end()) {
+						stream << ",";
+					}
+
+					stream << "\n";
 				}
 
-				stream << "}," << endl;
-				stream << "\"data\":\"" << data << "\"" << endl;
+				stream << "},\n";
+				stream << "\"data\":\"" << data << "\"\n";
 				stream << "}";
 
 				return stream.str();
