@@ -3,7 +3,7 @@ Image processing
 
 Installation and project setup
 -------------------
-To get this project running you need [OpenCV 2.4.9](http://opencv.org/) and [Poco C++ Libraries 1.4.7](http://pocoproject.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. 
+To get this project running you need [OpenCV 2.4.9](http://opencv.org/) and [Poco C++ Libraries 1.5.4](http://pocoproject.org/). We developed on Windows 7 by using Visual Studio 2013 as IDE and the Microsoft Visual C++ Compiler 18.00.21005.1 for x86 platform. The installation instructions are for Visual Studio 2013 and Windows. 
 
 It is necessary to add new system environment variables. So do not close the window, if you have opened it during the installation process.
 
@@ -14,7 +14,7 @@ It is necessary to add new system environment variables. So do not close the win
   4. At system variables press the "new" button and add a variable with name "OPENSSL" and path to e.g. "C:\OpenSSL\" (or to your new location) (with "\" at the end!)
   5. OpenSSL installation is finished
 2. Install Poco C++ Libraries
-  1. Download [Poco C++ Libraries 1.4.7 Complete Edition](http://pocoproject.org/download/index.html)
+  1. Download [Poco C++ Libraries 1.5.4 (development version) all](http://pocoproject.org/download/index.html) - [direct link - download poco-1.5.4-all.zip](http://pocoproject.org/releases/poco-1.5.4/)
   2. Unpack the archive file to e.g. C:\Poco
   3. Navigate to the folder
   4. Open the file "components" and remove "CppUnit", "Data", "Data/SQLite", "Data/ODBC", "Data/MySQL", "Zip"
@@ -38,8 +38,10 @@ It is necessary to add new system environment variables. So do not close the win
 3. Clone this repository
 4. Open the solution with VS 2013
 5. Build the project
-6. Finish!
-  
+6. Click right on the solution and go to -> properties -> debugging -> additional command line parameters
+7. add /uri=ws://127.0.0.1:3001/ where the IP and port should be the address of the NodeJS server
+6. Finish - now you can run the application!
+
 Troubleshooting
 -------------------
   * [OpenCV: install instructions windows](http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-installation)
