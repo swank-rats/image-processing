@@ -58,7 +58,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Thomas|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(POCO)\Foundation\include;$(POCO)\Crypto\include;$(POCO)\NetSSL_OpenSSL\include;$(POCO)\Net\include;$(POCO)\XML\include;$(POCO)\Util\include;$(OPENSSL)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(POCO)\Foundation\include;$(POCO)\Crypto\include;$(POCO)\NetSSL_OpenSSL\include;$(POCO)\Net\include;$(POCO)\XML\include;$(POCO)\Util\include;$(OPENSSL)\include;$(POCO)\JSON\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -93,7 +93,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OPENCV)\x86\vc12\lib;$(POCO)\lib;$(OPENSSL)\lib\VC;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_calib3d249d.lib;opencv_contrib249d.lib;opencv_core249d.lib;opencv_features2d249d.lib;opencv_flann249d.lib;opencv_gpu249d.lib;opencv_highgui249d.lib;opencv_imgproc249d.lib;opencv_legacy249d.lib;opencv_ml249d.lib;opencv_nonfree249d.lib;opencv_objdetect249d.lib;opencv_photo249d.lib;opencv_stitching249d.lib;opencv_superres249d.lib;opencv_ts249d.lib;opencv_video249d.lib;opencv_videostab249d.lib;PocoCryptod.lib;PocoFoundationd.lib;PocoNetd.lib;PocoNetSSLd.lib;PocoUtild.lib;PocoXMLd.lib;libeay32MDd.lib;ssleay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_calib3d249d.lib;opencv_contrib249d.lib;opencv_core249d.lib;opencv_features2d249d.lib;opencv_flann249d.lib;opencv_gpu249d.lib;opencv_highgui249d.lib;opencv_imgproc249d.lib;opencv_legacy249d.lib;opencv_ml249d.lib;opencv_nonfree249d.lib;opencv_objdetect249d.lib;opencv_photo249d.lib;opencv_stitching249d.lib;opencv_superres249d.lib;opencv_ts249d.lib;opencv_video249d.lib;opencv_videostab249d.lib;PocoCryptod.lib;PocoFoundationd.lib;PocoNetd.lib;PocoNetSSLd.lib;PocoUtild.lib;PocoXMLd.lib;PocoJSONd.lib;libeay32MDd.lib;ssleay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
