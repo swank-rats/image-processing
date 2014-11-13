@@ -33,11 +33,12 @@ static RNG rngdetect2;
 
 
 
-static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons, vector<vector<cv::Point>> triangles, vector<int> pentagonContourPositions)
+static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons, vector<vector<cv::Point>> triangles, vector<int> pentagonContourPositions, vector<int> triangleContourPositions, vector<int> *allowedTriangles)
 {
 
 	int pentagonPos;
 	vector<int> allowedPentagonsContourPosition;
+	bool found = false;
 
 	if (pentagons.size() == pentagonContourPositions.size()){
 
@@ -68,11 +69,16 @@ static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons,
 				if (pointPolygonTest(Mat(pentagons[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(pentagons[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(pentagons[a]), triPointThree, true) > 0){
 
 					allowedPentagonsContourPosition.push_back(pentagonContourPositions[a]);
-
+					allowedTriangles->push_back(triangleContourPositions[i]);
+					found = true;
+					break;
 				}
 
 
 			}
+
+			if (found)
+				break;
 		}
 
 	}
@@ -82,11 +88,12 @@ static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons,
 }
 
 
-static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangles, vector<vector<cv::Point>> triangles, vector<int> rectanglesContourPositions)
+static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangles, vector<vector<cv::Point>> triangles, vector<int> rectanglesContourPositions, vector<int> triangleContourPositions, vector<int> *allowedTriangles)
 {
 
 	int rectPos;
 	vector<int> allowedRectanglesContourPositions;
+	bool found = false;
 
 	if (rectangles.size() == rectanglesContourPositions.size()){
 
@@ -117,12 +124,16 @@ static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangle
 				if (pointPolygonTest(Mat(rectangles[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rectangles[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rectangles[a]), triPointThree, true) > 0){
 
 					allowedRectanglesContourPositions.push_back(rectanglesContourPositions[a]);
-
+					allowedTriangles->push_back(triangleContourPositions[i]);
+					found = true;
+					break;
 				}
 
 
 			}
 
+			if (found)
+				break;
 
 		}
 
@@ -199,14 +210,20 @@ static void thresh_callbackdetect3(int, void*)
 	vector<int> rectanglesContourPositions;
 	vector<int> pentagonsContourPositions;
 	vector<vector<cv::Point>> triangles;
+	vector<int> trianglePositions;
 
 	//Found correct elements
 	vector<int> allowedRectanglesContourPositions;
 	vector<int> allowedPentagonsContourPosition;
+	vector<int> allowedTriangles;
 
+	//dilate(src_graydetect2, src_graydetect2, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
 	/// Detect edges using canny
 	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+
+
+
 	/// Find contours
 	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
 
@@ -240,6 +257,7 @@ static void thresh_callbackdetect3(int, void*)
 		if (approx.size() == 3)
 		{
 			triangles.push_back(approx);
+			trianglePositions.push_back(i);
 		}
 
 		if (approx.size() == 5)
@@ -250,11 +268,11 @@ static void thresh_callbackdetect3(int, void*)
 	}
 
 
-	allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions);
-	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions);
+	allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions, trianglePositions, &allowedTriangles);
+	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTriangles);
 
 
-	
+
 	for (size_t i = 0; i < contours.size(); i++)
 	{
 		for (size_t y = 0; y < allowedRectanglesContourPositions.size(); y++)
@@ -271,21 +289,21 @@ static void thresh_callbackdetect3(int, void*)
 
 				cv::Point point = Point(mom.m10 / mom.m00, mom.m01 / mom.m00);
 				// draw mass center
-				cv::circle(drawing,point
+				cv::circle(drawing, point
 					// position of mass center converted to integer
 					,
 					2, cv::Scalar(255, 255, 255), 2);// draw white dot
 
-				
+
 
 				string xAsString = static_cast<ostringstream*>(&(ostringstream() << point.x))->str();
 				string yAsString = static_cast<ostringstream*>(&(ostringstream() << point.y))->str();
 
-				std::string zeichenkette= "x: " + xAsString + "y: " + yAsString;
+				std::string zeichenkette = "x: " + xAsString + " y: " + yAsString;
 
 				setLabel2(drawing, zeichenkette, contours[i]);
-			
-				
+
+
 			}
 		}
 
@@ -296,8 +314,46 @@ static void thresh_callbackdetect3(int, void*)
 
 				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
 				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+
+
+				cv::Moments mom;
+
+				mom = cv::moments(cv::Mat(contours[i]));
+
+				cv::Point point = Point(mom.m10 / mom.m00, mom.m01 / mom.m00);
+				// draw mass center
+				cv::circle(drawing, point
+					// position of mass center converted to integer
+					,
+					2, cv::Scalar(255, 255, 255), 2);// draw white dot
+
+
+
+				string xAsString = static_cast<ostringstream*>(&(ostringstream() << point.x))->str();
+				string yAsString = static_cast<ostringstream*>(&(ostringstream() << point.y))->str();
+
+				std::string zeichenkette = "x: " + xAsString + " y: " + yAsString;
+
+				setLabel2(drawing, zeichenkette, contours[i]);
+
 			}
+
+
+			for (size_t y = 0; y < allowedTriangles.size(); y++)
+			{
+				if (allowedTriangles[y] == i)
+				{
+
+					Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+					drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+
+				}
+			}
+
+
 		}
+
+
 
 	}
 
@@ -309,8 +365,6 @@ static void thresh_callbackdetect3(int, void*)
 	namedWindow("Contours", WINDOW_AUTOSIZE);
 	imshow("Contours", drawing);
 }
-
-
 
 /**
 * Helper function to find a cosine of angle between vectors
@@ -324,6 +378,7 @@ static double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0)
 	double dy2 = pt2.y - pt0.y;
 	return (dx1*dx2 + dy1*dy2) / sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
 }
+
 
 class ThomasTest{
 public:
@@ -533,18 +588,36 @@ public:
 
 		CvCapture* capture = cvCaptureFromCAM(0);
 
+
 		while (true)
 		{
 			srcdetect2 = cvQueryFrame(capture);
 
-			/// Convert image to gray and blur it
+
+			////Grayscale matrix
+			//cv::Mat grayscaleMat(srcdetect2.size(), CV_8U);
+
+			////Convert BGR to Gray
+			//cv::cvtColor(srcdetect2, grayscaleMat, CV_BGR2GRAY);
+
+			////Binary image
+			//cv::Mat binaryMat(grayscaleMat.size(), grayscaleMat.type());
+
+			////Apply thresholding
+			//cv::threshold(grayscaleMat, binaryMat, 100, 255, cv::THRESH_BINARY);
+
+			//src_graydetect2 = binaryMat;
+
+			///// Convert image to gray and blur it
+			//cvtColor(srcdetect2, src_graydetect2, CV_BGR2GRAY);
+
 			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
 			blur(src_graydetect2, src_graydetect2, Size(3, 3));
 
 			/// Create Window
 			const char* source_window = "Source";
 			namedWindow(source_window, WINDOW_AUTOSIZE);
-			imshow(source_window, srcdetect2);
+			imshow(source_window, src_graydetect2);
 
 			//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
 			//thresh_callbackdetect2(0, 0);
@@ -757,4 +830,102 @@ public:
 
 
 	}
+
+	void Test5(){
+
+		CvCapture* capture = cvCaptureFromCAM(0);
+
+		Mat src;
+
+		while (true)
+		{
+			src = cvQueryFrame(capture);
+
+
+			// Convert to grayscale
+			cv::Mat gray;
+			cv::cvtColor(src, gray, CV_BGR2GRAY);
+
+			// Use Canny instead of threshold to catch squares with gradient shading
+			cv::Mat bw;
+			cv::Canny(gray, bw, 0, 50, 5);
+
+			// Find contours
+			std::vector<std::vector<cv::Point> > contours;
+			cv::findContours(bw.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+
+			std::vector<cv::Point> approx;
+			cv::Mat dst = src.clone();
+
+			for (int i = 0; i < contours.size(); i++)
+			{
+				// Approximate contour with accuracy proportional
+				// to the contour perimeter
+				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
+
+				// Skip small or non-convex objects 
+				if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+					continue;
+
+				if (approx.size() == 3)
+				{
+					setLabel(dst, "TRI", contours[i]);    // Triangles
+				}
+				else if (approx.size() >= 4 && approx.size() <= 6)
+				{
+					// Number of vertices of polygonal curve
+					int vtc = approx.size();
+
+					// Get the cosines of all corners
+					std::vector<double> cos;
+					for (int j = 2; j < vtc + 1; j++)
+						cos.push_back(angle(approx[j%vtc], approx[j - 2], approx[j - 1]));
+
+					// Sort ascending the cosine values
+					std::sort(cos.begin(), cos.end());
+
+					// Get the lowest and the highest cosine
+					double mincos = cos.front();
+					double maxcos = cos.back();
+
+					// Use the degrees obtained above and the number of vertices
+					// to determine the shape of the contour
+					if (vtc == 4 && mincos >= -0.1 && maxcos <= 0.3)
+						setLabel(dst, "RECT", contours[i]);
+					else if (vtc == 5 && mincos >= -0.34 && maxcos <= -0.27)
+						setLabel(dst, "PENTA", contours[i]);
+					else if (vtc == 6 && mincos >= -0.55 && maxcos <= -0.45)
+						setLabel(dst, "HEXA", contours[i]);
+				}
+				else
+				{
+					// Detect and label circles
+					double area = cv::contourArea(contours[i]);
+					cv::Rect r = cv::boundingRect(contours[i]);
+					int radius = r.width / 2;
+
+					if (std::abs(1 - ((double)r.width / r.height)) <= 0.2 &&
+						std::abs(1 - (area / (CV_PI * std::pow(radius, 2)))) <= 0.2)
+						setLabel(dst, "CIR", contours[i]);
+				}
+			}
+
+			cv::imshow("src", src);
+			cv::imshow("dst", dst);
+
+
+			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+			{
+
+				break;
+			}
+		}
+
+		//cleaning up
+		cvDestroyAllWindows();
+
+
+
+	}
+
 };
