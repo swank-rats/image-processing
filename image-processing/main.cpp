@@ -188,6 +188,7 @@ private:
 		//th.DetectConture();
 		th.DetectConture2();
 		//DetectConture3();
+		//th.Test5();
 	}
 };
 
