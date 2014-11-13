@@ -15,9 +15,9 @@ using Poco::Net::MultipartWriter;
 namespace infrastructure {
 	namespace video_streaming {
 
-		VideoStreamingRequestHandler::VideoStreamingRequestHandler(WebcamServicePtr webcamService) : webcamService(webcamService)
-		{
-		}
+		VideoStreamingRequestHandler::VideoStreamingRequestHandler(WebcamServicePtr webcamService) : webcamService(webcamService) { }
+
+		VideoStreamingRequestHandler::~VideoStreamingRequestHandler() { }
 
 		void VideoStreamingRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response) {
 			static std::vector<int> params = { CV_IMWRITE_JPEG_QUALITY, 30 };

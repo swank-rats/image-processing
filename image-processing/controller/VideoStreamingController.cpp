@@ -13,6 +13,11 @@ namespace controller {
 			streamingServer = new VideoStreamingServer(4711, "/videostream", webcamService);
 		}
 
+		VideoStreamingController::~VideoStreamingController() {
+			delete streamingServer;
+			streamingServer = nullptr;
+		}
+
 		void VideoStreamingController::StartStreamingServer() {
 			streamingServer->StartServer();
 		}

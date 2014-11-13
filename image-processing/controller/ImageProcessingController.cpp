@@ -31,6 +31,7 @@ namespace controller {
 
 		ImageProcessingController::~ImageProcessingController()
 		{
+			delete detectService;
 			detectService = nullptr;	
 		}
 

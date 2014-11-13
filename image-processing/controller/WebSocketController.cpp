@@ -12,6 +12,11 @@ namespace controller {
 		{
 		}
 
+		WebSocketController::~WebSocketController() {
+			delete webSocketClient;
+			webSocketClient = nullptr;
+		}
+
 		void WebSocketController::StartWebSocketClient() {
 			webSocketClient->OpenConnection();
 		}

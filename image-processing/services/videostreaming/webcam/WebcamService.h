@@ -28,7 +28,7 @@ namespace services {
 		class WebcamService : public Observable<WebcamService>, public std::enable_shared_from_this < WebcamService > {
 		public:
 			WebcamService();
-
+			~WebcamService();
 			/*
 			 * This method will start the recording from the webcam
 			 * Returns true if starting was successful, false otherwise

@@ -30,13 +30,18 @@ namespace infrastructure {
 		struct WebSocketMessage
 		{
 		public:
-			WebSocketMessage(const string& to, const string& cmd, StringMap *params = new StringMap(), const string& data = 0)
+			WebSocketMessage(const string& cmd, const string& to = 0, StringMap *params = new StringMap(), const string& data = 0)
 				: to(to), cmd(cmd), data(data) {
 
 				this->params = params == nullptr ? new StringMap() : params;
 			}
 
 			WebSocketMessage(const WebSocketMessage& msg) :to(msg.to), cmd(msg.cmd), params(msg.params), data(msg.data) {
+			}
+
+			~WebSocketMessage() {
+				delete params;
+				params = nullptr;
 			}
 
 			void AddParam(const string& key, const string& value) {
@@ -47,26 +52,40 @@ namespace infrastructure {
 				stringstream stream;
 
 				stream << "{";
-				stream << "\"to\":\"" << to << "\",\n";
-				stream << "\"cmd\":\"" << cmd << "\",\n";
-				stream << "\"params\": {\n";
-
-				StringMap::Iterator iter = params->begin();
-				while (iter != params->end())
-				{
-					stream << "\"" << iter->first << "\":" << "\"" << iter->second << "\"";
-
-					++iter;
-
-					if (iter != params->end()) {
-						stream << ",";
-					}
-
-					stream << "\n";
+				if (!to.empty()) {
+					stream << "\"to\":\"" << to << "\",\n";
 				}
 
-				stream << "},\n";
-				stream << "\"data\":\"" << data << "\"\n";
+				if (cmd.empty()) {
+					//TODO ERROR!
+				}
+
+				stream << "\"cmd\":\"" << cmd << "\",\n";
+
+				if (!params->empty()) {
+					stream << "\"params\": {\n";
+
+					StringMap::Iterator iter = params->begin();
+					while (iter != params->end())
+					{
+						stream << "\"" << iter->first << "\":" << "\"" << iter->second << "\"";
+
+						++iter;
+
+						if (iter != params->end()) {
+							stream << ",";
+						}
+
+						stream << "\n";
+					}
+
+					stream << "},\n";
+				}
+
+				if (!data.empty()) {
+					stream << "\"data\":\"" << data << "\"\n";
+				}
+
 				stream << "}";
 
 				return stream.str();
@@ -110,16 +129,21 @@ namespace infrastructure {
 		class WebSocketMessageNotification : public Notification
 		{
 		public:
-			WebSocketMessageNotification(WebSocketMessage data) : data(data) {
+			WebSocketMessageNotification(WebSocketMessage* data) : data(data) {
 			}
 
-			WebSocketMessage GetData()
+			~WebSocketMessageNotification() {
+				delete data;
+				data = nullptr;
+			}
+
+			WebSocketMessage* GetData()
 			{
 				return data;
 			}
 
 		private:
-			WebSocketMessage data;
+			WebSocketMessage* data;
 		};
 	}
 }

@@ -33,13 +33,27 @@ namespace infrastructure {
 	namespace websocket {
 
 		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue& queue)
-			: uri(uri), context(context), session(uri.getHost(), uri.getPort(), context), webSocket(nullptr), timeout(1000), queue(queue),
-			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send)
-		{
+			: uri(uri), context(context), session(uri.getHost(), uri.getPort(), context), webSocket(nullptr), timeout(1000), sendingQueue(queue),
+			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
+			receivedQueue(NotificationQueue()) {
+		}
+
+		WebSocketClientConnectionHandler::~WebSocketClientConnectionHandler() {
+			if (IsConnected()) {
+				CloseConnection();
+			}
+
+			delete webSocket;
+			webSocket = nullptr;
 		}
 
 		URI WebSocketClientConnectionHandler::GetURI() {
 			return uri;
+		}
+
+		const NotificationQueue& WebSocketClientConnectionHandler::GetReceivedMessagesQueues() {
+			//TODO handle received messages
+			return receivedQueue;
 		}
 
 		void WebSocketClientConnectionHandler::OpenConnection() {
@@ -94,6 +108,10 @@ namespace infrastructure {
 			}
 		}
 
+		bool WebSocketClientConnectionHandler::IsConnected() {
+			return session.connected();
+		}
+
 		void WebSocketClientConnectionHandler::Send() {
 			Logger& logger = Logger::get("WebSocketClient");
 			int flags = WebSocket::FRAME_TEXT;
@@ -101,7 +119,7 @@ namespace infrastructure {
 			const char* buffer;
 
 			while (!sendActity.isStopped()) {
-				AutoPtr<Notification> notification(queue.waitDequeueNotification());
+				AutoPtr<Notification> notification(sendingQueue.waitDequeueNotification());
 
 				while (notification)
 				{
@@ -110,7 +128,7 @@ namespace infrastructure {
 					{
 						try {
 							//TODO WTF WHY DOES buffer = messageNotification->GetData().ToString().c_str() NOT WORK??
-							string temp = messageNotification->GetData().ToString();
+							string temp = messageNotification->GetData()->ToString();
 							buffer = temp.c_str();
 
 							length = webSocket->sendFrame(buffer, temp.length(), flags);
@@ -131,16 +149,15 @@ namespace infrastructure {
 						}
 					}
 
-					notification = queue.waitDequeueNotification();
+					notification = sendingQueue.waitDequeueNotification();
 				}
 			}
 		}
 
-
 		void WebSocketClientConnectionHandler::Listen() {
 			Logger& logger = Logger::get("WebSocketClient");
 
-			char buffer[1024];
+			char buffer[1024]; //TODO set correct buffer size
 			int flags = WebSocket::FRAME_TEXT;
 			int length;
 
@@ -153,7 +170,7 @@ namespace infrastructure {
 							string receivedMessage = string(buffer, length);
 							logger.information(receivedMessage);
 							WebSocketMessage* message = WebSocketMessage::Parse(receivedMessage);
-							//TODO notify WebSocketClient about new received message
+							receivedQueue.enqueueNotification(new WebSocketMessageNotification(message));
 						}
 						else {
 							logger.error("Connection was closed by server!");

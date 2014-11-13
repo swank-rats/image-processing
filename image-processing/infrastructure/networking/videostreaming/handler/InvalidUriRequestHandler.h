@@ -21,6 +21,7 @@ namespace infrastructure {
 		{
 		public:
 			InvalidUriRequestHandler();
+			~InvalidUriRequestHandler();
 			void handleRequest(HTTPServerRequest& request,HTTPServerResponse& response);
 		};
 	}

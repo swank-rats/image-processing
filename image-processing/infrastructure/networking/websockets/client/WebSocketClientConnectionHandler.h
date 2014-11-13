@@ -17,7 +17,6 @@
 #include <Poco\Activity.h>
 #include <Poco\NotificationQueue.h>
 
-
 #include "WebSocketMessage.h"
 
 using Poco::Logger;
@@ -38,9 +37,12 @@ namespace infrastructure {
 		{
 		public:
 			WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue& queue);
+			~WebSocketClientConnectionHandler();
 			URI GetURI();
 			void OpenConnection();
 			void CloseConnection();
+			bool IsConnected();
+			const NotificationQueue& GetReceivedMessagesQueues();
 		private:
 			URI uri;
 			Context::Ptr context;
@@ -49,7 +51,8 @@ namespace infrastructure {
 			HTTPSClientSession session;
 			WebSocket* webSocket;
 			Timespan timeout;
-			NotificationQueue& queue;
+			NotificationQueue& sendingQueue;
+			NotificationQueue& receivedQueue;
 
 			void Listen();
 			void Send();

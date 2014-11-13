@@ -23,6 +23,7 @@ namespace infrastructure {
 		{
 		public:
 			VideoStreamingRequestHandler(WebcamServicePtr webcamService);
+			~VideoStreamingRequestHandler();
 			void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
 		private:
 			WebcamServicePtr webcamService;

@@ -23,6 +23,7 @@ namespace infrastructure {
 		{
 		public:
 			VideoStreamingRequestHandlerFactory(WebcamServicePtr webcamService, const string& uri);
+			~VideoStreamingRequestHandlerFactory();
 			HTTPRequestHandler* createRequestHandler(const HTTPServerRequest& request);
 		private:
 			WebcamServicePtr webcamService;

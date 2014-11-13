@@ -22,19 +22,22 @@ using Poco::Net::Context;
 using Poco::Net::WebSocket;
 using Poco::NotificationQueue;
 
-
 namespace infrastructure {
 	namespace websocket {
 		class WebSocketClient
 		{
 		public:
 			WebSocketClient(URI uri, Context::Ptr context);
+			~WebSocketClient();
 			void OpenConnection();
 			void CloseConnection();
-			void Send(WebSocketMessage message);
+			bool IsConnected();
+			void Send(WebSocketMessage* message);
 		private:
 			WebSocketClientConnectionHandler* connHandler;
 			NotificationQueue queue;
+
+			void Echo();
 		};
 	}
 }

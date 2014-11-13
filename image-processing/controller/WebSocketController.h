@@ -20,6 +20,7 @@ namespace controller {
 		{
 		public:
 			WebSocketController(URI uri, Context::Ptr context);
+			~WebSocketController();
 			void StartWebSocketClient();
 			void StopWebSocketClient();
 		private:

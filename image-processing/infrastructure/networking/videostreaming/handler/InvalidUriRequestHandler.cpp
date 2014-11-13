@@ -10,10 +10,9 @@ using Poco::Net::HTTPResponse;
 
 namespace infrastructure {
 	namespace video_streaming {
-		InvalidUriRequestHandler::InvalidUriRequestHandler()
-		{
-		}
+		InvalidUriRequestHandler::InvalidUriRequestHandler() { }
 
+		InvalidUriRequestHandler::~InvalidUriRequestHandler() { }
 
 		void InvalidUriRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response) {
 			Logger& logger = Logger::get("InvalidUriRequestHandler");

@@ -26,7 +26,16 @@ namespace infrastructure {
 
 			server = new HTTPServer(new VideoStreamingRequestHandlerFactory(webcamService, uri), threadPool, socket, pParams);
 			logger.information("init videostreaming server at port " + socket.address().port());
+		}
 
+		VideoStreamingServer::~VideoStreamingServer() {
+			if (server->currentConnections() > 0) {
+				//TODO check if this will cause an exception
+				server->stopAll();
+			}
+
+			delete server;
+			server = nullptr;
 		}
 
 		void VideoStreamingServer::StartServer()
@@ -41,7 +50,7 @@ namespace infrastructure {
 			Logger& logger = Logger::get("VideoStreamingServer");
 
 			logger.information("stopping video streaming server");
-			server->stop();
+			server->stopAll();
 			threadPool.stopAll();
 			logger.information("stopped video streaming server");
 		}

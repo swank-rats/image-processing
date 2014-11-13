@@ -9,6 +9,8 @@ namespace infrastructure {
 		{
 		}
 
+		VideoStreamingRequestHandlerFactory::~VideoStreamingRequestHandlerFactory() { }
+
 		HTTPRequestHandler* VideoStreamingRequestHandlerFactory::createRequestHandler(const HTTPServerRequest& request) {
 			if (request.getURI() == uri) {
 				return new VideoStreamingRequestHandler(webcamService);

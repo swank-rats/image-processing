@@ -22,24 +22,32 @@ using infrastructure::websocket::StringMap;
 
 namespace infrastructure {
 	namespace websocket {
-		WebSocketClient::WebSocketClient(URI uri, Context::Ptr context) : 
-			connHandler(new WebSocketClientConnectionHandler(uri, context, queue))
+		WebSocketClient::WebSocketClient(URI uri, Context::Ptr context)
+			: connHandler(new WebSocketClientConnectionHandler(uri, context, queue))
 		{
 		}
 
+		WebSocketClient::~WebSocketClient() {
+			if (connHandler->IsConnected()) {
+				connHandler->CloseConnection();
+			}
+
+			delete connHandler;
+			connHandler = nullptr;
+		}
+		
 		void WebSocketClient::OpenConnection() {
 			connHandler->OpenConnection();
-
-			StringMap* map = new StringMap();
-			map->insert(StringMap::ValueType("param1", "test"));
-			Send(WebSocketMessage("t", "c", map, "d"));
 		}
 
 		void WebSocketClient::CloseConnection() {
 			connHandler->CloseConnection();
 		}
+		bool WebSocketClient::IsConnected() {
+			return connHandler->IsConnected();
+		}
 
-		void WebSocketClient::Send(WebSocketMessage message) {
+		void WebSocketClient::Send(WebSocketMessage* message) {
 			queue.enqueueNotification(new WebSocketMessageNotification(message));
 		}
 	}

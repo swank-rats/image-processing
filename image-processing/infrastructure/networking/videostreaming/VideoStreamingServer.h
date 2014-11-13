@@ -28,6 +28,7 @@ namespace infrastructure {
 		{
 		public:
 			VideoStreamingServer(unsigned short port, const string& uri, WebcamServicePtr webcamService);
+			~VideoStreamingServer();
 			void StartServer();
 			void StopServer();
 		private:

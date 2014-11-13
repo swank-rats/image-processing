@@ -13,6 +13,16 @@ namespace services {
 		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
 		}
 
+		WebcamService::~WebcamService() {
+			if (recordingActivity.isRunning()) {
+				StopRecording();
+			}
+
+			if (capture.isOpened()) {
+				capture.release();
+			}
+		}
+
 		bool WebcamService::StartRecording() {
 			Logger& logger = Logger::get("WebcamService");
 
