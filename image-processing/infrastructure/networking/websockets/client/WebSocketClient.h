@@ -12,15 +12,20 @@
 #include <Poco\Net\WebSocket.h>
 #include <Poco\Net\Context.h>
 #include <Poco\NotificationQueue.h>
+#include <Poco\Activity.h>
+
 
 #include "WebSocketClientConnectionHandler.h"
+//#include "..\..\..\..\controller\WebSocketController.h"
 
 using Poco::Logger;
 using Poco::URI;
+using Poco::NotificationQueue;
+using Poco::Activity;
 using Poco::Net::HTTPSClientSession;
 using Poco::Net::Context;
 using Poco::Net::WebSocket;
-using Poco::NotificationQueue;
+//using controller::websocket::WebSocketController;
 
 namespace infrastructure {
 	namespace websocket {
@@ -35,9 +40,11 @@ namespace infrastructure {
 			void Send(WebSocketMessage* message);
 		private:
 			WebSocketClientConnectionHandler* connHandler;
-			NotificationQueue queue;
+			NotificationQueue* sendingQueue;
+			Activity<WebSocketClient> messageHandlerActivity;
+			//WebSocketController* controller;
 
-			void Echo();
+			void HandleMessage();
 		};
 	}
 }

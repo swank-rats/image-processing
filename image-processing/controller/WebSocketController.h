@@ -8,6 +8,7 @@
 #include <Poco\URI.h>
 #include <Poco\Net\Context.h>
 #include "..\infrastructure\networking\websockets\client\WebSocketClient.h"
+#include "..\infrastructure\networking\websockets\client\WebSocketMessage.h"
 
 using namespace infrastructure::websocket;
 using Poco::URI;
@@ -23,6 +24,7 @@ namespace controller {
 			~WebSocketController();
 			void StartWebSocketClient();
 			void StopWebSocketClient();
+			void HandleReceivedMessage(WebSocketMessage* message);
 		private:
 			WebSocketClient* webSocketClient;
 		};

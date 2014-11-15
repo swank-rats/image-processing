@@ -24,5 +24,10 @@ namespace controller {
 		void WebSocketController::StopWebSocketClient() {
 			webSocketClient->CloseConnection();
 		}
+
+		void WebSocketController::HandleReceivedMessage(WebSocketMessage* message) {
+
+			
+		}
 	}
 }

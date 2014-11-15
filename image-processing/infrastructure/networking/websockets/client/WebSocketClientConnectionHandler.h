@@ -8,8 +8,6 @@
 #include <Poco\URI.h>
 #include <Poco\Logger.h>
 #include <Poco\Timespan.h>
-#include <Poco\ActiveMethod.h>
-#include <Poco\ActiveResult.h>
 #include <Poco\Net\HTTPServer.h>
 #include <Poco\Net\Context.h>
 #include <Poco\Net\HTTPSClientSession.h>
@@ -22,8 +20,6 @@
 using Poco::Logger;
 using Poco::URI;
 using Poco::Timespan;
-using Poco::ActiveMethod;
-using Poco::ActiveResult;
 using Poco::Activity;
 using Poco::NotificationQueue;
 using Poco::Net::Context;
@@ -36,13 +32,13 @@ namespace infrastructure {
 		class WebSocketClientConnectionHandler
 		{
 		public:
-			WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue& queue);
+			WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue* queue);
 			~WebSocketClientConnectionHandler();
 			URI GetURI();
 			void OpenConnection();
 			void CloseConnection();
 			bool IsConnected();
-			const NotificationQueue& GetReceivedMessagesQueues();
+			NotificationQueue* GetReceivedMessagesQueues();
 		private:
 			URI uri;
 			Context::Ptr context;
@@ -51,8 +47,8 @@ namespace infrastructure {
 			HTTPSClientSession session;
 			WebSocket* webSocket;
 			Timespan timeout;
-			NotificationQueue& sendingQueue;
-			NotificationQueue& receivedQueue;
+			NotificationQueue* sendingQueue;
+			NotificationQueue* receivedQueue;
 
 			void Listen();
 			void Send();

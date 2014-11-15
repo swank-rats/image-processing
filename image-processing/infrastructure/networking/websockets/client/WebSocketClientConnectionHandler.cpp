@@ -32,10 +32,10 @@ using infrastructure::websocket::WebSocketMessage;
 namespace infrastructure {
 	namespace websocket {
 
-		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue& queue)
+		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue* queue)
 			: uri(uri), context(context), session(uri.getHost(), uri.getPort(), context), webSocket(nullptr), timeout(1000), sendingQueue(queue),
 			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
-			receivedQueue(NotificationQueue()) {
+			receivedQueue(new NotificationQueue()) {
 		}
 
 		WebSocketClientConnectionHandler::~WebSocketClientConnectionHandler() {
@@ -45,14 +45,15 @@ namespace infrastructure {
 
 			delete webSocket;
 			webSocket = nullptr;
+			delete receivedQueue;
+			receivedQueue = nullptr;
 		}
 
 		URI WebSocketClientConnectionHandler::GetURI() {
 			return uri;
 		}
 
-		const NotificationQueue& WebSocketClientConnectionHandler::GetReceivedMessagesQueues() {
-			//TODO handle received messages
+		NotificationQueue* WebSocketClientConnectionHandler::GetReceivedMessagesQueues() {
 			return receivedQueue;
 		}
 
@@ -89,6 +90,10 @@ namespace infrastructure {
 			Logger& logger = Logger::get("WebSocketClient");
 
 			try {
+				//stop notifications
+				receivedQueue->clear();
+				receivedQueue->wakeUpAll();
+
 				if (receiveActity.isRunning()) {
 					receiveActity.stop();
 					receiveActity.wait();
@@ -102,6 +107,8 @@ namespace infrastructure {
 				if (session.connected()) {
 					webSocket->shutdown();
 				}
+
+				
 			}
 			catch (Exception& e) {
 				logger.error(e.displayText());
@@ -117,40 +124,36 @@ namespace infrastructure {
 			int flags = WebSocket::FRAME_TEXT;
 			int length;
 			const char* buffer;
+			AutoPtr<Notification> notification(sendingQueue->waitDequeueNotification());
 
-			while (!sendActity.isStopped()) {
-				AutoPtr<Notification> notification(sendingQueue.waitDequeueNotification());
-
-				while (notification)
+			while (!sendActity.isStopped() && notification) {
+				WebSocketMessageNotification* messageNotification = dynamic_cast<WebSocketMessageNotification*>(notification.get());
+				if (messageNotification)
 				{
-					WebSocketMessageNotification* messageNotification = dynamic_cast<WebSocketMessageNotification*>(notification.get());
-					if (messageNotification)
+					try {
+						//TODO WTF WHY DOES buffer = messageNotification->GetData().ToString().c_str() NOT WORK??
+						string temp = messageNotification->GetData()->ToString();
+						buffer = temp.c_str();
+
+						length = webSocket->sendFrame(buffer, temp.length(), flags);
+
+						logger.information((length > 0) ? "message send!" : "message send failed");
+					}
+					catch (TimeoutException) {
+						logger.error("send failed cause of timeout");
+					}
+					catch (Exception& e)
 					{
-						try {
-							//TODO WTF WHY DOES buffer = messageNotification->GetData().ToString().c_str() NOT WORK??
-							string temp = messageNotification->GetData()->ToString();
-							buffer = temp.c_str();
+						logger.error(e.displayText());
 
-							length = webSocket->sendFrame(buffer, temp.length(), flags);
-
-							logger.information((length > 0) ? "message send!" : "message send failed");
-						}
-						catch (TimeoutException) {
-							logger.error("send failed cause of timeout");
-						}
-						catch (Exception& e)
-						{
-							logger.error(e.displayText());
-
-							if (!session.connected()) {
-								logger.error("Connection was closed!");
-								break;
-							}
+						if (!session.connected()) {
+							logger.error("Connection was closed!");
+							break;
 						}
 					}
-
-					notification = sendingQueue.waitDequeueNotification();
 				}
+
+				notification = sendingQueue->waitDequeueNotification();
 			}
 		}
 
@@ -168,9 +171,11 @@ namespace infrastructure {
 
 						if (length > 0) {
 							string receivedMessage = string(buffer, length);
-							logger.information(receivedMessage);
 							WebSocketMessage* message = WebSocketMessage::Parse(receivedMessage);
-							receivedQueue.enqueueNotification(new WebSocketMessageNotification(message));
+
+							if (message) {
+								receivedQueue->enqueueNotification(new WebSocketMessageNotification(message));
+							}
 						}
 						else {
 							logger.error("Connection was closed by server!");

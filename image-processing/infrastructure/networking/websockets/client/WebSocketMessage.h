@@ -9,6 +9,8 @@
 #include <string>
 #include <sstream>
 #include <Poco\HashMap.h>
+#include <Poco\Logger.h>
+#include <Poco\Exception.h>
 #include <Poco\JSON\Parser.h>
 #include <Poco\Dynamic\Var.h>
 #include <Poco\JSON\Object.h>
@@ -17,11 +19,12 @@
 using std::string;
 using std::stringstream;
 using std::vector;
-using Poco::JSON::Parser;
-using Poco::HashMap;
-using Poco::Dynamic::Var;
-using Poco::JSON::Object;
 using Poco::Notification;
+using Poco::HashMap;
+using Poco::Logger;
+using Poco::Dynamic::Var;
+using Poco::JSON::Parser;
+using Poco::JSON::Object;
 
 namespace infrastructure {
 	namespace websocket {
@@ -30,7 +33,7 @@ namespace infrastructure {
 		struct WebSocketMessage
 		{
 		public:
-			WebSocketMessage(const string& cmd, const string& to = 0, StringMap *params = new StringMap(), const string& data = 0)
+			WebSocketMessage(const string& cmd, const string& to = "", StringMap *params = new StringMap(), const string& data = "")
 				: to(to), cmd(cmd), data(data) {
 
 				this->params = params == nullptr ? new StringMap() : params;
@@ -92,32 +95,52 @@ namespace infrastructure {
 			}
 
 			static WebSocketMessage* Parse(const string& message) {
-				/* Protocol (based on JSON object)
-				* {
-				* 	 to: 'test',
-				* 	 cmd: 'echo',
-				*   params: {
-				*	     toUpper: true
-				*	 },
-				*	 data: 'testdata'
-				* }
-				*/
-				Parser parser;
+				Logger& logger = Logger::get("WebSocketMessage");
 
-				std::istringstream istr(message);
-				parser.parse(istr);
+				try {
+					/* Protocol (based on JSON object)
+					* {
+					* 	 to: 'test',
+					* 	 cmd: 'echo',
+					*   params: {
+					*	     toUpper: true
+					*	 },
+					*	 data: 'testdata'
+					* }
+					*/
+					Parser parser;
 
-				Object::Ptr root = parser.result().extract<Object::Ptr>();
-				string to = root->getValue<string>("to");
-				string cmd = root->getValue<string>("cmd");
+					std::istringstream istr(message);
+					parser.parse(istr);
 
-				Object::Ptr params = root->getObject("params");
-				//TODO parse params
-				StringMap* map = new StringMap();
+					Object::Ptr root = parser.result().extract<Object::Ptr>();
+					vector<string> names;
 
-				string data = root->getValue<string>("data");
+					root->getNames(names);
+					
+					//TODO parsing message
 
-				return new WebSocketMessage(to, cmd, map, data);
+					//string to = root->getValue<string>("to");
+					//string cmd = root->getValue<string>("cmd");
+
+					//Object::Ptr params = root->getObject("params");
+					////TODO parse params
+					//StringMap* map = new StringMap();
+
+					//string data = root->getValue<string>("data");
+
+					//return new WebSocketMessage(to, cmd, map, data);
+
+					string cmd = "cmd";
+					string to = "to";
+
+					return new WebSocketMessage(cmd, to);
+				}
+				catch (Poco::Exception& e)  {
+					logger.warning(e.displayText());
+				}
+
+				return nullptr;
 			}
 		private:
 			string to;
