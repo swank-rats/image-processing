@@ -15,7 +15,7 @@
 #include <Poco\Activity.h>
 #include <Poco\NotificationQueue.h>
 
-#include "WebSocketMessage.h"
+#include "..\message\Message.h"
 
 using Poco::Logger;
 using Poco::URI;
@@ -25,7 +25,7 @@ using Poco::NotificationQueue;
 using Poco::Net::Context;
 using Poco::Net::HTTPSClientSession;
 using Poco::Net::WebSocket;
-using infrastructure::websocket::WebSocketMessage;
+using infrastructure::websocket::Message;
 
 namespace infrastructure {
 	namespace websocket {

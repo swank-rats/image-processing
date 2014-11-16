@@ -48,7 +48,7 @@ namespace controller {
 			AutoPtr<Notification> notification(receivedMessagesQueue.waitDequeueNotification());
 
 			while (!messageHandlerActivity.isStopped() && notification) {
-				WebSocketMessageNotification* messageNotification = dynamic_cast<WebSocketMessageNotification*>(notification.get());
+				MessageNotification* messageNotification = dynamic_cast<MessageNotification*>(notification.get());
 				if (messageNotification)
 				{
 					logger.information("received message");

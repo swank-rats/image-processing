@@ -117,6 +117,9 @@
     <ClCompile Include="controller\ImageProcessingController.cpp" />
     <ClCompile Include="controller\VideoStreamingController.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.cpp" />
+    <ClCompile Include="infrastructure\networking\websockets\message\Message.cpp" />
+    <ClCompile Include="infrastructure\networking\websockets\message\MessageParams.cpp" />
+    <ClCompile Include="infrastructure\networking\websockets\message\MessageNotification.cpp" />
     <ClCompile Include="services\ObjectDetectionService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="services\videostreaming\webcam\WebcamService.cpp" />
@@ -132,7 +135,9 @@
     <ClInclude Include="controller\ImageProcessingController.h" />
     <ClInclude Include="controller\VideoStreamingController.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h" />
-    <ClInclude Include="infrastructure\networking\websockets\client\WebSocketMessage.h" />
+    <ClInclude Include="infrastructure\networking\websockets\message\Message.h" />
+    <ClInclude Include="infrastructure\networking\websockets\message\MessageParams.h" />
+    <ClInclude Include="infrastructure\networking\websockets\message\MessageNotification.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />
     <ClInclude Include="services\videostreaming\webcam\WebcamService.h" />
     <ClInclude Include="shared\observer\IObserver.h" />

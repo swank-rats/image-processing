@@ -144,8 +144,6 @@ private:
 		WebSocketController webSocketCtrl(uri, context);
 		webSocketCtrl.StartWebSocketClient();
 
-		logger.information(std::to_string(webcamService.use_count()));
-
 		char key;
 		while (1) {
 			key = cvWaitKey(10);

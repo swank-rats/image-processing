@@ -25,7 +25,7 @@ namespace infrastructure {
 			pParams->setKeepAlive(true);
 
 			server = new HTTPServer(new VideoStreamingRequestHandlerFactory(webcamService, uri), threadPool, socket, pParams);
-			logger.information("init videostreaming server at port " + socket.address().port());
+			logger.information("init videostreaming server at port " + std::to_string(port));
 		}
 
 		VideoStreamingServer::~VideoStreamingServer() {

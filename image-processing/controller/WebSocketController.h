@@ -11,7 +11,8 @@
 #include <Poco\Activity.h>
 
 #include "..\infrastructure\networking\websockets\client\WebSocketClient.h"
-#include "..\infrastructure\networking\websockets\client\WebSocketMessage.h"
+#include "..\infrastructure\networking\websockets\message\Message.h"
+#include "..\infrastructure\networking\websockets\message\MessageNotification.h"
 
 using namespace infrastructure::websocket;
 using Poco::URI;

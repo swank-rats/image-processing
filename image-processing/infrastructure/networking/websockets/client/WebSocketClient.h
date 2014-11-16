@@ -14,8 +14,8 @@
 #include <Poco\NotificationQueue.h>
 #include <Poco\Activity.h>
 
-
 #include "WebSocketClientConnectionHandler.h"
+#include "..\message\Message.h"
 
 using Poco::Logger;
 using Poco::URI;
@@ -24,6 +24,8 @@ using Poco::Activity;
 using Poco::Net::HTTPSClientSession;
 using Poco::Net::Context;
 using Poco::Net::WebSocket;
+using infrastructure::websocket::Message;
+
 
 namespace infrastructure {
 	namespace websocket {
@@ -35,7 +37,7 @@ namespace infrastructure {
 			void OpenConnection();
 			void CloseConnection();
 			bool IsConnected();
-			void Send(WebSocketMessage* message);
+			void Send(Message* message);
 		private:
 			WebSocketClientConnectionHandler* connHandler;
 			NotificationQueue sendingQueue;

@@ -15,6 +15,7 @@
 #include <Poco\Net\HTTPCredentials.h>
 
 #include "WebSocketClientConnectionHandler.h"
+#include "..\message\MessageNotification.h"
 
 using std::string;
 using Poco::Logger;
@@ -27,7 +28,7 @@ using Poco::Net::HTTPRequest;
 using Poco::Net::HTTPResponse;
 using Poco::Net::HTTPCredentials;
 
-using infrastructure::websocket::WebSocketMessage;
+using infrastructure::websocket::MessageNotification;
 
 namespace infrastructure {
 	namespace websocket {
@@ -59,8 +60,7 @@ namespace infrastructure {
 				HTTPRequest req(HTTPRequest::HTTP_GET, uri.getPath(), HTTPMessage::HTTP_1_1);
 				HTTPResponse res;
 				HTTPCredentials creds("user", "s3cr3t"); //add to websocket ctor as parameter with correct data
-
-				logger.information("Connecting to " + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
+				logger.information("Connecting to " + uri.getScheme() + "://" +uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
 
 				webSocket = new WebSocket(session, req, res);
 
@@ -115,23 +115,19 @@ namespace infrastructure {
 			AutoPtr<Notification> notification(sendingQueue.waitDequeueNotification());
 
 			while (!sendActity.isStopped() && notification) {
-				WebSocketMessageNotification* messageNotification = dynamic_cast<WebSocketMessageNotification*>(notification.get());
+				MessageNotification* messageNotification = dynamic_cast<MessageNotification*>(notification.get());
 				if (messageNotification)
 				{
 					try {
-						//TODO WTF WHY DOES buffer = messageNotification->GetData().ToString().c_str() NOT WORK??
-						WebSocketMessage* message = messageNotification->GetData(); //take ownership
-						string temp2 = message->ToString().c_str();
+						Message* message = messageNotification->GetData();
 						string temp = message->ToString();
-						buffer = temp.c_str();
+						buffer =  temp.c_str();
 
 						length = webSocket->sendFrame(buffer, temp.length(), flags);
 
 						logger.information((length > 0) ? "message send!" : "message send failed");
-
-						//cleanup
-						delete message;
 						message = nullptr;
+						messageNotification = nullptr;
 					}
 					catch (TimeoutException) {
 						logger.error("send failed cause of timeout");
@@ -165,10 +161,10 @@ namespace infrastructure {
 
 						if (length > 0) {
 							string receivedMessage = string(buffer, length);
-							WebSocketMessage* message = WebSocketMessage::Parse(receivedMessage);
+							Message* message = Message::Parse(receivedMessage);
 
 							if (message) {
-								receivedQueue.enqueueNotification(new WebSocketMessageNotification(message));
+								receivedQueue.enqueueNotification(new MessageNotification(message));
 							}
 						}
 						else {

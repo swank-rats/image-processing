@@ -13,14 +13,14 @@
 #include <Poco\AutoPtr.h>
 
 #include "WebSocketClient.h"
-#include "WebSocketMessage.h"
+#include "..\message\MessageNotification.h"
 
 using Poco::AutoPtr;
 using Poco::Net::HTTPRequest;
 using Poco::Net::HTTPResponse;
 using Poco::Net::HTTPResponse;
 
-using infrastructure::websocket::StringMap;
+using infrastructure::websocket::MessageNotification;
 
 namespace infrastructure {
 	namespace websocket {
@@ -36,6 +36,8 @@ namespace infrastructure {
 		
 		void WebSocketClient::OpenConnection() {
 			connHandler->OpenConnection();
+
+			Send(new Message("cmd", "to"));
 		}
 
 		void WebSocketClient::CloseConnection() {
@@ -48,8 +50,8 @@ namespace infrastructure {
 			return connHandler->IsConnected();
 		}
 
-		void WebSocketClient::Send(WebSocketMessage* message) {
-			sendingQueue.enqueueNotification(new WebSocketMessageNotification(message));
+		void WebSocketClient::Send(Message* message) {
+			sendingQueue.enqueueNotification(new MessageNotification(message));
 		}
 	}
 }

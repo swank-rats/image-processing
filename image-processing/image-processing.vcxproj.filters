@@ -54,6 +54,15 @@
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="infrastructure\networking\websockets\message\Message.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\websockets\message\MessageParams.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="infrastructure\networking\websockets\message\MessageNotification.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
@@ -95,7 +104,13 @@
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\client\WebSocketMessage.h">
+    <ClInclude Include="infrastructure\networking\websockets\message\Message.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\websockets\message\MessageParams.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="infrastructure\networking\websockets\message\MessageNotification.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
