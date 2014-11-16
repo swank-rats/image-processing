@@ -7,12 +7,17 @@
 #pragma once
 #include <Poco\URI.h>
 #include <Poco\Net\Context.h>
+#include <Poco\NotificationQueue.h>
+#include <Poco\Activity.h>
+
 #include "..\infrastructure\networking\websockets\client\WebSocketClient.h"
 #include "..\infrastructure\networking\websockets\client\WebSocketMessage.h"
 
 using namespace infrastructure::websocket;
 using Poco::URI;
 using Poco::Net::Context;
+using Poco::NotificationQueue;
+using Poco::Activity;
 
 namespace controller {
 	namespace websocket {
@@ -24,9 +29,12 @@ namespace controller {
 			~WebSocketController();
 			void StartWebSocketClient();
 			void StopWebSocketClient();
-			void HandleReceivedMessage(WebSocketMessage* message);
 		private:
 			WebSocketClient* webSocketClient;
+			NotificationQueue receivedMessagesQueue;
+			Activity<WebSocketController> messageHandlerActivity;
+
+			void HandleReceivedMessages();
 		};
 
 	}

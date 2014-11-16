@@ -32,10 +32,10 @@ using infrastructure::websocket::WebSocketMessage;
 namespace infrastructure {
 	namespace websocket {
 
-		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue* queue)
-			: uri(uri), context(context), session(uri.getHost(), uri.getPort(), context), webSocket(nullptr), timeout(1000), sendingQueue(queue),
+		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue)
+			: uri(uri), context(context), session(uri.getHost(), uri.getPort(), context), webSocket(nullptr), timeout(1000),
 			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
-			receivedQueue(new NotificationQueue()) {
+			receivedQueue(receivedQueue), sendingQueue(sendingQueue) {
 		}
 
 		WebSocketClientConnectionHandler::~WebSocketClientConnectionHandler() {
@@ -45,16 +45,10 @@ namespace infrastructure {
 
 			delete webSocket;
 			webSocket = nullptr;
-			delete receivedQueue;
-			receivedQueue = nullptr;
 		}
 
 		URI WebSocketClientConnectionHandler::GetURI() {
 			return uri;
-		}
-
-		NotificationQueue* WebSocketClientConnectionHandler::GetReceivedMessagesQueues() {
-			return receivedQueue;
 		}
 
 		void WebSocketClientConnectionHandler::OpenConnection() {
@@ -90,10 +84,6 @@ namespace infrastructure {
 			Logger& logger = Logger::get("WebSocketClient");
 
 			try {
-				//stop notifications
-				receivedQueue->clear();
-				receivedQueue->wakeUpAll();
-
 				if (receiveActity.isRunning()) {
 					receiveActity.stop();
 					receiveActity.wait();
@@ -106,9 +96,7 @@ namespace infrastructure {
 
 				if (session.connected()) {
 					webSocket->shutdown();
-				}
-
-				
+				}				
 			}
 			catch (Exception& e) {
 				logger.error(e.displayText());
@@ -124,7 +112,7 @@ namespace infrastructure {
 			int flags = WebSocket::FRAME_TEXT;
 			int length;
 			const char* buffer;
-			AutoPtr<Notification> notification(sendingQueue->waitDequeueNotification());
+			AutoPtr<Notification> notification(sendingQueue.waitDequeueNotification());
 
 			while (!sendActity.isStopped() && notification) {
 				WebSocketMessageNotification* messageNotification = dynamic_cast<WebSocketMessageNotification*>(notification.get());
@@ -132,12 +120,18 @@ namespace infrastructure {
 				{
 					try {
 						//TODO WTF WHY DOES buffer = messageNotification->GetData().ToString().c_str() NOT WORK??
-						string temp = messageNotification->GetData()->ToString();
+						WebSocketMessage* message = messageNotification->GetData(); //take ownership
+						string temp2 = message->ToString().c_str();
+						string temp = message->ToString();
 						buffer = temp.c_str();
 
 						length = webSocket->sendFrame(buffer, temp.length(), flags);
 
 						logger.information((length > 0) ? "message send!" : "message send failed");
+
+						//cleanup
+						delete message;
+						message = nullptr;
 					}
 					catch (TimeoutException) {
 						logger.error("send failed cause of timeout");
@@ -153,7 +147,7 @@ namespace infrastructure {
 					}
 				}
 
-				notification = sendingQueue->waitDequeueNotification();
+				notification = sendingQueue.waitDequeueNotification();
 			}
 		}
 
@@ -174,7 +168,7 @@ namespace infrastructure {
 							WebSocketMessage* message = WebSocketMessage::Parse(receivedMessage);
 
 							if (message) {
-								receivedQueue->enqueueNotification(new WebSocketMessageNotification(message));
+								receivedQueue.enqueueNotification(new WebSocketMessageNotification(message));
 							}
 						}
 						else {

@@ -16,7 +16,6 @@
 
 
 #include "WebSocketClientConnectionHandler.h"
-//#include "..\..\..\..\controller\WebSocketController.h"
 
 using Poco::Logger;
 using Poco::URI;
@@ -25,14 +24,13 @@ using Poco::Activity;
 using Poco::Net::HTTPSClientSession;
 using Poco::Net::Context;
 using Poco::Net::WebSocket;
-//using controller::websocket::WebSocketController;
 
 namespace infrastructure {
 	namespace websocket {
 		class WebSocketClient
 		{
 		public:
-			WebSocketClient(URI uri, Context::Ptr context);
+			WebSocketClient(URI uri, Context::Ptr context, NotificationQueue &receivedQueue);
 			~WebSocketClient();
 			void OpenConnection();
 			void CloseConnection();
@@ -40,11 +38,7 @@ namespace infrastructure {
 			void Send(WebSocketMessage* message);
 		private:
 			WebSocketClientConnectionHandler* connHandler;
-			NotificationQueue* sendingQueue;
-			Activity<WebSocketClient> messageHandlerActivity;
-			//WebSocketController* controller;
-
-			void HandleMessage();
+			NotificationQueue sendingQueue;
 		};
 	}
 }

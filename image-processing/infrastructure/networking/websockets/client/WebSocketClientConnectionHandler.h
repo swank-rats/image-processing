@@ -32,7 +32,7 @@ namespace infrastructure {
 		class WebSocketClientConnectionHandler
 		{
 		public:
-			WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue* queue);
+			WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue);
 			~WebSocketClientConnectionHandler();
 			URI GetURI();
 			void OpenConnection();
@@ -47,8 +47,8 @@ namespace infrastructure {
 			HTTPSClientSession session;
 			WebSocket* webSocket;
 			Timespan timeout;
-			NotificationQueue* sendingQueue;
-			NotificationQueue* receivedQueue;
+			NotificationQueue &sendingQueue;
+			NotificationQueue &receivedQueue;
 
 			void Listen();
 			void Send();

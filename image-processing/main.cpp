@@ -135,7 +135,6 @@ private:
 
 		std::shared_ptr<WebcamService> webcamService = std::make_shared<WebcamService>();
 
-
 		ImageProcessingController imgProcCtrl(webcamService);
 		imgProcCtrl.StartImageProcessing();
 
@@ -144,6 +143,8 @@ private:
 
 		WebSocketController webSocketCtrl(uri, context);
 		webSocketCtrl.StartWebSocketClient();
+
+		logger.information(std::to_string(webcamService.use_count()));
 
 		char key;
 		while (1) {
