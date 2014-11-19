@@ -42,6 +42,30 @@ namespace infrastructure {
 			params = nullptr;
 		}
 
+		string Message::GetTo() {
+			return to;
+		}
+
+		string Message::GetCmd() {
+			return cmd;
+		}
+
+		string Message::GetData() {
+			return data;
+		}
+
+		bool Message::GetParam(const string name, string& out) {
+			StringMap::Iterator iter = params->find(name);
+
+			if (iter == params->end()) {
+				return false;
+			}
+
+			out = iter->second;
+
+			return true;
+		}
+
 		void Message::AddParam(const string& key, const string& value) {
 			params->insert(StringMap::ValueType(key, value));
 		}
@@ -107,7 +131,7 @@ namespace infrastructure {
 
 		Message* Message::Parse(const string& message) {
 			Logger& logger = Logger::get("WebSocketMessage");
-			static StringMsgHeadersMap& map = MessageHeaders().GetMap();
+			static StringMsgHeadersMap map = MessageHeaders().GetMap();
 
 			try {
 				/* Protocol (based on JSON object)
