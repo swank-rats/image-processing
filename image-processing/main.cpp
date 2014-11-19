@@ -142,6 +142,7 @@ private:
 		vidStreamCtrl.StartStreamingServer();
 
 		WebSocketController webSocketCtrl(uri, context);
+		//TODO ask wolfi how to solve
 		//WebSocketController::MessageCallback callback = reinterpret_cast<WebSocketController::MessageCallback>(imgProcCtrl.HandleMessageNotification);
 		//webSocketCtrl.AddMessageOberver(imgProcCtrl, &callback);
 		webSocketCtrl.GetNotificationCenter().addObserver(NObserver<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
