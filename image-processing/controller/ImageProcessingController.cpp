@@ -56,6 +56,10 @@ namespace controller {
 			//detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
 		}
 
+		void ImageProcessingController::HandleMessageNotification(const AutoPtr<MessageNotification>& notification) {
+
+		}
+
 		void ImageProcessingController::CreateTrackBarView(){
 			namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 

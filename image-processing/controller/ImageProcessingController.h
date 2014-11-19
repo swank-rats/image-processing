@@ -7,11 +7,16 @@
 #pragma once
 #include <memory>
 #include <opencv2\opencv.hpp>
+#include <Poco\AutoPtr.h>
+#include "..\infrastructure\networking\websockets\message\MessageNotification.h"
 #include "..\services\videostreaming\webcam\WebcamService.h"
 #include "..\shared\observer\IObserver.h"
 #include "..\services\ObjectDetectionService.h"
 
-using namespace services::webcam;
+using Poco::AutoPtr;
+using services::webcam::WebcamService;
+using services::webcam::WebcamServicePtr;
+using infrastructure::websocket::MessageNotification;
 
 namespace controller {
 	namespace image_processing {
@@ -24,6 +29,7 @@ namespace controller {
 			void StopImageProcessing();
 			virtual void Update(WebcamService* observable);
 			IplImage* GetLastFrame();
+			void HandleMessageNotification(const AutoPtr<MessageNotification>& notification);
 		private:
 			WebcamServicePtr webcamService;
 			ObjectDetectionService* detectService;

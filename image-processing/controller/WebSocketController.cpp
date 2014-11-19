@@ -43,15 +43,18 @@ namespace controller {
 			}
 		}
 
+		NotificationCenter& WebSocketController::GetNotificationCenter() {
+			return notificationCenter;
+		}
+
 		void WebSocketController::HandleReceivedMessages() {
-			Logger& logger = Logger::get("WebSocketController");
 			AutoPtr<Notification> notification(receivedMessagesQueue.waitDequeueNotification());
 
 			while (!messageHandlerActivity.isStopped() && notification) {
 				MessageNotification* messageNotification = dynamic_cast<MessageNotification*>(notification.get());
 				if (messageNotification)
 				{
-					logger.information("received message");
+					notificationCenter.postNotification(messageNotification);
 				}
 
 				notification = receivedMessagesQueue.waitDequeueNotification();
