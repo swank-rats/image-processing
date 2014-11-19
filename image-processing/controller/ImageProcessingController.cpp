@@ -51,13 +51,13 @@ namespace controller {
 		}
 
 		void ImageProcessingController::Update(WebcamService* observable) {
-
+			//TODO still needed?
 			Mat frame= observable->GetLastImage();
 			//detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
 		}
 
 		void ImageProcessingController::HandleMessageNotification(const AutoPtr<MessageNotification>& notification) {
-
+			//TODO handle message - eg simulate shot and so on
 		}
 
 		void ImageProcessingController::CreateTrackBarView(){
