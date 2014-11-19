@@ -24,8 +24,8 @@ using Poco::Logger;
 using Poco::Dynamic::Var;
 using Poco::JSON::Parser;
 using Poco::JSON::Object;
-using infrastructure::websocket::MessageParams;
-using infrastructure::websocket::MessageParamsEnum;
+using infrastructure::websocket::MessageHeaders;
+using infrastructure::websocket::MessageHeaderEnum;
 
 namespace infrastructure {
 	namespace websocket {
@@ -107,7 +107,7 @@ namespace infrastructure {
 
 		Message* Message::Parse(const string& message) {
 			Logger& logger = Logger::get("WebSocketMessage");
-			static MessageParams messageParams;
+			static StringMsgHeadersMap& map = MessageHeaders().GetMap();
 
 			try {
 				/* Protocol (based on JSON object)
@@ -135,17 +135,16 @@ namespace infrastructure {
 				vector<string> paramsNames;
 
 				for (vector<string>::size_type i = 0; i != names.size(); i++) {
-					StringMsgParamsMap& map = messageParams.GetMap();
 
 					switch (map[names[i]])
 					{
-					case MessageParamsEnum::to:
+					case MessageHeaderEnum::to:
 						tempMessage->to = root->getValue<string>(names[i]);
 						break;
-					case MessageParamsEnum::cmd:
+					case MessageHeaderEnum::cmd:
 						tempMessage->cmd = root->getValue<string>(names[i]);
 						break;
-					case MessageParamsEnum::params:
+					case MessageHeaderEnum::params:
 						params = root->getObject(names[i]);
 						params->getNames(paramsNames);
 
@@ -153,7 +152,7 @@ namespace infrastructure {
 							tempMessage->AddParam(paramsNames[j], params->getValue<string>(paramsNames[j]));
 						}
 						break;
-					case MessageParamsEnum::data:
+					case MessageHeaderEnum::data:
 						tempMessage->data = root->getValue<string>(names[i]);
 						break;
 					default:

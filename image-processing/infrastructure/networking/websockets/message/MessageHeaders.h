@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : MessageParams.h
+// Name        : MessageHeaders.h
 // Author      : ITM13
 // Version     : 1.0
 // Description : 
@@ -14,15 +14,15 @@ using Poco::HashMap;
 
 namespace infrastructure {
 	namespace websocket {
-		enum MessageParamsEnum { to, cmd, params, data };
-		typedef HashMap<string, MessageParamsEnum> StringMsgParamsMap;
+		enum MessageHeaderEnum { to, cmd, params, data };
+		typedef HashMap<string, MessageHeaderEnum> StringMsgHeadersMap;
 
-		class MessageParams {
+		class MessageHeaders {
 		public:
-			MessageParams();
-			StringMsgParamsMap& GetMap();
+			MessageHeaders();
+			StringMsgHeadersMap& GetMap();
 		private:
-			StringMsgParamsMap map;
+			StringMsgHeadersMap map;
 		};
 	}
 }

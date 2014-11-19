@@ -57,10 +57,10 @@
     <ClCompile Include="infrastructure\networking\websockets\message\Message.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\message\MessageParams.cpp">
+    <ClCompile Include="infrastructure\networking\websockets\message\MessageNotification.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\message\MessageNotification.cpp">
+    <ClCompile Include="infrastructure\networking\websockets\message\MessageHeaders.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,10 +107,10 @@
     <ClInclude Include="infrastructure\networking\websockets\message\Message.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\message\MessageParams.h">
+    <ClInclude Include="infrastructure\networking\websockets\message\MessageNotification.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\message\MessageNotification.h">
+    <ClInclude Include="infrastructure\networking\websockets\message\MessageHeaders.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
