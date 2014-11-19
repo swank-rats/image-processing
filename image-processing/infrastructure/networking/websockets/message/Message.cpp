@@ -14,7 +14,7 @@
 #include <Poco\JSON\Object.h>
 
 #include "Message.h"
-#include "MessageParams.h"
+#include "MessageHeaders.h"
 
 using std::string;
 using std::stringstream;
