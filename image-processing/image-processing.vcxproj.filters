@@ -121,6 +121,9 @@
     <Image Include="resources\images\lena.bmp">
       <Filter>Ressourcendateien</Filter>
     </Image>
+    <Image Include="resources\images\gunfire_small.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\AppConfig.xml" />

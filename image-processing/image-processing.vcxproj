@@ -152,6 +152,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>
     <Image Include="resources\images\colored_squares.png" />
+    <Image Include="resources\images\gunfire_small.png" />
     <Image Include="resources\images\lena.bmp" />
   </ItemGroup>
   <ItemGroup>
