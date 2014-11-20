@@ -30,8 +30,7 @@ namespace infrastructure {
 
 		VideoStreamingServer::~VideoStreamingServer() {
 			if (server->currentConnections() > 0) {
-				//TODO check if this will cause an exception
-				server->stopAll();
+				StopServer();
 			}
 
 			delete server;
@@ -50,7 +49,7 @@ namespace infrastructure {
 			Logger& logger = Logger::get("VideoStreamingServer");
 
 			logger.information("stopping video streaming server");
-			server->stopAll();
+			server->stopAll(true);
 			threadPool.stopAll();
 			logger.information("stopped video streaming server");
 		}
