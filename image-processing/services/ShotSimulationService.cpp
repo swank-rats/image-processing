@@ -22,10 +22,13 @@ namespace services {
 			bulletRightImg = imread("resources/images/bullet_small_right.png", CV_LOAD_IMAGE_UNCHANGED);
 			wallExplosionImg = imread("resources/images/explosion_wall.png", CV_LOAD_IMAGE_UNCHANGED);
 			robotExplosionImg = imread("resources/images/explosion_robot.png", CV_LOAD_IMAGE_UNCHANGED);
+
+			webcamService->AddObserver(this);
 		}
 
 		ShotSimulationService::~ShotSimulationService()
 		{
+			webcamService->RemoveObserver(this);
 		}
 
 		void ShotSimulationService::SimulateShot(Shot shot) {
@@ -33,6 +36,10 @@ namespace services {
 		}
 
 		void ShotSimulationService::Update(WebcamService* observable) {
+			if (shots.empty()) {
+				return;
+			}
+
 			try {
 				Mat frame = observable->GetLastImage();
 				ShotsMapType::Iterator iter = shots.begin();
@@ -67,6 +74,8 @@ namespace services {
 							iter->second = iter->first.endPoint;
 						}
 					}
+
+					++iter;
 				} while (iter != shots.end());
 
 				//delete finished simulations

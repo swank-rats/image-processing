@@ -79,5 +79,5 @@ void ObjectDetectionService::ThreshCallback(int, void*, Mat src, Mat src_gray, i
 }
 
 Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, int player) {
-	return Shot(Point2i(15, 20), Point2i(540, 430), player == 1 ? ShotEndPointType::Robot : ShotEndPointType::Wall);
+	return Shot(Point2i(15, 20), Point2i(500, 380), player == 1 ? ShotEndPointType::Robot : ShotEndPointType::Wall);
 }
