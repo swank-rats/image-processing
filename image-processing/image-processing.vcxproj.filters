@@ -63,6 +63,9 @@
     <ClCompile Include="infrastructure\networking\websockets\message\MessageHeaders.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="services\ShotSimulationService.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
@@ -111,6 +114,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="infrastructure\networking\websockets\message\MessageHeaders.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="services\ShotSimulationService.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

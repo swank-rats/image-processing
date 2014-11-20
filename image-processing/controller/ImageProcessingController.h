@@ -10,12 +10,14 @@
 #include <Poco\AutoPtr.h>
 #include "..\infrastructure\networking\websockets\message\MessageNotification.h"
 #include "..\services\videostreaming\webcam\WebcamService.h"
+#include "..\services\ShotSimulationService.h"
 #include "..\shared\observer\IObserver.h"
 #include "..\services\ObjectDetectionService.h"
 
 using Poco::AutoPtr;
 using services::webcam::WebcamService;
 using services::webcam::WebcamServicePtr;
+using services::simulation::ShotSimulationService;
 using infrastructure::websocket::MessageNotification;
 
 namespace controller {
@@ -32,6 +34,7 @@ namespace controller {
 			void HandleMessageNotification(const AutoPtr<MessageNotification>& notification);
 		private:
 			WebcamServicePtr webcamService;
+			ShotSimulationService shotSimulation;
 			ObjectDetectionService* detectService;
 			int iLowH = 0;
 			int iHighH = 179;
@@ -40,7 +43,6 @@ namespace controller {
 			int iLowV = 0;
 			int iHighV = 255;
 			void CreateTrackBarView();
-			void OverlayImage(cv::Mat &background, const cv::Mat &foreground, cv::Point2i location);
 		};
 	}
 }

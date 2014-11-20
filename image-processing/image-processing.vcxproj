@@ -129,6 +129,7 @@
     <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClient.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp" />
+    <ClCompile Include="services\ShotSimulationService.cpp" />
     <ClCompile Include="ThomasTestMethod.h" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +149,7 @@
     <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.h" />
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClient.h" />
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.h" />
+    <ClInclude Include="services\ShotSimulationService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>
