@@ -124,6 +124,18 @@
     <Image Include="resources\images\gunfire_small.png">
       <Filter>Ressourcendateien</Filter>
     </Image>
+    <Image Include="resources\images\bullet_small_right.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
+    <Image Include="resources\images\bullet_small_left.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
+    <Image Include="resources\images\explosion_robot.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
+    <Image Include="resources\images\explosion_wall.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\AppConfig.xml" />
