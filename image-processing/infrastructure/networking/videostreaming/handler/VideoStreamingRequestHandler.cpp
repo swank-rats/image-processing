@@ -2,19 +2,18 @@
 // Name        : VideoStreamingRequestHandler.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #include "VideoStreamingRequestHandler.h"
+
 #include <Poco\Net\MultipartWriter.h>
 #include <Poco\Net\MessageHeader.h>
 
 using Poco::Net::MessageHeader;
 using Poco::Net::MultipartWriter;
 
-
 namespace infrastructure {
 	namespace video_streaming {
-
 		VideoStreamingRequestHandler::VideoStreamingRequestHandler(WebcamServicePtr webcamService) : webcamService(webcamService) { }
 
 		VideoStreamingRequestHandler::~VideoStreamingRequestHandler() { }
@@ -26,7 +25,7 @@ namespace infrastructure {
 			string boundary = "VIDEOSTREAM";
 
 			logger.information("Video streaming started for client " + request.clientAddress().toString());
-			
+
 			response.set("Max-Age", "0");
 			response.set("Expires", "0");
 			response.set("Cache-Control", "no-cache, private");

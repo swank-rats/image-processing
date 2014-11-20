@@ -2,7 +2,7 @@
 // Name        : InvalidUriRequestHandler.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #pragma once
 #include <Poco\Net\HTTPServerRequest.h>
@@ -22,8 +22,7 @@ namespace infrastructure {
 		public:
 			InvalidUriRequestHandler();
 			~InvalidUriRequestHandler();
-			void handleRequest(HTTPServerRequest& request,HTTPServerResponse& response);
+			void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
 		};
 	}
 }
-

@@ -4,12 +4,19 @@
 // Version     : 1.0
 // Description : Image process start point
 //============================================================================
+#include "services\videostreaming\webcam\WebcamService.h"
+#include "services\ObjectDetectionService.h"
+#include "controller\ImageProcessingController.h"
+#include "controller\VideoStreamingController.h"
+#include "controller\WebSocketController.h"
+
+#include "ThomasTestMethod.h"
+
 #include <iostream>
 #include <list>
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
-#include <opencv2\opencv.hpp>
 
 #include <Poco\Logger.h>
 #include <Poco\AutoPtr.h>
@@ -26,14 +33,6 @@
 #include <Poco\Util\OptionCallback.h>
 #include <Poco\Util\HelpFormatter.h>
 #include <Poco\Net\SSLManager.h>
-
-#include "services\videostreaming\webcam\WebcamService.h"
-#include "services\ObjectDetectionService.h"
-#include "controller\ImageProcessingController.h"
-#include "controller\VideoStreamingController.h"
-#include "controller\WebSocketController.h"
-
-#include "ThomasTestMethod.h"
 
 using namespace cv;
 using namespace std;
@@ -103,10 +102,8 @@ protected:
 			.callback(OptionCallback<ImageProcessingServerApplication>(this, &ImageProcessingServerApplication::HandleURI)));
 	}
 
-	int main(const std::vector<std::string>& args)
-	{
-		if (!helpRequested)
-		{
+	int main(const std::vector<std::string>& args) {
+		if (!helpRequested)	{
 #ifdef THOMAS
 			TestThomas();
 #else
@@ -131,8 +128,7 @@ private:
 		Logger::root().setChannel(formattingChannel);
 	}
 
-	void WithThread()
-	{
+	void WithThread() {
 		Logger& logger = Logger::get("main");
 		logger.information("Threads were used");
 
@@ -159,7 +155,7 @@ private:
 		while (1) {
 			key = cvWaitKey(10);
 
-			if (char(key) == 27){
+			if (char(key) == 27) {
 				break; //If you hit ESC key loop will break.
 			}
 		}
@@ -172,23 +168,20 @@ private:
 		destroyAllWindows();
 	}
 
-	void displayHelp()
-	{
+	void displayHelp() {
 		HelpFormatter helpFormatter(options());
 		helpFormatter.setCommand(commandName());
 		helpFormatter.setUsage("OPTIONS");
 		helpFormatter.setHeader("Websocket Performance testing client");
 		helpFormatter.format(std::cout);
 	}
-	void HandleHelp(const std::string& name, const std::string& value)
-	{
+	void HandleHelp(const std::string& name, const std::string& value) {
 		helpRequested = true;
 		displayHelp();
 		stopOptionsProcessing();
 	}
 
-	void HandleURI(const std::string& name, const std::string& value)
-	{
+	void HandleURI(const std::string& name, const std::string& value) {
 		uri = URI(value);
 	}
 

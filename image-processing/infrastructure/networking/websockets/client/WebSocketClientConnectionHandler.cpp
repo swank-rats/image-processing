@@ -2,10 +2,11 @@
 // Name        : WebSocketClientConnectionHandler.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
-#pragma once
-#include <string>
+#include "WebSocketClientConnectionHandler.h"
+#include "..\message\MessageNotification.h"
+
 #include <Poco\Logger.h>
 #include <Poco\Exception.h>
 #include <Poco\AutoPtr.h>
@@ -14,8 +15,7 @@
 #include <Poco\Net\HTTPResponse.h>
 #include <Poco\Net\HTTPCredentials.h>
 
-#include "WebSocketClientConnectionHandler.h"
-#include "..\message\MessageNotification.h"
+#include <string>
 
 using std::string;
 using Poco::Logger;
@@ -32,12 +32,10 @@ using infrastructure::websocket::MessageNotification;
 
 namespace infrastructure {
 	namespace websocket {
-
 		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue)
 			: uri(uri), context(context), session(uri.getHost(), uri.getPort(), context), webSocket(nullptr), timeout(1000),
 			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
-			receivedQueue(receivedQueue), sendingQueue(sendingQueue) {
-		}
+			receivedQueue(receivedQueue), sendingQueue(sendingQueue) { }
 
 		WebSocketClientConnectionHandler::~WebSocketClientConnectionHandler() {
 			if (IsConnected()) {
@@ -60,7 +58,7 @@ namespace infrastructure {
 				HTTPRequest req(HTTPRequest::HTTP_GET, uri.getPath(), HTTPMessage::HTTP_1_1);
 				HTTPResponse res;
 				HTTPCredentials creds("user", "s3cr3t"); //add to websocket ctor as parameter with correct data
-				logger.information("Connecting to " + uri.getScheme() + "://" +uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
+				logger.information("Connecting to " + uri.getScheme() + "://" + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
 
 				webSocket = new WebSocket(session, req, res);
 
@@ -96,7 +94,7 @@ namespace infrastructure {
 
 				if (session.connected()) {
 					webSocket->shutdown();
-				}				
+				}
 			}
 			catch (Exception& e) {
 				logger.error(e.displayText());
@@ -121,7 +119,7 @@ namespace infrastructure {
 					try {
 						Message* message = messageNotification->GetData();
 						string temp = message->ToString();
-						buffer =  temp.c_str();
+						buffer = temp.c_str();
 
 						length = webSocket->sendFrame(buffer, temp.length(), flags);
 

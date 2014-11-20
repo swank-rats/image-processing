@@ -2,9 +2,10 @@
 // Name        : Message.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
-#pragma once
+#include "Message.h"
+#include "MessageHeaders.h"
 
 #include <Poco\HashMap.h>
 #include <Poco\Logger.h>
@@ -13,8 +14,8 @@
 #include <Poco\Dynamic\Var.h>
 #include <Poco\JSON\Object.h>
 
-#include "Message.h"
-#include "MessageHeaders.h"
+#include <string>
+#include <vector>
 
 using std::string;
 using std::stringstream;
@@ -31,7 +32,6 @@ namespace infrastructure {
 	namespace websocket {
 		Message::Message(const string& cmd, const string& to, StringMap *params, const string& data)
 			: cmd(cmd), to(to), data(data) {
-
 			this->params = params == nullptr ? new StringMap() : params;
 		}
 
@@ -159,7 +159,6 @@ namespace infrastructure {
 				vector<string> paramsNames;
 
 				for (vector<string>::size_type i = 0; i != names.size(); i++) {
-
 					switch (map[names[i]])
 					{
 					case MessageHeaderEnum::to:

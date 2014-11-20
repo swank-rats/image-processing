@@ -3,11 +3,12 @@
 // Author      : ITM13
 // Version     : 1.0
 
-// Description : 
+// Description :
 //============================================================================
 #pragma once
-#include <vector>
 #include "IObserver.h"
+
+#include <vector>
 
 using namespace std;
 
@@ -16,7 +17,6 @@ class Observable
 {
 public:
 	Observable() {
-
 	}
 
 	virtual ~Observable() {
@@ -35,7 +35,7 @@ public:
 
 	bool RemoveObserver(IObserver<T> *observer) {
 		vector<IObserver<T> *>::iterator iter = find(observers.begin(), observers.end(), observer);
-		
+
 		// observer could not be found
 		if (iter == observers.end()) {
 			return false;

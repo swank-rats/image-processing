@@ -2,13 +2,12 @@
 // Name        : ShotSimulationService.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
+#include "ShotSimulationService.h"
+
 #include <algorithm>
 #include <vector>
-#include <opencv2\core\core.hpp>
-
-#include "ShotSimulationService.h"
 
 using std::max;
 using std::vector;
@@ -17,8 +16,7 @@ using shared::model::ShotEndPointType;
 
 namespace services {
 	namespace simulation {
-		ShotSimulationService::ShotSimulationService(WebcamServicePtr webcamService) : webcamService(webcamService)
-		{
+		ShotSimulationService::ShotSimulationService(WebcamServicePtr webcamService) : webcamService(webcamService) {
 			gunShotImg = imread("resources/images/gunfire_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			bulletLeftImg = imread("resources/images/bullet_small_left.png", CV_LOAD_IMAGE_UNCHANGED);
 			bulletRightImg = imread("resources/images/bullet_small_right.png", CV_LOAD_IMAGE_UNCHANGED);
@@ -45,7 +43,7 @@ namespace services {
 						//simulate gun shot
 						OverlayImage(frame, gunShotImg, iter->first.startPoint);
 						iter->second.x += gunShotImg.cols;
-						iter->second.y += gunShotImg.rows/2;
+						iter->second.y += gunShotImg.rows / 2;
 					}
 					else if (ArePointsEqual(iter->first.endPoint, iter->second)) {
 						//simulate explosion
@@ -83,8 +81,7 @@ namespace services {
 			}
 		}
 
-		void ShotSimulationService::OverlayImage(cv::Mat &background, const cv::Mat &foreground, cv::Point2i location)
-		{
+		void ShotSimulationService::OverlayImage(cv::Mat &background, const cv::Mat &foreground, cv::Point2i location) {
 			/*
 			 * http://jepsonsblog.blogspot.co.at/2012/10/overlay-transparent-image-in-opencv.html
 			 */
@@ -99,7 +96,7 @@ namespace services {
 					break;
 				}
 
-				// start at the column indicated by location, 
+				// start at the column indicated by location,
 				// or at column 0 if location.x is negative.
 				for (int x = max(location.x, 0); x < background.cols; ++x)
 				{
@@ -113,13 +110,13 @@ namespace services {
 					// determine the opacity of the foregrond pixel, using its fourth (alpha) channel.
 					double opacity = ((double)foreground.data[fY * foreground.step + fX * foreground.channels() + 3]) / 255.;
 
-					// and now combine the background and foreground pixel, using the opacity, 
+					// and now combine the background and foreground pixel, using the opacity,
 					// but only if opacity > 0.
 					for (int c = 0; opacity > 0 && c < background.channels(); ++c)
 					{
 						unsigned char foregroundPx = foreground.data[fY * foreground.step + fX * foreground.channels() + c];
 						unsigned char backgroundPx = background.data[y * background.step + x * background.channels() + c];
-						background.data[y * background.step + background.channels()*x + c] = backgroundPx * (1. - opacity) + foregroundPx * opacity;
+						background.data[y * background.step + background.channels() * x + c] = backgroundPx * (1. - opacity) + foregroundPx * opacity;
 					}
 				}
 			}

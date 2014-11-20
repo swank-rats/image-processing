@@ -2,14 +2,9 @@
 // Name        : MessageHeaders.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
-#pragma once
-
-#include <string>
 #include "MessageHeaders.h"
-
-using std::string;
 
 namespace infrastructure {
 	namespace websocket {

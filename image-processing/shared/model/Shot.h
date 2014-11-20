@@ -3,10 +3,10 @@
 // Author      : ITM13
 // Version     : 1.0
 
-// Description : 
+// Description :
 //============================================================================
 #pragma once
-#include <opencv2\opencv.hpp>
+#include <opencv2\core\core.hpp>
 
 using cv::Point2i;
 
@@ -21,7 +21,7 @@ namespace shared {
 			ShotEndPointType endPointType;
 
 			Shot(Point2i start, Point2i end, ShotEndPointType type)
-			: startPoint(start), endPoint(end), endPointType(type) {
+				: startPoint(start), endPoint(end), endPointType(type) {
 			}
 		};
 	}

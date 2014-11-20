@@ -2,12 +2,12 @@
 // Name        : MessageNotification.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #pragma once
+#include "Message.h"
 
 #include <Poco\Notification.h>
-#include "Message.h"
 
 using Poco::Notification;
 using infrastructure::websocket::Message;

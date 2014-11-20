@@ -2,16 +2,17 @@
 // Name        : ShotSimulationService.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #pragma once
-#include <memory>
-#include <opencv2\core\core.hpp>
-#include <Poco\HashMap.h>
-
 #include "videostreaming\webcam\WebcamService.h"
 #include "..\shared\observer\IObserver.h"
 #include "..\shared\model\Shot.h"
+
+#include <opencv2\core\core.hpp>
+#include <Poco\HashMap.h>
+
+#include <memory>
 
 using cv::Mat;
 using cv::Point2i;
@@ -22,7 +23,7 @@ using Poco::HashMap;
 
 namespace services {
 	namespace simulation {
-		class ShotSimulationService : public IObserver <WebcamService>
+		class ShotSimulationService : public IObserver < WebcamService >
 		{
 		public:
 			ShotSimulationService(WebcamServicePtr webcamService);

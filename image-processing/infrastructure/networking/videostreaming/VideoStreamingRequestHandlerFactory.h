@@ -2,14 +2,15 @@
 // Name        : VideoStreamingRequestHandlerFactory.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #pragma once
-#include <string>
+#include "..\..\..\services\videostreaming\webcam\WebcamService.h"
+
 #include <Poco\Net\HTTPRequestHandlerFactory.h>
 #include <Poco\Net\HTTPServerRequest.h>
 
-#include "..\..\..\services\videostreaming\webcam\WebcamService.h"
+#include <string>
 
 using std::string;
 using Poco::Net::HTTPRequestHandlerFactory;

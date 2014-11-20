@@ -2,17 +2,16 @@
 // Name        : ObjectDetectionService.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
-
+#include "ObjectDetectionService.h"
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\opencv.hpp>
+
 #include <iostream>
 #include <string>
-
-#include "ObjectDetectionService.h"
 
 using namespace cv;
 using namespace std;
@@ -20,22 +19,11 @@ using shared::model::ShotEndPointType;
 
 RNG rng(12345);
 
+ObjectDetectionService::ObjectDetectionService() { }
 
+ObjectDetectionService::~ObjectDetectionService() { }
 
-ObjectDetectionService::ObjectDetectionService()
-{
-
-}
-
-
-ObjectDetectionService::~ObjectDetectionService()
-{
-
-}
-
-void ObjectDetectionService::DetectObject(Mat src, int iLowH, int iLowS, int iLowV, int iHighH, int iHighS, int iHighV){
-
-
+void ObjectDetectionService::DetectObject(Mat src, int iLowH, int iLowS, int iLowV, int iHighH, int iHighS, int iHighV) {
 	Mat imgOriginal(src);
 	Mat imgHSV;
 
@@ -56,7 +44,6 @@ void ObjectDetectionService::DetectObject(Mat src, int iLowH, int iLowS, int iLo
 	imshow("input", imgThresholded);
 	waitKey();
 
-
 	///// Convert image to gray and blur it
 	//cvtColor(imgThresholded, src_gray, COLOR_BGR2GRAY);
 	//blur(src_gray, src_gray, Size(3, 3));
@@ -64,13 +51,10 @@ void ObjectDetectionService::DetectObject(Mat src, int iLowH, int iLowS, int iLo
 	ThreshCallback(0, 0, src, imgThresholded, thresh);
 }
 
-
-
 /**
 * @function thresh_callback
 */
-void ObjectDetectionService::ThreshCallback(int, void*, Mat src, Mat src_gray, int thresh)
-{
+void ObjectDetectionService::ThreshCallback(int, void*, Mat src, Mat src_gray, int thresh) {
 	Mat canny_output;
 	vector<vector<Point> > contours;
 	vector<Vec4i> hierarchy;

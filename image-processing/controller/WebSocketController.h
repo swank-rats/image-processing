@@ -2,9 +2,13 @@
 // Name        : WebSocketController.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #pragma once
+#include "..\infrastructure\networking\websockets\client\WebSocketClient.h"
+#include "..\infrastructure\networking\websockets\message\Message.h"
+#include "..\infrastructure\networking\websockets\message\MessageNotification.h"
+
 #include <Poco\URI.h>
 #include <Poco\Net\Context.h>
 #include <Poco\NotificationQueue.h>
@@ -12,10 +16,6 @@
 #include <Poco\NObserver.h>
 #include <Poco\NotificationCenter.h>
 #include <Poco\AutoPtr.h>
-
-#include "..\infrastructure\networking\websockets\client\WebSocketClient.h"
-#include "..\infrastructure\networking\websockets\message\Message.h"
-#include "..\infrastructure\networking\websockets\message\MessageNotification.h"
 
 using Poco::URI;
 using Poco::Net::Context;
@@ -38,7 +38,7 @@ namespace controller {
 			void StopWebSocketClient();
 
 			typedef void(*MessageCallback)(const AutoPtr<MessageNotification>&);
-			
+
 			template<class T>
 			void AddMessageOberver(T target, void(*callback)(const AutoPtr<MessageNotification>&)) {
 				notificationCenter.addObserver(NObserver<T, MessageNotification>(target, callback));
@@ -58,6 +58,5 @@ namespace controller {
 
 			void HandleReceivedMessages();
 		};
-
 	}
 }

@@ -2,14 +2,15 @@
 // Name        : VideoStreamingRequestHandler.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #pragma once
+#include "..\..\..\..\services\videostreaming\webcam\WebcamService.h"
+
 #include <Poco\Logger.h>
 #include <Poco\Net\HTTPServerRequest.h>
 #include <Poco\Net\HTTPServerResponse.h>
 #include <Poco\Net\HTTPRequestHandler.h>
-#include "..\..\..\..\services\videostreaming\webcam\WebcamService.h"
 
 using Poco::Net::HTTPRequestHandler;
 using Poco::Net::HTTPServerRequest;
@@ -28,6 +29,5 @@ namespace infrastructure {
 		private:
 			WebcamServicePtr webcamService;
 		};
-
 	}
 }

@@ -2,9 +2,8 @@
 // Name        : ObjectDetectionService.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
-
 #pragma once
 #include "..\shared\model\Shot.h"
 
@@ -23,11 +22,8 @@ public:
 
 	Shot DetectShotRoute(const Mat &frame, int player); //TODO add player parameter
 private:
-	Mat src; 
+	Mat src;
 	Mat src_gray;
 	int thresh = 100;
 	int max_thresh = 255;
-	
-
 };
-

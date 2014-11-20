@@ -2,7 +2,7 @@
 // Name        : WebcamService.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #include "WebcamService.h"
 
@@ -39,7 +39,7 @@ namespace services {
 			//camera settings
 			capture.set(CV_CAP_PROP_FPS, 30);
 			//Possible resolutions : 1280x720, 640x480; 440x330
-			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640); 
+			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
 			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 
 			logger.information("Camera settings: ");
@@ -47,7 +47,7 @@ namespace services {
 			logger.information("Resolution: " + std::to_string(capture.get(CV_CAP_PROP_FRAME_WIDTH)) + "x" + std::to_string(capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
 			logger.information("Codec: " + std::to_string(capture.get(CV_CAP_PROP_FOURCC)));
 			logger.information("Format: " + std::to_string(capture.get(CV_CAP_PROP_FORMAT)));
-			
+
 			recordingActivity.start();
 
 			logger.information("started recording");
@@ -65,12 +65,11 @@ namespace services {
 				logger.information("recording activity stop requested");
 				recordingActivity.wait();
 				logger.information("recording activity stopped successfully");
-
 			}
 			else {
 				logger.error("recording activity is already stopped!");
 			}
-			
+
 			logger.information("stopped recording");
 
 			return true;
@@ -80,7 +79,7 @@ namespace services {
 			Logger& logger = Logger::get("WebcamService");
 
 			cv::Mat frame;
-				
+
 			while (!recordingActivity.isStopped()) {
 				if (!capture.isOpened()) {
 					logger.error("Lost connection to webcam!");

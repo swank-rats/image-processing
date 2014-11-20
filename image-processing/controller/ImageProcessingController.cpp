@@ -2,16 +2,17 @@
 // Name        : ImageProcessingController.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #include "ImageProcessingController.h"
 
-#include <iostream>
-#include <algorithm>
+#include "..\services\ObjectDetectionService.h"
+
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 
-#include "..\services\ObjectDetectionService.h"
+#include <iostream>
+#include <algorithm>
 
 using std::max;
 using cv::Mat;
@@ -31,19 +32,16 @@ namespace controller {
 		int iHighV = 255;
 
 		ImageProcessingController::ImageProcessingController(WebcamServicePtr webcamService)
-			: webcamService(webcamService), shotSimulation(webcamService)
-		{
-			detectService= new ObjectDetectionService();
+			: webcamService(webcamService), shotSimulation(webcamService) {
+			detectService = new ObjectDetectionService();
 		}
 
-		ImageProcessingController::~ImageProcessingController()
-		{
+		ImageProcessingController::~ImageProcessingController()	{
 			delete detectService;
-			detectService = nullptr;	
+			detectService = nullptr;
 		}
 
 		void ImageProcessingController::StartImageProcessing() {
-
 			webcamService->AddObserver(this);
 
 			CreateTrackBarView();
@@ -67,7 +65,7 @@ namespace controller {
 			//TODO handle message - eg simulate shot and so on
 		}
 
-		void ImageProcessingController::CreateTrackBarView(){
+		void ImageProcessingController::CreateTrackBarView() {
 			namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
 			//Create trackbars in "Control" window

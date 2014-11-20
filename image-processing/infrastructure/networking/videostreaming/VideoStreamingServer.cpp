@@ -2,21 +2,20 @@
 // Name        : VideoStreamingServer.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : Representing a HTTP streaming server that listens at a 
+// Description : Representing a HTTP streaming server that listens at a
 //				 specific port and provides a video stream via MJPEG.
 //============================================================================
-#include <Poco\Net\HTTPServerParams.h>
 #include "VideoStreamingServer.h"
 #include "VideoStreamingRequestHandlerFactory.h"
+
+#include <Poco\Net\HTTPServerParams.h>
 
 using Poco::Net::HTTPServerParams;
 
 namespace infrastructure {
 	namespace video_streaming {
-
-		VideoStreamingServer::VideoStreamingServer(unsigned short port, const std::string& uri, 
-			services::webcam::WebcamServicePtr webcamService) : socket(port)
-		{
+		VideoStreamingServer::VideoStreamingServer(unsigned short port, const std::string& uri,
+			services::webcam::WebcamServicePtr webcamService) : socket(port) {
 			Logger& logger = Logger::get("VideoStreamingServer");
 
 			HTTPServerParams* pParams = new HTTPServerParams;
@@ -37,8 +36,7 @@ namespace infrastructure {
 			server = nullptr;
 		}
 
-		void VideoStreamingServer::StartServer()
-		{
+		void VideoStreamingServer::StartServer() {
 			Logger& logger = Logger::get("VideoStreamingServer");
 
 			logger.information("starting video streaming server...");
@@ -53,7 +51,5 @@ namespace infrastructure {
 			threadPool.stopAll();
 			logger.information("stopped video streaming server");
 		}
-
 	}
 }
-

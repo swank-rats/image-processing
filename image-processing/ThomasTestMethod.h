@@ -18,7 +18,8 @@
 #include "controller\ImageProcessingController.h"
 
 
-#include "Poco/HashMap.h"
+#include "Poco/HashMap.h"
+
 
 
 

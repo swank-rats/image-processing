@@ -2,9 +2,11 @@
 // Name        : WebSocketClient.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
-#include <string>
+#include "WebSocketClient.h"
+
+#include "..\message\MessageNotification.h"
 
 #include <Poco\Exception.h>
 #include <Poco\Net\HTTPMessage.h>
@@ -12,8 +14,7 @@
 #include <Poco\Net\HTTPResponse.h>
 #include <Poco\AutoPtr.h>
 
-#include "WebSocketClient.h"
-#include "..\message\MessageNotification.h"
+#include <string>
 
 using Poco::AutoPtr;
 using Poco::Net::HTTPRequest;
@@ -33,7 +34,7 @@ namespace infrastructure {
 				CloseConnection();
 			}
 		}
-		
+
 		void WebSocketClient::OpenConnection() {
 			connHandler->OpenConnection();
 

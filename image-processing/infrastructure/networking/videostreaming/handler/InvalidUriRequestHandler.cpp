@@ -2,7 +2,7 @@
 // Name        : InvalidUriRequestHandler.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #include "InvalidUriRequestHandler.h"
 
@@ -18,7 +18,7 @@ namespace infrastructure {
 			Logger& logger = Logger::get("InvalidUriRequestHandler");
 
 			logger.information("Invalid uri " + request.getURI() + " call by " + request.clientAddress().toString());
-			
+
 			response.setStatus(HTTPResponse::HTTP_BAD_REQUEST);
 			response.send();
 		}

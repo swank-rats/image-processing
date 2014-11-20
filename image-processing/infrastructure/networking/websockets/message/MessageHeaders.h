@@ -2,7 +2,7 @@
 // Name        : MessageHeaders.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #pragma once
 

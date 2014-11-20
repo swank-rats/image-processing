@@ -2,9 +2,12 @@
 // Name        : WebSocketClient.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #pragma once
+#include "..\message\Message.h"
+#include "WebSocketClientConnectionHandler.h"
+
 #include <Poco\URI.h>
 #include <Poco\Logger.h>
 #include <Poco\Net\HTTPServer.h>
@@ -14,9 +17,6 @@
 #include <Poco\NotificationQueue.h>
 #include <Poco\Activity.h>
 
-#include "WebSocketClientConnectionHandler.h"
-#include "..\message\Message.h"
-
 using Poco::Logger;
 using Poco::URI;
 using Poco::NotificationQueue;
@@ -25,7 +25,6 @@ using Poco::Net::HTTPSClientSession;
 using Poco::Net::Context;
 using Poco::Net::WebSocket;
 using infrastructure::websocket::Message;
-
 
 namespace infrastructure {
 	namespace websocket {
@@ -44,4 +43,3 @@ namespace infrastructure {
 		};
 	}
 }
-

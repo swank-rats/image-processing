@@ -2,12 +2,9 @@
 // Name        : WebSocketController.cpp
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
-#include <Poco\AutoPtr.h>
 #include "WebSocketController.h"
-
-using Poco::AutoPtr;
 
 namespace controller {
 	namespace websocket {

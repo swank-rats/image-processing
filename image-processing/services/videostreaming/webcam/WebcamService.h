@@ -2,10 +2,11 @@
 // Name        : WebcamService.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
-
 #pragma once
+#include "..\..\..\shared\observer\Observable.h"
+
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\opencv.hpp>
@@ -15,8 +16,6 @@
 #include <Poco\RWLock.h>
 
 #include <memory>
-#include "..\..\..\shared\observer\Observable.h"
-
 
 using cv::VideoCapture;
 using cv::Mat;

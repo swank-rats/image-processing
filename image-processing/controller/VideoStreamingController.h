@@ -2,7 +2,7 @@
 // Name        : VideoStreamingController.h
 // Author      : ITM13
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #pragma once
 #include "..\infrastructure\networking\videostreaming\VideoStreamingServer.h"
@@ -13,7 +13,6 @@ using namespace infrastructure::video_streaming;
 
 namespace controller {
 	namespace video_streaming {
-
 		class VideoStreamingController
 		{
 		public:
