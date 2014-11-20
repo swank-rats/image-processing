@@ -222,7 +222,8 @@ static void thresh_callbackdetect3(int, void*)
 	/// Detect edges using canny
 	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
 
-
+	//thresholding the grayscale image to get better results
+	threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
 
 	/// Find contours
 	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
@@ -595,8 +596,8 @@ public:
 		////camera settings
 		capture.set(CV_CAP_PROP_FPS, 30);
 		////Possible resolutions : 640x480; 440x330
-		capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
-		capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
+		//capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+		//capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
 
 
 
