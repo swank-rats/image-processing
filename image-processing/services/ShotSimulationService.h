@@ -38,7 +38,7 @@ namespace services {
 			Mat robotExplosionImg;
 			WebcamServicePtr webcamService;
 
-			typedef HashMap<Shot, Point2i> ShotsMapType;
+			typedef HashMap<Shot, Point2i, Shot> ShotsMapType;
 			ShotsMapType shots;
 
 			void OverlayImage(Mat &background, const Mat &foreground, Point2i location);
