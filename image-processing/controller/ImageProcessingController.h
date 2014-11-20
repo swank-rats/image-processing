@@ -40,6 +40,7 @@ namespace controller {
 			int iLowV = 0;
 			int iHighV = 255;
 			void CreateTrackBarView();
+			void OverlayImage(cv::Mat &background, const cv::Mat &foreground, cv::Point2i location);
 		};
 	}
 }
