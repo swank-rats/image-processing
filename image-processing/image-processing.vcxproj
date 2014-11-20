@@ -141,6 +141,7 @@
     <ClInclude Include="infrastructure\networking\websockets\message\MessageNotification.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />
     <ClInclude Include="services\videostreaming\webcam\WebcamService.h" />
+    <ClInclude Include="shared\model\Shot.h" />
     <ClInclude Include="shared\observer\IObserver.h" />
     <ClInclude Include="shared\observer\Observable.h" />
     <ClInclude Include="controller\WebSocketController.h" />

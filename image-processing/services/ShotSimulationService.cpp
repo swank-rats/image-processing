@@ -5,15 +5,15 @@
 // Description : 
 //============================================================================
 #include <algorithm>
+#include <vector>
 #include <opencv2\core\core.hpp>
-#include <opencv2\highgui\highgui.hpp>
-#include <opencv2\opencv.hpp>
-
 
 #include "ShotSimulationService.h"
 
 using std::max;
+using std::vector;
 using cv::imread;
+using shared::model::ShotEndPointType;
 
 namespace services {
 	namespace simulation {
@@ -30,13 +30,52 @@ namespace services {
 		{
 		}
 
-		void ShotSimulationService::SimulateShot() {
+		void ShotSimulationService::SimulateShot(Shot shot) {
+			shots.insert(ShotsMapType::ValueType(shot, shot.startPoint));
+		}
+
+		void ShotSimulationService::Update(WebcamService* observable) {
 			try {
-				Mat frame = webcamService->GetLastImage();
-				OverlayImage(frame, gunShotImg, Point2i(0, 0));
-				OverlayImage(frame, wallExplosionImg, Point2i(81, 81));
-				OverlayImage(frame, robotExplosionImg, Point2i(200, 200));
-				OverlayImage(frame, bulletLeftImg, Point2i(350, 350));
+				Mat frame = observable->GetLastImage();
+				ShotsMapType::Iterator iter = shots.begin();
+				vector<Shot> deleteShots;
+
+				do {
+					if (ArePointsEqual(iter->first.startPoint, iter->second)) {
+						//simulate gun shot
+						OverlayImage(frame, gunShotImg, iter->first.startPoint);
+						iter->second.x += gunShotImg.cols;
+						iter->second.y += gunShotImg.rows/2;
+					}
+					else if (ArePointsEqual(iter->first.endPoint, iter->second)) {
+						//simulate explosion
+						if (iter->first.endPointType == ShotEndPointType::Robot) {
+							OverlayImage(frame, robotExplosionImg, iter->first.endPoint);
+						}
+						else {
+							OverlayImage(frame, wallExplosionImg, iter->first.endPoint);
+						}
+
+						deleteShots.push_back(iter->first);
+					}
+					else {
+						//simulate bullet
+						OverlayImage(frame, bulletLeftImg, iter->second);
+						iter->second.x += bulletLeftImg.cols;
+						iter->second.y += bulletLeftImg.rows;
+
+						if (IsPointBiggerOrEqual(iter->second, iter->first.endPoint)) {
+							//simulation is finished after next step
+							iter->second = iter->first.endPoint;
+						}
+					}
+				} while (iter != shots.end());
+
+				//delete finished simulations
+				for each (Shot shot in deleteShots)
+				{
+					shots.erase(shot);
+				}
 			}
 			catch (cv::Exception& e) {
 				Logger& logger = Logger::get("Test");
@@ -84,6 +123,14 @@ namespace services {
 					}
 				}
 			}
+		}
+
+		bool ShotSimulationService::ArePointsEqual(const Point2i &p1, const Point2i &p2) {
+			return p1.x == p2.x && p1.y == p2.y;
+		}
+
+		bool ShotSimulationService::IsPointBiggerOrEqual(const Point2i &p1, const Point2i &p2) {
+			return p1.x >= p2.x && p1.y >= p2.y;
 		}
 	}
 }

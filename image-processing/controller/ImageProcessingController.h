@@ -13,8 +13,10 @@
 #include "..\services\ShotSimulationService.h"
 #include "..\shared\observer\IObserver.h"
 #include "..\services\ObjectDetectionService.h"
+#include <Poco\Timer.h>
 
 using Poco::AutoPtr;
+using Poco::Timer;
 using services::webcam::WebcamService;
 using services::webcam::WebcamServicePtr;
 using services::simulation::ShotSimulationService;
@@ -29,9 +31,10 @@ namespace controller {
 			~ImageProcessingController();
 			void StartImageProcessing();
 			void StopImageProcessing();
-			virtual void Update(WebcamService* observable);
+			void Update(WebcamService* observable);
 			IplImage* GetLastFrame();
 			void HandleMessageNotification(const AutoPtr<MessageNotification>& notification);
+			void OnTimer(Timer& timer);
 		private:
 			WebcamServicePtr webcamService;
 			ShotSimulationService shotSimulation;

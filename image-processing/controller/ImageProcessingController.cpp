@@ -4,19 +4,20 @@
 // Version     : 1.0
 // Description : 
 //============================================================================
+#include "ImageProcessingController.h"
 
-#include <opencv2\core\core.hpp>
-#include <opencv2\highgui\highgui.hpp>
 #include <iostream>
 #include <algorithm>
+#include <opencv2\core\core.hpp>
+#include <opencv2\highgui\highgui.hpp>
 
-#include "ImageProcessingController.h"
 #include "..\services\ObjectDetectionService.h"
 
 using std::max;
 using cv::Mat;
 using cv::Rect;
 using cv::Point;
+using Poco::TimerCallback;
 
 namespace controller {
 	namespace image_processing {
@@ -58,7 +59,7 @@ namespace controller {
 
 		void ImageProcessingController::Update(WebcamService* observable) {
 			Mat frame = observable->GetLastImage();
-			shotSimulation.SimulateShot();
+
 			//detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
 		}
 
@@ -78,6 +79,14 @@ namespace controller {
 
 			cvCreateTrackbar("LowV", "Control", &iLowV, 255);//Value (0 - 255)
 			cvCreateTrackbar("HighV", "Control", &iHighV, 255);
+		}
+
+		void ImageProcessingController::OnTimer(Timer& timer) {
+			static int player = 0;
+			Mat frame = webcamService->GetLastImage();
+			Shot shot = detectService->DetectShotRoute(frame, player);
+			shotSimulation.SimulateShot(shot);
+			player = player == 0 ? 1 : 0;
 		}
 	}
 }

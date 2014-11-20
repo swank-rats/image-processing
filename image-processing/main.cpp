@@ -13,6 +13,7 @@
 
 #include <Poco\Logger.h>
 #include <Poco\AutoPtr.h>
+#include <Poco\Timer.h>
 #include <Poco\WindowsConsoleChannel.h>
 #include <Poco\FormattingChannel.h>
 #include <Poco\PatternFormatter.h>
@@ -38,6 +39,8 @@ using namespace cv;
 using namespace std;
 using Poco::Logger;
 using Poco::AutoPtr;
+using Poco::Timer;
+using Poco::TimerCallback;
 using Poco::WindowsConsoleChannel;
 using Poco::FormattingChannel;
 using Poco::PatternFormatter;
@@ -147,6 +150,11 @@ private:
 		//webSocketCtrl.AddMessageOberver(imgProcCtrl, &callback);
 		webSocketCtrl.GetNotificationCenter().addObserver(NObserver<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
 		webSocketCtrl.StartWebSocketClient();
+
+		TimerCallback<ImageProcessingController> callback(imgProcCtrl, &ImageProcessingController::OnTimer);
+		Timer timer(1000, 2000); //start after 1 sec, recall every 2 sec
+		timer.start(callback);
+
 		char key;
 		while (1) {
 			key = cvWaitKey(10);
@@ -156,6 +164,7 @@ private:
 			}
 		}
 
+		timer.stop();
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();
 		webSocketCtrl.StopWebSocketClient();

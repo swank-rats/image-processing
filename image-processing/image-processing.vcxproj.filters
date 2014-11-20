@@ -119,6 +119,9 @@
     <ClInclude Include="services\ShotSimulationService.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="shared\model\Shot.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\images\colored_squares.png">
