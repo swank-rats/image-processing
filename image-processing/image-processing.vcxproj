@@ -129,6 +129,7 @@
     <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClient.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp" />
+    <ClCompile Include="services\ShotSimulationService.cpp" />
     <ClCompile Include="ThomasTestMethod.h" />
   </ItemGroup>
   <ItemGroup>
@@ -148,10 +149,15 @@
     <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.h" />
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClient.h" />
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.h" />
+    <ClInclude Include="services\ShotSimulationService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>
+    <Image Include="resources\images\bullet_small_left.png" />
+    <Image Include="resources\images\bullet_small_right.png" />
     <Image Include="resources\images\colored_squares.png" />
+    <Image Include="resources\images\explosion_robot.png" />
+    <Image Include="resources\images\explosion_wall.png" />
     <Image Include="resources\images\gunfire_small.png" />
     <Image Include="resources\images\lena.bmp" />
   </ItemGroup>

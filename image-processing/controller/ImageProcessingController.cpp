@@ -8,10 +8,12 @@
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <iostream>
+#include <algorithm>
 
 #include "ImageProcessingController.h"
 #include "..\services\ObjectDetectionService.h"
 
+using std::max;
 using cv::Mat;
 using cv::Rect;
 using cv::Point;
@@ -27,15 +29,10 @@ namespace controller {
 		int iLowV = 0;
 		int iHighV = 255;
 
-		Mat gunShot;
-		Rect roi;
-
-		ImageProcessingController::ImageProcessingController(WebcamServicePtr webcamService) : webcamService(webcamService)
+		ImageProcessingController::ImageProcessingController(WebcamServicePtr webcamService)
+			: webcamService(webcamService), shotSimulation(webcamService)
 		{
 			detectService= new ObjectDetectionService();
-			gunShot = imread("resources/images/gunfire_small.png", -1);
-			imshow("gunshot", gunShot);
-			roi = Rect(Point(10, 10), gunShot.size());
 		}
 
 		ImageProcessingController::~ImageProcessingController()
@@ -60,32 +57,8 @@ namespace controller {
 		}
 
 		void ImageProcessingController::Update(WebcamService* observable) {
-			static bool shown = false;
-			//TODO still needed?
 			Mat frame = observable->GetLastImage();
-
-			if (!shown && !frame.empty()) {
-				//gunShot.copyTo(frame.colRange(0, 80).rowRange(0, 80));
-
-				//gunShot.copyTo(frame(roi));
-				//imshow("drawn shot", frame);
-				shown = true;
-			}
-
-			//Mat src(5, 7, CV_8UC1, Scalar(1)); // 5x7
-			//Mat dst(10, 10, CV_8UC1, Scalar(0)); // 10x10
-
-			//src.copyTo(dst.rowRange(1, 6).colRange(3, 10));
-
-			//cv::Rect roi(cv::Point(originX, originY), cv::Size(width, height));
-			//cv::Mat destinationROI = bigImage(roi);
-			//smallImage.copyTo(destinationROI);
-/*
-			If you are certain the small image fits into the big image then you could simply do:
-
-			cv::Rect roi(cv::Point(originX, originY), smallImage.size());
-			smallImage.copyTo(bigImage(roi));*/
-
+			shotSimulation.SimulateShot();
 			//detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
 		}
 

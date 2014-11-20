@@ -63,6 +63,9 @@
     <ClCompile Include="infrastructure\networking\websockets\message\MessageHeaders.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="services\ShotSimulationService.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
@@ -113,6 +116,9 @@
     <ClInclude Include="infrastructure\networking\websockets\message\MessageHeaders.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="services\ShotSimulationService.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\images\colored_squares.png">
@@ -122,6 +128,18 @@
       <Filter>Ressourcendateien</Filter>
     </Image>
     <Image Include="resources\images\gunfire_small.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
+    <Image Include="resources\images\bullet_small_right.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
+    <Image Include="resources\images\bullet_small_left.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
+    <Image Include="resources\images\explosion_robot.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
+    <Image Include="resources\images\explosion_wall.png">
       <Filter>Ressourcendateien</Filter>
     </Image>
   </ItemGroup>

@@ -38,7 +38,7 @@ namespace services {
 
 			//camera settings
 			capture.set(CV_CAP_PROP_FPS, 30);
-			//Possible resolutions : 640x480; 440x330
+			//Possible resolutions : 1280x720, 640x480; 440x330
 			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640); 
 			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 
