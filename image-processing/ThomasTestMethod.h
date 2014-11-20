@@ -586,12 +586,32 @@ public:
 	void DetectConture2() {
 
 
-		CvCapture* capture = cvCaptureFromCAM(0);
+		VideoCapture capture = VideoCapture();
+		
+		capture.open(0);
 
+
+
+		////camera settings
+		capture.set(CV_CAP_PROP_FPS, 30);
+		////Possible resolutions : 640x480; 440x330
+		capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+		capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
+
+
+
+		cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
+		cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+
+		/// Create Window
+		const char* source_window = "Source";
+		namedWindow(source_window, WINDOW_AUTOSIZE);
+
+		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect3);
 
 		while (true)
 		{
-			srcdetect2 = cvQueryFrame(capture);
+			capture >> srcdetect2;
 
 
 			////Grayscale matrix
@@ -614,15 +634,13 @@ public:
 			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
 			blur(src_graydetect2, src_graydetect2, Size(3, 3));
 
-			/// Create Window
-			const char* source_window = "Source";
-			namedWindow(source_window, WINDOW_AUTOSIZE);
-			imshow(source_window, src_graydetect2);
+			
+			imshow(source_window, srcdetect2);
 
 			//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
 			//thresh_callbackdetect2(0, 0);
 
-			createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect3);
+			
 			thresh_callbackdetect3(0, 0);
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
