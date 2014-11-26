@@ -36,7 +36,7 @@ namespace infrastructure {
 			void OpenConnection();
 			void CloseConnection();
 			bool IsConnected();
-			void Send(Message* message);
+			void Send(const Message* message);
 		private:
 			WebSocketClientConnectionHandler* connHandler;
 			NotificationQueue sendingQueue;

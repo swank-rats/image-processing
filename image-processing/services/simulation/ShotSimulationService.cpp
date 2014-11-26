@@ -15,7 +15,7 @@ using cv::imread;
 
 namespace services {
 	namespace simulation {
-		ShotSimulationService::ShotSimulationService(WebcamServicePtr webcamService)
+		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService)
 			: webcamService(webcamService), detectionService() {
 			gunShotImg = imread("resources/images/gunfire_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);
@@ -28,6 +28,8 @@ namespace services {
 		ShotSimulationService::~ShotSimulationService()
 		{
 			webcamService->RemoveObserver(this);
+			//do not delete, since it is a shared pointer
+			webcamService = nullptr;
 		}
 
 		void ShotSimulationService::SimulateShot(Shot shot) {

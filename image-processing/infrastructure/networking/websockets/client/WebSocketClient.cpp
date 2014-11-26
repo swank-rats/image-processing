@@ -51,7 +51,7 @@ namespace infrastructure {
 			return connHandler->IsConnected();
 		}
 
-		void WebSocketClient::Send(Message* message) {
+		void WebSocketClient::Send(const Message* message) {
 			sendingQueue.enqueueNotification(new MessageNotification(message));
 		}
 	}

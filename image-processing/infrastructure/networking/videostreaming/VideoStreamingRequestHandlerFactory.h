@@ -9,25 +9,27 @@
 
 #include <Poco\Net\HTTPRequestHandlerFactory.h>
 #include <Poco\Net\HTTPServerRequest.h>
+#include <Poco\SharedPtr.h>
 
 #include <string>
 
 using std::string;
 using Poco::Net::HTTPRequestHandlerFactory;
-using services::webcam::WebcamServicePtr;
 using Poco::Net::HTTPServerRequest;
 using Poco::Net::HTTPRequestHandler;
+using Poco::SharedPtr;
+using services::webcam::WebcamService;
 
 namespace infrastructure {
 	namespace video_streaming {
 		class VideoStreamingRequestHandlerFactory : public HTTPRequestHandlerFactory
 		{
 		public:
-			VideoStreamingRequestHandlerFactory(WebcamServicePtr webcamService, const string& uri);
+			VideoStreamingRequestHandlerFactory(SharedPtr<WebcamService> webcamService, const string& uri);
 			~VideoStreamingRequestHandlerFactory();
 			HTTPRequestHandler* createRequestHandler(const HTTPServerRequest& request);
 		private:
-			WebcamServicePtr webcamService;
+			SharedPtr<WebcamService> webcamService;
 			string uri;
 		};
 	}

@@ -33,10 +33,12 @@
 #include <Poco\Util\OptionCallback.h>
 #include <Poco\Util\HelpFormatter.h>
 #include <Poco\Net\SSLManager.h>
+#include "Poco/SharedPtr.h"
 
 using namespace cv;
 using namespace std;
 using Poco::Logger;
+using Poco::SharedPtr;
 using Poco::AutoPtr;
 using Poco::Timer;
 using Poco::TimerCallback;
@@ -132,20 +134,20 @@ private:
 		Logger& logger = Logger::get("main");
 		logger.information("Threads were used");
 
-		std::shared_ptr<WebcamService> webcamService = std::make_shared<WebcamService>();
+		SharedPtr<WebcamService> webcamService(new WebcamService());
+		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri, context));
 
-		ImageProcessingController imgProcCtrl(webcamService);
+		ImageProcessingController imgProcCtrl(webcamService, webSocketCtrl);
 		imgProcCtrl.StartImageProcessing();
 
 		VideoStreamingController vidStreamCtrl(webcamService);
 		vidStreamCtrl.StartStreamingServer();
 
-		WebSocketController webSocketCtrl(uri, context);
 		//TODO ask wolfi how to solve
 		//WebSocketController::MessageCallback callback = reinterpret_cast<WebSocketController::MessageCallback>(imgProcCtrl.HandleMessageNotification);
 		//webSocketCtrl.AddMessageOberver(imgProcCtrl, &callback);
-		webSocketCtrl.GetNotificationCenter().addObserver(NObserver<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
-		webSocketCtrl.StartWebSocketClient();
+		webSocketCtrl->GetNotificationCenter().addObserver(NObserver<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
+		webSocketCtrl->StartWebSocketClient();
 
 		TimerCallback<ImageProcessingController> callback(imgProcCtrl, &ImageProcessingController::OnTimer);
 		Timer timer(1000, 2000); //start after 1 sec, recall every 2 sec
@@ -163,7 +165,8 @@ private:
 		timer.stop();
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();
-		webSocketCtrl.StopWebSocketClient();
+		webSocketCtrl->StopWebSocketClient();
+		webSocketCtrl = nullptr; //will call destructor since it is a shared pointer
 
 		destroyAllWindows();
 	}

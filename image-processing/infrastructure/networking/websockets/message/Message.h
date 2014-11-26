@@ -24,6 +24,8 @@ namespace infrastructure {
 		public:
 			Message(const string& cmd, const string& to = "", StringMap *params = new StringMap(), const string& data = "");
 			Message(const Message& msg);
+			Message(const Message* msg);
+
 			~Message();
 			string GetTo();
 			string GetCmd();
@@ -31,7 +33,7 @@ namespace infrastructure {
 
 			bool Message::GetParam(const string name, string& out);
 			void AddParam(const string& key, const string& value);
-			string ToString();
+			string ToString() const;
 
 			static Message* Parse(const string& message);
 		private:

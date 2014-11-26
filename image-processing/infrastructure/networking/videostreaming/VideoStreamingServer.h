@@ -12,6 +12,7 @@
 #include <Poco\Net\ServerSocket.h>
 #include <Poco\ThreadPool.h>
 #include <Poco\Logger.h>
+#include <Poco\SharedPtr.h>
 
 #include <string>
 
@@ -20,14 +21,15 @@ using Poco::Net::HTTPServer;
 using Poco::Net::ServerSocket;
 using Poco::ThreadPool;
 using Poco::Logger;
-using services::webcam::WebcamServicePtr;
+using Poco::SharedPtr;
+using services::webcam::WebcamService;
 
 namespace infrastructure {
 	namespace video_streaming {
 		class VideoStreamingServer
 		{
 		public:
-			VideoStreamingServer(unsigned short port, const string& uri, WebcamServicePtr webcamService);
+			VideoStreamingServer(unsigned short port, const string& uri, SharedPtr<WebcamService> webcamService);
 			~VideoStreamingServer();
 			void StartServer();
 			void StopServer();

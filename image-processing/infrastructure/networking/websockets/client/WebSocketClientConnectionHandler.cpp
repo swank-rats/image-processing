@@ -117,7 +117,7 @@ namespace infrastructure {
 				if (messageNotification)
 				{
 					try {
-						Message* message = messageNotification->GetData();
+						const Message* message = messageNotification->GetData();
 						string temp = message->ToString();
 						buffer = temp.c_str();
 

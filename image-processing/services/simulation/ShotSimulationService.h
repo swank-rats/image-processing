@@ -12,22 +12,23 @@
 
 #include <opencv2\core\core.hpp>
 #include <Poco\HashMap.h>
+#include <Poco\SharedPtr.h>
 
 #include <memory>
 
 using cv::Mat;
 using cv::Point2i;
 using services::webcam::WebcamService;
-using services::webcam::WebcamServicePtr;
 using shared::model::Shot;
 using Poco::HashMap;
+using Poco::SharedPtr;
 
 namespace services {
 	namespace simulation {
 		class ShotSimulationService : public IObserver < WebcamService >
 		{
 		public:
-			ShotSimulationService(WebcamServicePtr webcamService);
+			ShotSimulationService(SharedPtr<WebcamService> webcamService);
 			~ShotSimulationService();
 			void SimulateShot(Shot shot);
 			void Update(WebcamService* observable);
@@ -36,7 +37,7 @@ namespace services {
 			Mat cheeseImg;
 			Mat wallExplosionImg;
 			Mat robotExplosionImg;
-			WebcamServicePtr webcamService;
+			SharedPtr<WebcamService> webcamService;
 			ObjectDetectionService detectionService;
 
 			typedef HashMap<Shot, Point2i, Shot> ShotsMapType;

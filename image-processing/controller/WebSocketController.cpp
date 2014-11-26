@@ -44,6 +44,10 @@ namespace controller {
 			return notificationCenter;
 		}
 
+		void WebSocketController::Send(const Message* message) {
+			webSocketClient->Send(message);
+		}
+
 		void WebSocketController::HandleReceivedMessages() {
 			AutoPtr<Notification> notification(receivedMessagesQueue.waitDequeueNotification());
 

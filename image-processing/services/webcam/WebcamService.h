@@ -24,7 +24,7 @@ using Poco::Logger;
 
 namespace services {
 	namespace webcam {
-		class WebcamService : public Observable<WebcamService>, public std::enable_shared_from_this < WebcamService > {
+		class WebcamService : public Observable < WebcamService > {
 		public:
 			WebcamService();
 			~WebcamService();
@@ -48,7 +48,5 @@ namespace services {
 			Mat lastImage;
 			Activity<WebcamService> recordingActivity;
 		};
-
-		typedef std::shared_ptr<WebcamService> WebcamServicePtr;
 	}
 }

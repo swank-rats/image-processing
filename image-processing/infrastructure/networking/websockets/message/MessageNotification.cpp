@@ -8,14 +8,16 @@
 
 namespace infrastructure {
 	namespace websocket {
-		MessageNotification::MessageNotification(Message* data) : data(data) { }
+		MessageNotification::MessageNotification(const Message* data) {
+			this->data = data;
+		}
 
 		MessageNotification::~MessageNotification() {
 			delete data;
 			data = nullptr;
 		}
 
-		Message* MessageNotification::GetData()
+		const Message* MessageNotification::GetData()
 		{
 			return data;
 		}

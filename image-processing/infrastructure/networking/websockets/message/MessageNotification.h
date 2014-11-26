@@ -17,11 +17,11 @@ namespace infrastructure {
 		class MessageNotification : public Notification
 		{
 		public:
-			MessageNotification(Message* data);
+			MessageNotification(const Message* data);
 			~MessageNotification();
-			Message* GetData();
+			const Message* GetData();
 		private:
-			Message* data;
+			const Message* data;
 		};
 	}
 }

@@ -8,7 +8,7 @@
 
 namespace controller {
 	namespace video_streaming {
-		VideoStreamingController::VideoStreamingController(WebcamServicePtr webcamService) {
+		VideoStreamingController::VideoStreamingController(SharedPtr<WebcamService> webcamService) {
 			streamingServer = new VideoStreamingServer(4711, "/videostream", webcamService);
 		}
 

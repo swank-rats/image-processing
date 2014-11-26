@@ -10,10 +10,13 @@
 
 namespace infrastructure {
 	namespace video_streaming {
-		VideoStreamingRequestHandlerFactory::VideoStreamingRequestHandlerFactory(WebcamServicePtr webcamService,
+		VideoStreamingRequestHandlerFactory::VideoStreamingRequestHandlerFactory(SharedPtr<WebcamService> webcamService,
 			const string& uri) : webcamService(webcamService), uri(uri)	{ }
 
-		VideoStreamingRequestHandlerFactory::~VideoStreamingRequestHandlerFactory() { }
+		VideoStreamingRequestHandlerFactory::~VideoStreamingRequestHandlerFactory() {
+			//do not delete, since it is a shared pointer
+			webcamService = nullptr;
+		}
 
 		HTTPRequestHandler* VideoStreamingRequestHandlerFactory::createRequestHandler(const HTTPServerRequest& request) {
 			if (request.getURI() == uri) {

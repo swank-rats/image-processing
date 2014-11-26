@@ -15,7 +15,7 @@ using Poco::Net::HTTPServerParams;
 namespace infrastructure {
 	namespace video_streaming {
 		VideoStreamingServer::VideoStreamingServer(unsigned short port, const std::string& uri,
-			services::webcam::WebcamServicePtr webcamService) : socket(port) {
+			SharedPtr<WebcamService> webcamService) : socket(port) {
 			Logger& logger = Logger::get("VideoStreamingServer");
 
 			HTTPServerParams* pParams = new HTTPServerParams;

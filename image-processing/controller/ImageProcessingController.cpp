@@ -31,14 +31,19 @@ namespace controller {
 		int iLowV = 0;
 		int iHighV = 255;
 
-		ImageProcessingController::ImageProcessingController(WebcamServicePtr webcamService)
-			: webcamService(webcamService), shotSimulation(webcamService) {
+		ImageProcessingController::ImageProcessingController(SharedPtr<WebcamService> webcamService,
+			SharedPtr<WebSocketController> websocketController) : webcamService(webcamService),
+			shotSimulation(webcamService), websocketController(websocketController) {
 			detectService = new ObjectDetectionService();
 		}
 
 		ImageProcessingController::~ImageProcessingController()	{
 			delete detectService;
 			detectService = nullptr;
+
+			//do not delete, since it is a shared pointer
+			webcamService = nullptr;
+			websocketController = nullptr;
 		}
 
 		void ImageProcessingController::StartImageProcessing() {

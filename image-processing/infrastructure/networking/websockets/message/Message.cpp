@@ -37,6 +37,8 @@ namespace infrastructure {
 
 		Message::Message(const Message& msg) : to(msg.to), cmd(msg.cmd), params(msg.params), data(msg.data) { }
 
+		Message::Message(const Message* msg) : to(msg->to), cmd(msg->cmd), params(msg->params), data(msg->data) { }
+
 		Message::~Message() {
 			delete params;
 			params = nullptr;
@@ -70,7 +72,7 @@ namespace infrastructure {
 			params->insert(StringMap::ValueType(key, value));
 		}
 
-		string Message::ToString() {
+		string Message::ToString() const {
 			stringstream stream;
 			string comma = ", ";
 			bool addComma = false;

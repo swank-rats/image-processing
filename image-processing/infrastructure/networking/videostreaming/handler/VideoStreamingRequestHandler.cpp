@@ -15,12 +15,15 @@ using Poco::Net::MultipartWriter;
 
 namespace infrastructure {
 	namespace video_streaming {
-		VideoStreamingRequestHandler::VideoStreamingRequestHandler(WebcamServicePtr webcamService) : webcamService(webcamService) {
+		VideoStreamingRequestHandler::VideoStreamingRequestHandler(SharedPtr<WebcamService> webcamService) : webcamService(webcamService) {
 			params = { CV_IMWRITE_JPEG_QUALITY, 30 };
 			boundary = "VIDEOSTREAM";
 		}
 
-		VideoStreamingRequestHandler::~VideoStreamingRequestHandler() { }
+		VideoStreamingRequestHandler::~VideoStreamingRequestHandler() {
+			//do not delete, since it is a shared pointer
+			webcamService = nullptr;
+		}
 
 		void VideoStreamingRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response) {
 			Poco::Logger& logger = Poco::Logger::get("VideoStreamingRequestHandler");

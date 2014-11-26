@@ -10,27 +10,31 @@
 #include "..\services\simulation\ShotSimulationService.h"
 #include "..\shared\observer\IObserver.h"
 #include "..\services\ObjectDetectionService.h"
+#include "WebSocketController.h"
 
 #include <opencv2\opencv.hpp>
 
 #include <Poco\AutoPtr.h>
 #include <Poco\Timer.h>
+#include <Poco\SharedPtr.h>
 
 #include <memory>
 
 using Poco::AutoPtr;
 using Poco::Timer;
+using Poco::SharedPtr;
 using services::webcam::WebcamService;
-using services::webcam::WebcamServicePtr;
+using services::webcam::WebcamService;
 using services::simulation::ShotSimulationService;
 using infrastructure::websocket::MessageNotification;
+using controller::websocket::WebSocketController;
 
 namespace controller {
 	namespace image_processing {
 		class ImageProcessingController : public IObserver < WebcamService >
 		{
 		public:
-			ImageProcessingController(WebcamServicePtr webcamService);
+			ImageProcessingController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> websocketController);
 			~ImageProcessingController();
 			void StartImageProcessing();
 			void StopImageProcessing();
@@ -39,7 +43,8 @@ namespace controller {
 			void HandleMessageNotification(const AutoPtr<MessageNotification>& notification);
 			void OnTimer(Timer& timer);
 		private:
-			WebcamServicePtr webcamService;
+			SharedPtr<WebcamService> webcamService;
+			SharedPtr<WebSocketController> websocketController;
 			ShotSimulationService shotSimulation;
 			ObjectDetectionService* detectService;
 			int iLowH = 0;
