@@ -10,19 +10,29 @@
 #include <Poco\Net\MessageHeader.h>
 
 using Poco::Net::MessageHeader;
+using Poco::Net::HTTPResponse;
 using Poco::Net::MultipartWriter;
 
 namespace infrastructure {
 	namespace video_streaming {
-		VideoStreamingRequestHandler::VideoStreamingRequestHandler(WebcamServicePtr webcamService) : webcamService(webcamService) { }
+		VideoStreamingRequestHandler::VideoStreamingRequestHandler(WebcamServicePtr webcamService) : webcamService(webcamService) {
+			params = { CV_IMWRITE_JPEG_QUALITY, 30 };
+			boundary = "VIDEOSTREAM";
+		}
 
 		VideoStreamingRequestHandler::~VideoStreamingRequestHandler() { }
 
 		void VideoStreamingRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response) {
-			static std::vector<int> params = { CV_IMWRITE_JPEG_QUALITY, 30 };
 			Poco::Logger& logger = Poco::Logger::get("VideoStreamingRequestHandler");
+			logger.information("Video stream request by client: " + request.clientAddress().toString());
 
-			string boundary = "VIDEOSTREAM";
+			// check if webcam service is running correctly
+			if (!webcamService->IsRecording()) {
+				logger.warning("No stream available. Closing connection to " + request.clientAddress().toString());
+				response.setStatus(HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+				response.send();
+				return;
+			}
 
 			logger.information("Video streaming started for client " + request.clientAddress().toString());
 

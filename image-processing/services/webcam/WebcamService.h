@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\..\..\shared\observer\Observable.h"
+#include "..\..\shared\observer\Observable.h"
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
@@ -39,6 +39,8 @@ namespace services {
 			bool StopRecording();
 
 			Mat GetLastImage();
+
+			bool IsRecording();
 		private:
 			void RecordingCore();
 

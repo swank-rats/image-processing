@@ -122,14 +122,14 @@
     <ClCompile Include="infrastructure\networking\websockets\message\MessageNotification.cpp" />
     <ClCompile Include="services\ObjectDetectionService.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="services\videostreaming\webcam\WebcamService.cpp" />
+    <ClCompile Include="services\webcam\WebcamService.cpp" />
     <ClCompile Include="controller\WebSocketController.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingServer.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingRequestHandlerFactory.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClient.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp" />
-    <ClCompile Include="services\ShotSimulationService.cpp" />
+    <ClCompile Include="services\simulation\ShotSimulationService.cpp" />
     <ClCompile Include="ThomasTestMethod.h" />
   </ItemGroup>
   <ItemGroup>
@@ -140,7 +140,7 @@
     <ClInclude Include="infrastructure\networking\websockets\message\MessageHeaders.h" />
     <ClInclude Include="infrastructure\networking\websockets\message\MessageNotification.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />
-    <ClInclude Include="services\videostreaming\webcam\WebcamService.h" />
+    <ClInclude Include="services\webcam\WebcamService.h" />
     <ClInclude Include="shared\model\Shot.h" />
     <ClInclude Include="shared\observer\IObserver.h" />
     <ClInclude Include="shared\observer\Observable.h" />
@@ -150,12 +150,11 @@
     <ClInclude Include="infrastructure\networking\videostreaming\handler\VideoStreamingRequestHandler.h" />
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClient.h" />
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.h" />
-    <ClInclude Include="services\ShotSimulationService.h" />
+    <ClInclude Include="services\simulation\ShotSimulationService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>
-    <Image Include="resources\images\bullet_small_left.png" />
-    <Image Include="resources\images\bullet_small_right.png" />
+    <Image Include="resources\images\cheese_small.png" />
     <Image Include="resources\images\colored_squares.png" />
     <Image Include="resources\images\explosion_robot.png" />
     <Image Include="resources\images\explosion_wall.png" />

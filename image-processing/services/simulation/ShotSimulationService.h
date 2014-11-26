@@ -5,9 +5,10 @@
 // Description :
 //============================================================================
 #pragma once
-#include "videostreaming\webcam\WebcamService.h"
-#include "..\shared\observer\IObserver.h"
-#include "..\shared\model\Shot.h"
+#include "..\webcam\WebcamService.h"
+#include "..\ObjectDetectionService.h"
+#include "..\..\shared\observer\IObserver.h"
+#include "..\..\shared\model\Shot.h"
 
 #include <opencv2\core\core.hpp>
 #include <Poco\HashMap.h>
@@ -32,11 +33,11 @@ namespace services {
 			void Update(WebcamService* observable);
 		private:
 			Mat gunShotImg;
-			Mat bulletLeftImg;
-			Mat bulletRightImg;
+			Mat cheeseImg;
 			Mat wallExplosionImg;
 			Mat robotExplosionImg;
 			WebcamServicePtr webcamService;
+			ObjectDetectionService detectionService;
 
 			typedef HashMap<Shot, Point2i, Shot> ShotsMapType;
 			ShotsMapType shots;

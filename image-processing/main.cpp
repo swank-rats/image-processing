@@ -4,7 +4,7 @@
 // Version     : 1.0
 // Description : Image process start point
 //============================================================================
-#include "services\videostreaming\webcam\WebcamService.h"
+#include "services\webcam\WebcamService.h"
 #include "services\ObjectDetectionService.h"
 #include "controller\ImageProcessingController.h"
 #include "controller\VideoStreamingController.h"

@@ -41,6 +41,7 @@ namespace infrastructure {
 
 			logger.information("starting video streaming server...");
 			server->start();
+			logger.information("video streaming server started - waiting for requests");
 		}
 
 		void VideoStreamingServer::StopServer() {

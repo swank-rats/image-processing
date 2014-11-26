@@ -6,7 +6,7 @@
 //				 specific port and provides a video stream via MJPEG.
 //============================================================================
 #pragma once
-#include "..\..\..\services\videostreaming\webcam\WebcamService.h"
+#include "..\..\..\services\webcam\WebcamService.h"
 
 #include <Poco\Net\HTTPServer.h>
 #include <Poco\Net\ServerSocket.h>

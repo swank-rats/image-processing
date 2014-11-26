@@ -15,7 +15,6 @@
 
 using namespace cv;
 using namespace std;
-using shared::model::ShotEndPointType;
 
 RNG rng(12345);
 
@@ -79,5 +78,11 @@ void ObjectDetectionService::ThreshCallback(int, void*, Mat src, Mat src_gray, i
 }
 
 Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, int player) {
-	return Shot(Point2i(15, 20), Point2i(500, 380), player == 1 ? ShotEndPointType::Robot : ShotEndPointType::Wall);
+	// TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
+	return Shot(Point2i(15, 20), Point2i(500, 380));
+}
+
+bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, Shot shot) {
+	// TODO analyse frame and detect if a player is at shot endposition
+	return true;
 }

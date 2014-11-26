@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\..\..\services\videostreaming\webcam\WebcamService.h"
+#include "..\..\..\services\webcam\WebcamService.h"
 
 #include <Poco\Net\HTTPRequestHandlerFactory.h>
 #include <Poco\Net\HTTPServerRequest.h>

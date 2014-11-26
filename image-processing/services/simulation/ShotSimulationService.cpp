@@ -12,14 +12,13 @@
 using std::max;
 using std::vector;
 using cv::imread;
-using shared::model::ShotEndPointType;
 
 namespace services {
 	namespace simulation {
-		ShotSimulationService::ShotSimulationService(WebcamServicePtr webcamService) : webcamService(webcamService) {
+		ShotSimulationService::ShotSimulationService(WebcamServicePtr webcamService)
+			: webcamService(webcamService), detectionService() {
 			gunShotImg = imread("resources/images/gunfire_small.png", CV_LOAD_IMAGE_UNCHANGED);
-			bulletLeftImg = imread("resources/images/bullet_small_left.png", CV_LOAD_IMAGE_UNCHANGED);
-			bulletRightImg = imread("resources/images/bullet_small_right.png", CV_LOAD_IMAGE_UNCHANGED);
+			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			wallExplosionImg = imread("resources/images/explosion_wall.png", CV_LOAD_IMAGE_UNCHANGED);
 			robotExplosionImg = imread("resources/images/explosion_robot.png", CV_LOAD_IMAGE_UNCHANGED);
 
@@ -54,7 +53,7 @@ namespace services {
 					}
 					else if (ArePointsEqual(iter->first.endPoint, iter->second)) {
 						//simulate explosion
-						if (iter->first.endPointType == ShotEndPointType::Robot) {
+						if (detectionService.HasShotHitPlayer(frame, iter->first)) {
 							OverlayImage(frame, robotExplosionImg, iter->first.endPoint);
 						}
 						else {
@@ -65,9 +64,9 @@ namespace services {
 					}
 					else {
 						//simulate bullet
-						OverlayImage(frame, bulletLeftImg, iter->second);
-						iter->second.x += bulletLeftImg.cols;
-						iter->second.y += bulletLeftImg.rows;
+						OverlayImage(frame, cheeseImg, iter->second);
+						iter->second.x += cheeseImg.cols;
+						iter->second.y += cheeseImg.rows;
 
 						if (IsPointBiggerOrEqual(iter->second, iter->first.endPoint)) {
 							//simulation is finished after next step

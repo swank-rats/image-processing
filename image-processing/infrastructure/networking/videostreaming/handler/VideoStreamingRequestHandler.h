@@ -5,13 +5,17 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\..\..\..\services\videostreaming\webcam\WebcamService.h"
+#include "..\..\..\..\services\webcam\WebcamService.h"
 
 #include <Poco\Logger.h>
 #include <Poco\Net\HTTPServerRequest.h>
 #include <Poco\Net\HTTPServerResponse.h>
 #include <Poco\Net\HTTPRequestHandler.h>
 
+#include <vector>
+#include <string>
+
+using std::vector;
 using Poco::Net::HTTPRequestHandler;
 using Poco::Net::HTTPServerRequest;
 using Poco::Net::HTTPServerResponse;
@@ -28,6 +32,8 @@ namespace infrastructure {
 			void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
 		private:
 			WebcamServicePtr webcamService;
+			vector<int> params;
+			string boundary;
 		};
 	}
 }

@@ -26,15 +26,15 @@ namespace services {
 		bool WebcamService::StartRecording() {
 			Logger& logger = Logger::get("WebcamService");
 
-			logger.information("starting recording...");
-			cvNamedWindow(windowName, CV_WINDOW_AUTOSIZE);
-
 			capture.open(CV_CAP_ANY);
 
 			if (!capture.isOpened()){
-				logger.error("No camera found");
+				logger.error("No camera available!");
 				return false;
 			}
+
+			logger.information("starting recording...");
+			cvNamedWindow(windowName, CV_WINDOW_AUTOSIZE);
 
 			//camera settings
 			capture.set(CV_CAP_PROP_FPS, 30);
@@ -73,6 +73,10 @@ namespace services {
 			logger.information("stopped recording");
 
 			return true;
+		}
+
+		bool WebcamService::IsRecording() {
+			return capture.isOpened() && recordingActivity.isRunning();
 		}
 
 		void WebcamService::RecordingCore() {

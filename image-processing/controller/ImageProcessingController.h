@@ -6,8 +6,8 @@
 //============================================================================
 #pragma once
 #include "..\infrastructure\networking\websockets\message\MessageNotification.h"
-#include "..\services\videostreaming\webcam\WebcamService.h"
-#include "..\services\ShotSimulationService.h"
+#include "..\services\webcam\WebcamService.h"
+#include "..\services\simulation\ShotSimulationService.h"
 #include "..\shared\observer\IObserver.h"
 #include "..\services\ObjectDetectionService.h"
 

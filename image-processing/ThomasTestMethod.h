@@ -5,7 +5,6 @@
 // Description : Image process start point
 //============================================================================
 
-
 #include <iostream>
 #include <list>
 
@@ -13,15 +12,11 @@
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\opencv.hpp>
 
-#include "services\videostreaming\webcam\WebcamService.h"
+#include "services\webcam\WebcamService.h"
 #include "services\ObjectDetectionService.h"
 #include "controller\ImageProcessingController.h"
 
-
 #include "Poco/HashMap.h"
-
-
-
 
 using namespace cv;
 using namespace std;
@@ -32,25 +27,19 @@ static int threshdetect2;
 static int max_threshdetect2;
 static RNG rngdetect2;
 
-
-
 static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons, vector<vector<cv::Point>> triangles, vector<int> pentagonContourPositions, vector<int> triangleContourPositions, vector<int> *allowedTriangles)
 {
-
 	int pentagonPos;
 	vector<int> allowedPentagonsContourPosition;
 	bool found = false;
 
 	if (pentagons.size() == pentagonContourPositions.size()){
-
-
 		for (size_t i = 0; i < triangles.size(); i++)
 		{
 			std::vector<cv::Point> triangleSelected = triangles[i];
 
 			for (size_t a = 0; a < pentagons.size(); a++)
 			{
-
 				if (triangleSelected.size() != 3)
 					break;
 
@@ -68,44 +57,34 @@ static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons,
 				triPointThree.y = triangleSelected[2].y;
 
 				if (pointPolygonTest(Mat(pentagons[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(pentagons[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(pentagons[a]), triPointThree, true) > 0){
-
 					allowedPentagonsContourPosition.push_back(pentagonContourPositions[a]);
 					allowedTriangles->push_back(triangleContourPositions[i]);
 					found = true;
 					break;
 				}
-
-
 			}
 
 			if (found)
 				break;
 		}
-
 	}
 
 	return  allowedPentagonsContourPosition;
-
 }
-
 
 static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangles, vector<vector<cv::Point>> triangles, vector<int> rectanglesContourPositions, vector<int> triangleContourPositions, vector<int> *allowedTriangles)
 {
-
 	int rectPos;
 	vector<int> allowedRectanglesContourPositions;
 	bool found = false;
 
 	if (rectangles.size() == rectanglesContourPositions.size()){
-
-
 		for (size_t i = 0; i < triangles.size(); i++)
 		{
 			std::vector<cv::Point> triSelected = triangles[i];
 
 			for (size_t a = 0; a < rectangles.size(); a++)
 			{
-
 				if (triSelected.size() != 3)
 					break;
 
@@ -123,27 +102,19 @@ static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangle
 				triPointThree.y = triSelected[2].y;
 
 				if (pointPolygonTest(Mat(rectangles[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rectangles[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rectangles[a]), triPointThree, true) > 0){
-
 					allowedRectanglesContourPositions.push_back(rectanglesContourPositions[a]);
 					allowedTriangles->push_back(triangleContourPositions[i]);
 					found = true;
 					break;
 				}
-
-
 			}
 
 			if (found)
 				break;
-
 		}
-
-
 	}
 
 	return allowedRectanglesContourPositions;
-
-
 }
 
 static void setLabel2(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour)
@@ -190,7 +161,6 @@ static void thresh_callbackdetect2(int, void*)
 
 static void calcPosition()
 {
-
 }
 
 /**
@@ -198,7 +168,7 @@ static void calcPosition()
 */
 static void thresh_callbackdetect3(int, void*)
 {
-	//Drawing and contours 
+	//Drawing and contours
 	Mat canny_output;
 	vector<vector<Point> > contours;
 	vector<Vec4i> hierarchy;
@@ -232,20 +202,17 @@ static void thresh_callbackdetect3(int, void*)
 	/// Draw contours
 	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
 
-
-
 	/*
 	*	Starting detection process
 	*/
 
 	for (size_t i = 0; i < contours.size(); i++)
 	{
-
 		// Approximate contour with accuracy proportional
 		// to the contour perimeter
 		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
-		// Skip small or non-convex objects 
+		// Skip small or non-convex objects
 		if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
 			continue;
 
@@ -269,11 +236,8 @@ static void thresh_callbackdetect3(int, void*)
 		}
 	}
 
-
 	allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions, trianglePositions, &allowedTriangles);
 	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTriangles);
-
-
 
 	for (size_t i = 0; i < contours.size(); i++)
 	{
@@ -281,7 +245,6 @@ static void thresh_callbackdetect3(int, void*)
 		{
 			if (allowedRectanglesContourPositions[y] == i)
 			{
-
 				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
 				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
 
@@ -296,16 +259,12 @@ static void thresh_callbackdetect3(int, void*)
 					,
 					2, cv::Scalar(255, 255, 255), 2);// draw white dot
 
-
-
 				string xAsString = static_cast<ostringstream*>(&(ostringstream() << point.x))->str();
 				string yAsString = static_cast<ostringstream*>(&(ostringstream() << point.y))->str();
 
 				std::string zeichenkette = "x: " + xAsString + " y: " + yAsString;
 
 				setLabel2(drawing, zeichenkette, contours[i]);
-
-
 			}
 		}
 
@@ -313,10 +272,8 @@ static void thresh_callbackdetect3(int, void*)
 		{
 			if (allowedPentagonsContourPosition[y] == i)
 			{
-
 				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
 				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
-
 
 				cv::Moments mom;
 
@@ -329,39 +286,24 @@ static void thresh_callbackdetect3(int, void*)
 					,
 					2, cv::Scalar(255, 255, 255), 2);// draw white dot
 
-
-
 				string xAsString = static_cast<ostringstream*>(&(ostringstream() << point.x))->str();
 				string yAsString = static_cast<ostringstream*>(&(ostringstream() << point.y))->str();
 
 				std::string zeichenkette = "x: " + xAsString + " y: " + yAsString;
 
 				setLabel2(drawing, zeichenkette, contours[i]);
-
 			}
-
 
 			for (size_t y = 0; y < allowedTriangles.size(); y++)
 			{
 				if (allowedTriangles[y] == i)
 				{
-
 					Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
 					drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
-
 				}
 			}
-
-
 		}
-
-
-
 	}
-
-
-
-
 
 	/// Show in a window
 	namedWindow("Contours", WINDOW_AUTOSIZE);
@@ -381,7 +323,6 @@ static double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0)
 	return (dx1*dx2 + dy1*dy2) / sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
 }
 
-
 class ThomasTest{
 public:
 	enum Farbe { ROT = 0, GRUEN = 1, BLAU = 2 };
@@ -393,12 +334,10 @@ public:
 	}
 
 	void DetectWihoutServices(){
-
 		VideoCapture cap(0); //capture the video from web cam
 
 		if (!cap.isOpened())  // if not success, exit program
 		{
-
 			return;
 		}
 
@@ -431,7 +370,6 @@ public:
 
 			if (!bSuccess) //if not success, break loop
 			{
-
 				break;
 			}
 
@@ -456,7 +394,6 @@ public:
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
-
 				break;
 			}
 		}
@@ -464,8 +401,6 @@ public:
 
 	void DetectConture()
 	{
-
-
 		CvCapture* capture = cvCaptureFromCAM(0);
 		IplImage* img;
 		CvMemStorage *storage;
@@ -493,7 +428,6 @@ public:
 			//finding all contours in the image
 			cvFindContours(imgGrayScale, storage, &contours, sizeof(CvContour), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, cvPoint(0, 0));
 
-
 			//iterating through each contour
 			while (contours)
 			{
@@ -513,7 +447,6 @@ public:
 					cvLine(img, *pt[0], *pt[1], cvScalar(255, 0, 0), 4);
 					cvLine(img, *pt[1], *pt[2], cvScalar(255, 0, 0), 4);
 					cvLine(img, *pt[2], *pt[0], cvScalar(255, 0, 0), 4);
-
 				}
 
 				//if there are 4 vertices in the contour(It should be a quadrilateral)
@@ -565,15 +498,13 @@ public:
 			dilate(img2, img2, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 			erode(img2, img2, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
-			//show the image in which identified shapes are marked   
+			//show the image in which identified shapes are marked
 			cvNamedWindow("Tracked");
 			//cvShowImage("Tracked", img2);
 			imshow("Tracked", img2);
 
-
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
-
 				break;
 			}
 		}
@@ -586,21 +517,15 @@ public:
 	}
 
 	void DetectConture2() {
-
-
 		VideoCapture capture = VideoCapture();
-		
+
 		capture.open(0);
-
-
 
 		////camera settings
 		capture.set(CV_CAP_PROP_FPS, 30);
 		////Possible resolutions : 640x480; 440x330
 		//capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
 		//capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
-
-
 
 		cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
 		cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
@@ -614,7 +539,6 @@ public:
 		while (true)
 		{
 			capture >> srcdetect2;
-
 
 			////Grayscale matrix
 			//cv::Mat grayscaleMat(srcdetect2.size(), CV_8U);
@@ -636,18 +560,15 @@ public:
 			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
 			blur(src_graydetect2, src_graydetect2, Size(3, 3));
 
-			
 			imshow(source_window, srcdetect2);
 
 			//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
 			//thresh_callbackdetect2(0, 0);
 
-			
 			thresh_callbackdetect3(0, 0);
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
-
 				break;
 			}
 		}
@@ -657,13 +578,10 @@ public:
 	}
 
 	void DetectConture3() {
-
-
 		CvCapture* capture = cvCaptureFromCAM(0);
 
 		while (true)
 		{
-
 			Mat src = cvQueryFrame(capture);
 
 			// Convert to grayscale
@@ -687,7 +605,7 @@ public:
 				// to the contour perimeter
 				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
-				// Skip small or non-convex objects 
+				// Skip small or non-convex objects
 				if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
 					continue;
 
@@ -738,10 +656,8 @@ public:
 			cv::imshow("dst", dst);
 			//cv::waitKey(0);
 
-
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
-
 				break;
 			}
 		}
@@ -770,7 +686,6 @@ public:
 
 	void Test4()
 	{
-
 		// create a RGB colour image (set it to a black background)
 
 		Mat img = Mat::zeros(400, 400, CV_8UC3);
@@ -785,7 +700,7 @@ public:
 		contour.push_back(Point(150, 350));
 		contour.push_back(Point(100, 100));
 
-		// create a pointer to the data as an array of points (via a conversion to 
+		// create a pointer to the data as an array of points (via a conversion to
 		// a Mat() object)
 
 		const cv::Point *pts = (const cv::Point*) Mat(contour).data;
@@ -793,14 +708,13 @@ public:
 
 		std::cout << "Number of polygon vertices: " << npts << std::endl;
 
-		// draw the polygon 
+		// draw the polygon
 
 		polylines(img, &pts, &npts, 1,
-			true, 			// draw closed contour (i.e. joint end to start) 
-			Scalar(0, 255, 0),// colour RGB ordering (here = green) 
+			true, 			// draw closed contour (i.e. joint end to start)
+			Scalar(0, 255, 0),// colour RGB ordering (here = green)
 			3, 		        // line thickness
 			CV_AA, 0);
-
 
 		// do point in polygon test (by conversion/cast to a Mat() object)
 		// define and test point one (draw it in red)
@@ -832,12 +746,12 @@ public:
 				<< std::endl;
 		}
 
-		// pointPolygonTest :- 
-		// "The function determines whether the point is inside a contour, outside, 
-		// or lies on an edge (or coincides with a vertex). It returns positive 
-		// (inside), negative (outside) or zero (on an edge) value, correspondingly. 
-		// When measureDist=false , the return value is +1, -1 and 0, respectively. 
-		// Otherwise, the return value it is a signed distance between the point 
+		// pointPolygonTest :-
+		// "The function determines whether the point is inside a contour, outside,
+		// or lies on an edge (or coincides with a vertex). It returns positive
+		// (inside), negative (outside) or zero (on an edge) value, correspondingly.
+		// When measureDist=false , the return value is +1, -1 and 0, respectively.
+		// Otherwise, the return value it is a signed distance between the point
 		// and the nearest contour edge." - OpenCV Manual version 2.1
 
 		// create an image and display the image
@@ -845,14 +759,9 @@ public:
 		namedWindow("Polygon Test", 0);
 		imshow("Polygon Test", img);
 		waitKey(0);
-
-
-
-
 	}
 
 	void Test5(){
-
 		CvCapture* capture = cvCaptureFromCAM(0);
 
 		Mat src;
@@ -860,7 +769,6 @@ public:
 		while (true)
 		{
 			src = cvQueryFrame(capture);
-
 
 			// Convert to grayscale
 			cv::Mat gray;
@@ -883,7 +791,7 @@ public:
 				// to the contour perimeter
 				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
-				// Skip small or non-convex objects 
+				// Skip small or non-convex objects
 				if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
 					continue;
 
@@ -933,19 +841,13 @@ public:
 			cv::imshow("src", src);
 			cv::imshow("dst", dst);
 
-
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
-
 				break;
 			}
 		}
 
 		//cleaning up
 		cvDestroyAllWindows();
-
-
-
 	}
-
 };

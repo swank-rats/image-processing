@@ -6,7 +6,7 @@
 //============================================================================
 #pragma once
 #include "..\infrastructure\networking\videostreaming\VideoStreamingServer.h"
-#include "..\services\videostreaming\webcam\WebcamService.h"
+#include "..\services\webcam\WebcamService.h"
 
 using namespace services::webcam;
 using namespace infrastructure::video_streaming;

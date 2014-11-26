@@ -30,9 +30,6 @@
     <ClCompile Include="controller\VideoStreamingController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="services\videostreaming\webcam\WebcamService.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="infrastructure\networking\videostreaming\VideoStreamingServer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -63,7 +60,10 @@
     <ClCompile Include="infrastructure\networking\websockets\message\MessageHeaders.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="services\ShotSimulationService.cpp">
+    <ClCompile Include="services\simulation\ShotSimulationService.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="services\webcam\WebcamService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,9 +84,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="controller\VideoStreamingController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="services\videostreaming\webcam\WebcamService.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="infrastructure\networking\videostreaming\VideoStreamingServer.h">
@@ -116,10 +113,13 @@
     <ClInclude Include="infrastructure\networking\websockets\message\MessageHeaders.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="services\ShotSimulationService.h">
+    <ClInclude Include="shared\model\Shot.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="shared\model\Shot.h">
+    <ClInclude Include="services\simulation\ShotSimulationService.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="services\webcam\WebcamService.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -133,16 +133,13 @@
     <Image Include="resources\images\gunfire_small.png">
       <Filter>Ressourcendateien</Filter>
     </Image>
-    <Image Include="resources\images\bullet_small_right.png">
-      <Filter>Ressourcendateien</Filter>
-    </Image>
-    <Image Include="resources\images\bullet_small_left.png">
-      <Filter>Ressourcendateien</Filter>
-    </Image>
     <Image Include="resources\images\explosion_robot.png">
       <Filter>Ressourcendateien</Filter>
     </Image>
     <Image Include="resources\images\explosion_wall.png">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
+    <Image Include="resources\images\cheese_small.png">
       <Filter>Ressourcendateien</Filter>
     </Image>
   </ItemGroup>
