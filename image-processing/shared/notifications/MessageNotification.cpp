@@ -6,8 +6,8 @@
 //============================================================================
 #include "MessageNotification.h"
 
-namespace infrastructure {
-	namespace websocket {
+namespace shared {
+	namespace notifications {
 		MessageNotification::MessageNotification(const Message* data) {
 			this->data = data;
 		}

@@ -7,7 +7,7 @@
 #pragma once
 #include "..\infrastructure\networking\websockets\client\WebSocketClient.h"
 #include "..\infrastructure\networking\websockets\message\Message.h"
-#include "..\infrastructure\networking\websockets\message\MessageNotification.h"
+#include "..\shared\notifications\MessageNotification.h"
 
 #include <Poco\URI.h>
 #include <Poco\Net\Context.h>
@@ -24,7 +24,7 @@ using Poco::NotificationQueue;
 using Poco::NotificationCenter;
 using Poco::NObserver;
 using Poco::Activity;
-using infrastructure::websocket::MessageNotification;
+using shared::notifications::MessageNotification;
 using infrastructure::websocket::WebSocketClient;
 
 namespace controller {

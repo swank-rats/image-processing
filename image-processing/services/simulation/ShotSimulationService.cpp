@@ -5,6 +5,7 @@
 // Description :
 //============================================================================
 #include "ShotSimulationService.h"
+#include "..\..\shared\notifications\PlayerHitNotification.h"
 
 #include <algorithm>
 #include <vector>
@@ -12,11 +13,12 @@
 using std::max;
 using std::vector;
 using cv::imread;
+using shared::notifications::PlayerHitNotification;
 
 namespace services {
 	namespace simulation {
-		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService)
-			: webcamService(webcamService), detectionService() {
+		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService, NotificationQueue& playerHitQueue)
+			: webcamService(webcamService), detectionService(), playerHitQueue(playerHitQueue) {
 			gunShotImg = imread("resources/images/gunfire_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			wallExplosionImg = imread("resources/images/explosion_wall.png", CV_LOAD_IMAGE_UNCHANGED);
@@ -57,6 +59,9 @@ namespace services {
 						//simulate explosion
 						if (detectionService.HasShotHitPlayer(frame, iter->first)) {
 							OverlayImage(frame, robotExplosionImg, iter->first.endPoint);
+
+							// TODO concrete player
+							playerHitQueue.enqueueNotification(new PlayerHitNotification(Player()));
 						}
 						else {
 							OverlayImage(frame, wallExplosionImg, iter->first.endPoint);

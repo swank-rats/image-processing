@@ -7,6 +7,7 @@
 #include "ImageProcessingController.h"
 
 #include "..\services\ObjectDetectionService.h"
+#include "..\shared\notifications\PlayerHitNotification.h"
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
@@ -19,6 +20,7 @@ using cv::Mat;
 using cv::Rect;
 using cv::Point;
 using Poco::TimerCallback;
+using shared::notifications::PlayerHitNotification;
 
 namespace controller {
 	namespace image_processing {
@@ -32,8 +34,9 @@ namespace controller {
 		int iHighV = 255;
 
 		ImageProcessingController::ImageProcessingController(SharedPtr<WebcamService> webcamService,
-			SharedPtr<WebSocketController> websocketController) : webcamService(webcamService),
-			shotSimulation(webcamService), websocketController(websocketController) {
+			SharedPtr<WebSocketController> websocketController) : webcamService(webcamService), playerHitQueue(),
+			shotSimulation(webcamService, playerHitQueue), websocketController(websocketController),
+			playerHitActivity(this, &ImageProcessingController::HandlePlayerHitNotification) {
 			detectService = new ObjectDetectionService();
 		}
 
@@ -52,12 +55,14 @@ namespace controller {
 			CreateTrackBarView();
 
 			webcamService->StartRecording();
+			playerHitActivity.start();
 		}
 
 		void ImageProcessingController::StopImageProcessing() {
 			webcamService->StopRecording();
 
 			webcamService->RemoveObserver(this);
+			playerHitActivity.stop();
 		}
 
 		void ImageProcessingController::Update(WebcamService* observable) {
@@ -90,6 +95,21 @@ namespace controller {
 			Shot shot = detectService->DetectShotRoute(frame, player);
 			shotSimulation.SimulateShot(shot);
 			player = player == 0 ? 1 : 0;
+		}
+
+		void ImageProcessingController::HandlePlayerHitNotification() {
+			AutoPtr<Notification> notification(playerHitQueue.waitDequeueNotification());
+
+			while (!playerHitActivity.isStopped() && notification) {
+				PlayerHitNotification* playerHitNotification = dynamic_cast<PlayerHitNotification*>(notification.get());
+				if (playerHitNotification)
+				{
+					// TODO concrete command
+					websocketController->Send(new Message("hit"));
+				}
+
+				notification = playerHitQueue.waitDequeueNotification();
+			}
 		}
 	}
 }

@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #include "WebSocketClientConnectionHandler.h"
-#include "..\message\MessageNotification.h"
+#include "..\..\..\..\shared\\notifications\MessageNotification.h"
 
 #include <Poco\Logger.h>
 #include <Poco\Exception.h>
@@ -28,7 +28,7 @@ using Poco::Net::HTTPRequest;
 using Poco::Net::HTTPResponse;
 using Poco::Net::HTTPCredentials;
 
-using infrastructure::websocket::MessageNotification;
+using shared::notifications::MessageNotification;
 
 namespace infrastructure {
 	namespace websocket {

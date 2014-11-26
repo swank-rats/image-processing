@@ -119,7 +119,8 @@
     <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\message\Message.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\message\MessageHeaders.cpp" />
-    <ClCompile Include="infrastructure\networking\websockets\message\MessageNotification.cpp" />
+    <ClCompile Include="shared\notifications\PlayerHitNotification.cpp" />
+    <ClCompile Include="shared\notifications\MessageNotification.cpp" />
     <ClCompile Include="services\ObjectDetectionService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="services\webcam\WebcamService.cpp" />
@@ -138,9 +139,11 @@
     <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h" />
     <ClInclude Include="infrastructure\networking\websockets\message\Message.h" />
     <ClInclude Include="infrastructure\networking\websockets\message\MessageHeaders.h" />
-    <ClInclude Include="infrastructure\networking\websockets\message\MessageNotification.h" />
+    <ClInclude Include="shared\notifications\PlayerHitNotification.h" />
+    <ClInclude Include="shared\notifications\MessageNotification.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />
     <ClInclude Include="services\webcam\WebcamService.h" />
+    <ClInclude Include="shared\model\Player.h" />
     <ClInclude Include="shared\model\Shot.h" />
     <ClInclude Include="shared\observer\IObserver.h" />
     <ClInclude Include="shared\observer\Observable.h" />

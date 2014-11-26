@@ -6,7 +6,7 @@
 //============================================================================
 #include "WebSocketClient.h"
 
-#include "..\message\MessageNotification.h"
+#include "..\..\..\..\shared\notifications\MessageNotification.h"
 
 #include <Poco\Exception.h>
 #include <Poco\Net\HTTPMessage.h>
@@ -21,7 +21,7 @@ using Poco::Net::HTTPRequest;
 using Poco::Net::HTTPResponse;
 using Poco::Net::HTTPResponse;
 
-using infrastructure::websocket::MessageNotification;
+using shared::notifications::MessageNotification;
 
 namespace infrastructure {
 	namespace websocket {
@@ -52,7 +52,9 @@ namespace infrastructure {
 		}
 
 		void WebSocketClient::Send(const Message* message) {
-			sendingQueue.enqueueNotification(new MessageNotification(message));
+			if (connHandler->IsConnected()) {
+				sendingQueue.enqueueNotification(new MessageNotification(message));
+			}
 		}
 	}
 }

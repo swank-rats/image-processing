@@ -54,9 +54,6 @@
     <ClCompile Include="infrastructure\networking\websockets\message\Message.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\message\MessageNotification.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="infrastructure\networking\websockets\message\MessageHeaders.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -64,6 +61,12 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="services\webcam\WebcamService.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="shared\notifications\MessageNotification.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="shared\notifications\PlayerHitNotification.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,9 +110,6 @@
     <ClInclude Include="infrastructure\networking\websockets\message\Message.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\message\MessageNotification.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="infrastructure\networking\websockets\message\MessageHeaders.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -120,6 +120,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="services\webcam\WebcamService.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\model\Player.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\notifications\MessageNotification.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\notifications\PlayerHitNotification.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

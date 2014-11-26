@@ -11,8 +11,10 @@
 #include "..\..\shared\model\Shot.h"
 
 #include <opencv2\core\core.hpp>
+
 #include <Poco\HashMap.h>
 #include <Poco\SharedPtr.h>
+#include <Poco\NotificationQueue.h>
 
 #include <memory>
 
@@ -22,13 +24,14 @@ using services::webcam::WebcamService;
 using shared::model::Shot;
 using Poco::HashMap;
 using Poco::SharedPtr;
+using Poco::NotificationQueue;
 
 namespace services {
 	namespace simulation {
 		class ShotSimulationService : public IObserver < WebcamService >
 		{
 		public:
-			ShotSimulationService(SharedPtr<WebcamService> webcamService);
+			ShotSimulationService(SharedPtr<WebcamService> webcamService, NotificationQueue& playerHitQueue);
 			~ShotSimulationService();
 			void SimulateShot(Shot shot);
 			void Update(WebcamService* observable);
@@ -39,6 +42,7 @@ namespace services {
 			Mat robotExplosionImg;
 			SharedPtr<WebcamService> webcamService;
 			ObjectDetectionService detectionService;
+			NotificationQueue& playerHitQueue;
 
 			typedef HashMap<Shot, Point2i, Shot> ShotsMapType;
 			ShotsMapType shots;

@@ -5,15 +5,15 @@
 // Description :
 //============================================================================
 #pragma once
-#include "Message.h"
+#include "..\..\infrastructure\networking\websockets\message\Message.h"
 
 #include <Poco\Notification.h>
 
 using Poco::Notification;
 using infrastructure::websocket::Message;
 
-namespace infrastructure {
-	namespace websocket {
+namespace shared {
+	namespace notifications {
 		class MessageNotification : public Notification
 		{
 		public:
