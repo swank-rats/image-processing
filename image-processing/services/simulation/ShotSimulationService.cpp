@@ -22,7 +22,12 @@ namespace services {
 			gunShotImg = imread("resources/images/gunfire_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			wallExplosionImg = imread("resources/images/explosion_wall.png", CV_LOAD_IMAGE_UNCHANGED);
+			wallExplosionHalfXSize = wallExplosionImg.cols / 2;
+			wallExplosionHalfYSize = wallExplosionImg.rows / 2;
+
 			robotExplosionImg = imread("resources/images/explosion_robot.png", CV_LOAD_IMAGE_UNCHANGED);
+			robotExplosionHalfXSize = robotExplosionImg.cols / 2;
+			robotExplosionHalfYSize = robotExplosionImg.rows / 2;
 
 			webcamService->AddObserver(this);
 		}
@@ -35,7 +40,7 @@ namespace services {
 		}
 
 		void ShotSimulationService::SimulateShot(Shot shot) {
-			shots.insert(ShotsMapType::ValueType(shot, shot.startPoint));
+			shots.insert(ShotsSetType::ValueType(SimulationShot(shot)));
 		}
 
 		void ShotSimulationService::Update(WebcamService* observable) {
@@ -45,40 +50,36 @@ namespace services {
 
 			try {
 				Mat frame = observable->GetLastImage();
-				ShotsMapType::Iterator iter = shots.begin();
+				ShotsSetType::Iterator iter = shots.begin();
 				vector<Shot> deleteShots;
 
 				do {
-					if (ArePointsEqual(iter->first.startPoint, iter->second)) {
-						//simulate gun shot
-						OverlayImage(frame, gunShotImg, iter->first.startPoint);
-						iter->second.x += gunShotImg.cols;
-						iter->second.y += gunShotImg.rows / 2;
+					if (!iter->HasSimulationStarted()) {
+						//simulate gun explosion
+						OverlayImage(frame, gunShotImg, iter->startPoint);
+						iter->StartSimulation();
 					}
-					else if (ArePointsEqual(iter->first.endPoint, iter->second)) {
+					else if (iter->IsEndPointReached()) {
 						//simulate explosion
-						if (detectionService.HasShotHitPlayer(frame, iter->first)) {
-							OverlayImage(frame, robotExplosionImg, iter->first.endPoint);
+						if (detectionService.HasShotHitPlayer(frame, *iter)) {
+							int explosionx = iter->endPoint.x - robotExplosionHalfXSize > 0 ? iter->endPoint.x - robotExplosionHalfXSize : 0;
+							int explosionY = iter->endPoint.y - robotExplosionHalfYSize > 0 ? iter->endPoint.y - robotExplosionHalfYSize : 0;
+							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
 
 							// TODO concrete player
 							playerHitQueue.enqueueNotification(new PlayerHitNotification(Player()));
 						}
 						else {
-							OverlayImage(frame, wallExplosionImg, iter->first.endPoint);
+							int explosionx = iter->endPoint.x - wallExplosionHalfXSize > 0 ? iter->endPoint.x - wallExplosionHalfXSize : 0;
+							int explosionY = iter->endPoint.y - wallExplosionHalfYSize > 0 ? iter->endPoint.y - wallExplosionHalfYSize : 0;
+							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
 						}
 
-						deleteShots.push_back(iter->first);
+						deleteShots.push_back(*iter);
 					}
 					else {
 						//simulate bullet
-						OverlayImage(frame, cheeseImg, iter->second);
-						iter->second.x += cheeseImg.cols;
-						iter->second.y += cheeseImg.rows;
-
-						if (IsPointBiggerOrEqual(iter->second, iter->first.endPoint)) {
-							//simulation is finished after next step
-							iter->second = iter->first.endPoint;
-						}
+						OverlayImage(frame, cheeseImg, iter->GetNextShotPoint());
 					}
 
 					++iter;
@@ -135,14 +136,6 @@ namespace services {
 					}
 				}
 			}
-		}
-
-		bool ShotSimulationService::ArePointsEqual(const Point2i &p1, const Point2i &p2) {
-			return p1.x == p2.x && p1.y == p2.y;
-		}
-
-		bool ShotSimulationService::IsPointBiggerOrEqual(const Point2i &p1, const Point2i &p2) {
-			return p1.x >= p2.x && p1.y >= p2.y;
 		}
 	}
 }

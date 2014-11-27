@@ -12,7 +12,7 @@
 
 #include <opencv2\core\core.hpp>
 
-#include <Poco\HashMap.h>
+#include <Poco\HashSet.h>
 #include <Poco\SharedPtr.h>
 #include <Poco\NotificationQueue.h>
 
@@ -22,7 +22,8 @@ using cv::Mat;
 using cv::Point2i;
 using services::webcam::WebcamService;
 using shared::model::Shot;
-using Poco::HashMap;
+using shared::model::SimulationShot;
+using Poco::HashSet;
 using Poco::SharedPtr;
 using Poco::NotificationQueue;
 
@@ -40,16 +41,18 @@ namespace services {
 			Mat cheeseImg;
 			Mat wallExplosionImg;
 			Mat robotExplosionImg;
+			int robotExplosionHalfXSize;
+			int robotExplosionHalfYSize;
+			int wallExplosionHalfXSize;
+			int wallExplosionHalfYSize;
 			SharedPtr<WebcamService> webcamService;
 			ObjectDetectionService detectionService;
 			NotificationQueue& playerHitQueue;
 
-			typedef HashMap<Shot, Point2i, Shot> ShotsMapType;
-			ShotsMapType shots;
+			typedef HashSet<SimulationShot, SimulationShot> ShotsSetType;
+			ShotsSetType shots;
 
 			void OverlayImage(Mat &background, const Mat &foreground, Point2i location);
-			bool ArePointsEqual(const Point2i &p1, const Point2i &p2);
-			bool IsPointBiggerOrEqual(const Point2i &p1, const Point2i &p2);
 		};
 	}
 }

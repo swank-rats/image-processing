@@ -18,6 +18,30 @@ using namespace std;
 
 RNG rng(12345);
 
+int nextShot = -1;
+int shotsSize = 8;
+Shot shots[] = {
+	//top to bottom, right to left
+	Shot(Point2i(350, 50), Point2i(50, 350)),
+	//bottom to top, right to left
+	Shot(Point2i(350, 350), Point2i(50, 50)),
+
+	//top to bottom, left to right
+	Shot(Point2i(15, 50), Point2i(380, 240)),
+	//bottom to top, left to right
+	Shot(Point2i(50, 380), Point2i(370, 30)),
+
+	//top to bottom
+	Shot(Point2i(50, 50), Point2i(50, 350)),
+	//bottom to top
+	Shot(Point2i(50, 350), Point2i(50, 50)),
+
+	//left to right
+	Shot(Point2i(50, 50), Point2i(400, 50)),
+	//right to left
+	Shot(Point2i(400, 50), Point2i(50, 50))
+};
+
 ObjectDetectionService::ObjectDetectionService() { }
 
 ObjectDetectionService::~ObjectDetectionService() { }
@@ -79,7 +103,13 @@ void ObjectDetectionService::ThreshCallback(int, void*, Mat src, Mat src_gray, i
 
 Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, int player) {
 	// TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
-	return Shot(Point2i(15, 20), Point2i(500, 380));
+	++nextShot;
+
+	if (nextShot >= shotsSize) {
+		nextShot = 0;
+	}
+
+	return shots[nextShot];
 }
 
 bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, Shot shot) {
