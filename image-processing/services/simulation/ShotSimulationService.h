@@ -52,7 +52,7 @@ namespace services {
 			typedef HashSet<SimulationShot, SimulationShot> ShotsSetType;
 			ShotsSetType shots;
 
-			void OverlayImage(Mat &background, const Mat &foreground, Point2i location);
+			void OverlayImage(Mat &background, const Mat &foreground, Point2i &location);
 		};
 	}
 }

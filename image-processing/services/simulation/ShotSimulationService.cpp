@@ -19,7 +19,7 @@ namespace services {
 	namespace simulation {
 		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService, NotificationQueue& playerHitQueue)
 			: webcamService(webcamService), detectionService(), playerHitQueue(playerHitQueue) {
-			gunShotImg = imread("resources/images/gunfire_small.png", CV_LOAD_IMAGE_UNCHANGED);
+			gunShotImg = imread("resources/images/gunfire2_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			wallExplosionImg = imread("resources/images/explosion_wall.png", CV_LOAD_IMAGE_UNCHANGED);
 			wallExplosionHalfXSize = wallExplosionImg.cols / 2;
@@ -54,28 +54,47 @@ namespace services {
 				vector<Shot> deleteShots;
 
 				do {
-					if (!iter->HasSimulationStarted()) {
+					if (iter->SimulateStartExplosion()) {
 						//simulate gun explosion
 						OverlayImage(frame, gunShotImg, iter->startPoint);
-						iter->StartSimulation();
 					}
-					else if (iter->IsEndPointReached()) {
+
+					if (iter->SimulateEndExplosion()) {
 						//simulate explosion
-						if (detectionService.HasShotHitPlayer(frame, *iter)) {
+						SimulationShot::SimulationHitStatus status = iter->GetHitStatus();
+						bool hitPlayer = false;
+
+						if (status == SimulationShot::SimulationHitStatus::UNKNOWN) {
+							hitPlayer = detectionService.HasShotHitPlayer(frame, *iter);
+						}
+
+						if (status == SimulationShot::HIT_PLAYER || hitPlayer) {
 							int explosionx = iter->endPoint.x - robotExplosionHalfXSize > 0 ? iter->endPoint.x - robotExplosionHalfXSize : 0;
 							int explosionY = iter->endPoint.y - robotExplosionHalfYSize > 0 ? iter->endPoint.y - robotExplosionHalfYSize : 0;
 							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
 
-							// TODO concrete player
-							playerHitQueue.enqueueNotification(new PlayerHitNotification(Player()));
+							if (status != SimulationShot::HIT_PLAYER) {
+								iter->SetStatusHitPlayer();
+							}
 						}
-						else {
+						else if (status == SimulationShot::HIT_WALL) {
 							int explosionx = iter->endPoint.x - wallExplosionHalfXSize > 0 ? iter->endPoint.x - wallExplosionHalfXSize : 0;
 							int explosionY = iter->endPoint.y - wallExplosionHalfYSize > 0 ? iter->endPoint.y - wallExplosionHalfYSize : 0;
 							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
+
+							if (status != SimulationShot::HIT_WALL) {
+								iter->SetStatusHitWall();
+							}
 						}
 
-						deleteShots.push_back(*iter);
+						if (iter->IsSimulationFinished()) {
+							// TODO concrete player
+							if (status == SimulationShot::HIT_PLAYER) {
+								playerHitQueue.enqueueNotification(new PlayerHitNotification(Player()));
+							}
+
+							deleteShots.push_back(*iter);
+						}
 					}
 					else {
 						//simulate bullet
@@ -97,7 +116,7 @@ namespace services {
 			}
 		}
 
-		void ShotSimulationService::OverlayImage(cv::Mat &background, const cv::Mat &foreground, cv::Point2i location) {
+		void ShotSimulationService::OverlayImage(cv::Mat &background, const cv::Mat &foreground, cv::Point2i &location) {
 			/*
 			 * http://jepsonsblog.blogspot.co.at/2012/10/overlay-transparent-image-in-opencv.html
 			 */

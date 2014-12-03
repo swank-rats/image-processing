@@ -7,6 +7,7 @@
 //============================================================================
 #pragma once
 #include <opencv2\core\core.hpp>
+#include <math.h>
 
 using cv::Point2i;
 
@@ -46,78 +47,75 @@ namespace shared {
 
 		struct SimulationShot : public Shot
 		{
+			enum SimulationHitStatus { UNKNOWN, HIT_PLAYER, HIT_WALL };
+
 			SimulationShot() {}
 			SimulationShot(Shot shot) : SimulationShot(shot.startPoint, shot.endPoint) { }
 			SimulationShot(Point2i start, Point2i end) : Shot(start, end) {
-				hasStarted = false;
+				a = abs(start.x - end.x);
+				b = abs(start.y - end.y);
 
-				currX = start.x;
-				currY = start.y;
+				xDirection = start.x > end.x ? -1 : 1;
+				yDirection = start.y > end.y ? -1 : 1;
 
-				xDirection = LeftToRight;
-				yDirection = TopToBottom;
+				currPercentage = percentageStep;
 
-				CalculateSimulation();
+				startExplosionCtr = 0;
+				endExplosionCtr = 0;
+				status = UNKNOWN;
 			}
 
 			Point2i GetNextShotPoint() {
-				switch (xDirection) {
-				case LeftToRight:
-					currX = currX + xSummand <= endPoint.x ? currX + xSummand : endPoint.x;
-					break;
-				case RightToLeft:
-					currX = currX - xSummand >= endPoint.x ? currX - xSummand : endPoint.x;
-					break;
+				int nextX = startPoint.x + round(a * currPercentage) * xDirection;
+				int nextY = startPoint.y + round(b * currPercentage) * yDirection;
+				currPercentage += percentageStep;
+
+				return Point2i(nextX, nextY);
+			}
+
+			bool SimulateStartExplosion() {
+				++startExplosionCtr;
+				return startExplosionCtr <= maxStartExplosions;
+			}
+
+			bool SimulateEndExplosion() {
+				if (currPercentage < 1.0) {
+					return false;
 				}
 
-				switch (yDirection) {
-				case TopToBottom:
-					currY = currY + ySummand <= endPoint.y ? currY + ySummand : endPoint.y;
-					break;
-				case BottomToTop:
-					currY = currY - ySummand >= endPoint.y ? currY - ySummand : endPoint.y;
-					break;
-				}
-
-				return Point2i(currX, currY);
+				++endExplosionCtr;
+				return endExplosionCtr <= maxEndExplosions;
 			}
 
-			void StartSimulation() {
-				hasStarted = true;
+			SimulationHitStatus GetHitStatus() {
+				return status;
 			}
 
-			bool HasSimulationStarted() {
-				return hasStarted;
+			void SetStatusHitPlayer() {
+				status = HIT_PLAYER;
 			}
 
-			bool IsEndPointReached() {
-				return currX - endPoint.x == 0 && currY - endPoint.y == 0;
+			void SetStatusHitWall() {
+				status = HIT_WALL;
+			}
+
+			bool IsSimulationFinished() {
+				return currPercentage >= 1.0 && endExplosionCtr >= maxEndExplosions;
 			}
 		private:
-			enum XDirections { LeftToRight, RightToLeft };
-			enum YDirections { TopToBottom, BottomToTop };
+			double percentageStep = 0.03;
+			int maxStartExplosions = 5;
+			int maxEndExplosions = 5;
 
+			double currPercentage;
 			bool hasStarted;
-			int xSummand;
-			int ySummand;
-			int currX;
-			int currY;
-			XDirections xDirection;
-			YDirections yDirection;
-
-			void CalculateSimulation() {
-				xSummand = startPoint.x >= endPoint.x ? startPoint.x / endPoint.x : endPoint.x / startPoint.x;
-				if (startPoint.x > endPoint.x) {
-					//we need to simulate shot from right to left
-					xDirection = RightToLeft;
-				}
-
-				ySummand = startPoint.y >= endPoint.y ? startPoint.y / endPoint.y : endPoint.y / startPoint.y;
-				if (startPoint.y > endPoint.y) {
-					//we need to simulate shot from bottom to top
-					yDirection = BottomToTop;
-				}
-			}
+			int xDirection;
+			int yDirection;
+			int a;
+			int b;
+			int startExplosionCtr;
+			int endExplosionCtr;
+			SimulationHitStatus status;
 		};
 	}
 }
