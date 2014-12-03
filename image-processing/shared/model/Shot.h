@@ -52,11 +52,8 @@ namespace shared {
 			SimulationShot() {}
 			SimulationShot(Shot shot) : SimulationShot(shot.startPoint, shot.endPoint) { }
 			SimulationShot(Point2i start, Point2i end) : Shot(start, end) {
-				a = abs(start.x - end.x);
-				b = abs(start.y - end.y);
-
-				xDirection = start.x > end.x ? -1 : 1;
-				yDirection = start.y > end.y ? -1 : 1;
+				a = end.x - start.x;
+				b = end.y - start.y;
 
 				currPercentage = percentageStep;
 
@@ -66,8 +63,8 @@ namespace shared {
 			}
 
 			Point2i GetNextShotPoint() {
-				int nextX = startPoint.x + round(a * currPercentage) * xDirection;
-				int nextY = startPoint.y + round(b * currPercentage) * yDirection;
+				int nextX = startPoint.x + round(a * currPercentage);
+				int nextY = startPoint.y + round(b * currPercentage);
 				currPercentage += percentageStep;
 
 				return Point2i(nextX, nextY);
