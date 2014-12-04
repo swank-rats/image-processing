@@ -9,6 +9,8 @@
 
 using namespace std;
 using namespace cv;
+using namespace shared::model;
+
 using shared::model::Shot;
 
 class ObjectDetectionService
@@ -20,8 +22,8 @@ public:
 	void DetectObject(Mat src, int iLowH, int iLowS, int iLowV, int iHighH, int iHighS, int iHighV);
 	void ThreshCallback(int, void*, Mat src, Mat src_gray, int thresh);
 
-	Shot DetectShotRoute(const Mat &frame, int player); //TODO player parameter
-	bool HasShotHitPlayer(const Mat &frame, Shot shot);
+	Shot DetectShotRoute(const Mat &frame, Player player); //TODO player parameter
+	bool HasShotHitPlayer(const Mat &frame, Shot &shot);
 private:
 	Mat src;
 	Mat src_gray;

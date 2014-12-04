@@ -8,6 +8,7 @@
 
 #include "..\services\ObjectDetectionService.h"
 #include "..\shared\notifications\PlayerHitNotification.h"
+#include "..\shared\model\Player.h"
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
@@ -21,6 +22,7 @@ using cv::Rect;
 using cv::Point;
 using Poco::TimerCallback;
 using shared::notifications::PlayerHitNotification;
+using shared::model::Player;
 
 namespace controller {
 	namespace image_processing {
@@ -90,11 +92,10 @@ namespace controller {
 		}
 
 		void ImageProcessingController::OnTimer(Timer& timer) {
-			static int player = 0;
 			Mat frame = webcamService->GetLastImage();
-			Shot shot = detectService->DetectShotRoute(frame, player);
+			Player p;
+			Shot shot = detectService->DetectShotRoute(frame, p);
 			shotSimulation.SimulateShot(shot);
-			player = player == 0 ? 1 : 0;
 		}
 
 		void ImageProcessingController::HandlePlayerHitNotification() {
@@ -104,8 +105,10 @@ namespace controller {
 				PlayerHitNotification* playerHitNotification = dynamic_cast<PlayerHitNotification*>(notification.get());
 				if (playerHitNotification)
 				{
-					// TODO concrete command
-					websocketController->Send(new Message("hit"));
+					Message* msg = new Message("hit", "server");
+					msg->AddParam("player", std::to_string(playerHitNotification->GetHitPlayer().playerId));
+					msg->AddParam("precision", std::to_string(playerHitNotification->GetPrecision()));
+					websocketController->Send(msg);
 				}
 
 				notification = playerHitQueue.waitDequeueNotification();

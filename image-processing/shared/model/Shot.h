@@ -6,6 +6,8 @@
 // Description :
 //============================================================================
 #pragma once
+#include "Player.h"
+
 #include <opencv2\core\core.hpp>
 #include <math.h>
 
@@ -15,22 +17,26 @@ namespace shared {
 	namespace model {
 		struct Shot
 		{
+			Player shootingPlayer;
+			Player hitPlayer;
 			Point2i startPoint;
 			Point2i endPoint;
 
 			Shot() { }
 
-			Shot(Point2i start, Point2i end) : startPoint(start), endPoint(end) { }
+			Shot(Player shootingPlayer, Point2i start, Point2i end) 
+				: shootingPlayer(shootingPlayer), startPoint(start), endPoint(end) { }
 
 			std::size_t operator () (Shot value) const
-				/// Returns the hash for the given value.
 			{
+				// Returns the hash for the given value.
 				return static_cast<std::size_t>(startPoint.x + startPoint.y + endPoint.x + endPoint.y) * 2654435761U;
 			}
 
 			bool operator == (const Shot &s2) const
 			{
-				return startPoint.x == s2.startPoint.x
+				return shootingPlayer.playerId == s2.shootingPlayer.playerId
+					&& startPoint.x == s2.startPoint.x
 					&& startPoint.y == s2.startPoint.y
 					&& endPoint.x == s2.endPoint.x
 					&& endPoint.y == s2.endPoint.y;
@@ -38,7 +44,8 @@ namespace shared {
 
 			bool operator != (const Shot &s2) const
 			{
-				return startPoint.x != s2.startPoint.x
+				return shootingPlayer.playerId != s2.shootingPlayer.playerId
+					|| startPoint.x != s2.startPoint.x
 					|| startPoint.y != s2.startPoint.y
 					|| endPoint.x != s2.endPoint.x
 					|| endPoint.y != s2.endPoint.y;
@@ -50,8 +57,8 @@ namespace shared {
 			enum SimulationHitStatus { UNKNOWN, HIT_PLAYER, HIT_WALL };
 
 			SimulationShot() {}
-			SimulationShot(Shot shot) : SimulationShot(shot.startPoint, shot.endPoint) { }
-			SimulationShot(Point2i start, Point2i end) : Shot(start, end) {
+			SimulationShot(Shot shot) : SimulationShot(shot.shootingPlayer, shot.startPoint, shot.endPoint) { }
+			SimulationShot(Player shootingPlayer, Point2i start, Point2i end) : Shot(shootingPlayer, start, end) {
 				a = end.x - start.x;
 				b = end.y - start.y;
 
@@ -84,21 +91,11 @@ namespace shared {
 				return endExplosionCtr <= maxEndExplosions;
 			}
 
-			SimulationHitStatus GetHitStatus() {
-				return status;
-			}
-
-			void SetStatusHitPlayer() {
-				status = HIT_PLAYER;
-			}
-
-			void SetStatusHitWall() {
-				status = HIT_WALL;
-			}
-
 			bool IsSimulationFinished() {
 				return currPercentage >= 1.0 && endExplosionCtr >= maxEndExplosions;
 			}
+
+			SimulationHitStatus status;
 		private:
 			double percentageStep = 0.03;
 			int maxStartExplosions = 5;
@@ -112,7 +109,6 @@ namespace shared {
 			int b;
 			int startExplosionCtr;
 			int endExplosionCtr;
-			SimulationHitStatus status;
 		};
 	}
 }

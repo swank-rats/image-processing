@@ -11,6 +11,7 @@ namespace shared {
 	namespace model {
 		struct Player
 		{
+			unsigned char playerId;
 		};
 	}
 }

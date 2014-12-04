@@ -25,5 +25,9 @@ namespace controller {
 			streamingServer->StopServer();
 			return true;
 		}
+
+		void VideoStreamingController::HandleMessageNotification(const AutoPtr<MessageNotification>& notification) {
+			//TODO handle message - eg simulate shot and so on
+		}
 	}
 }
