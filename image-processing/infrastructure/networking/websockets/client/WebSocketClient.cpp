@@ -36,9 +36,9 @@ namespace infrastructure {
 		}
 
 		void WebSocketClient::OpenConnection() {
-			connHandler->OpenConnection();
-
-			Send(new Message("cmd", "to"));
+			if (connHandler->OpenConnection()) {
+				Send(new Message("init", "server"));
+			}
 		}
 
 		void WebSocketClient::CloseConnection() {

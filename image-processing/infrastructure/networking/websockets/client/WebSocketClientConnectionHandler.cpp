@@ -50,7 +50,7 @@ namespace infrastructure {
 			return uri;
 		}
 
-		void WebSocketClientConnectionHandler::OpenConnection() {
+		bool WebSocketClientConnectionHandler::OpenConnection() {
 			Logger& logger = Logger::get("WebSocketClient");
 
 			try {
@@ -71,10 +71,15 @@ namespace infrastructure {
 					logger.information("Connection established");
 					receiveActity.start();
 					sendActity.start();
+
+					return true;
 				}
+
+				return false;
 			}
 			catch (Exception& e) {
 				logger.error(e.displayText());
+				return false;
 			}
 		}
 

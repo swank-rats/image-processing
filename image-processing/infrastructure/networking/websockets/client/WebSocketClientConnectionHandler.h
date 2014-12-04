@@ -35,7 +35,7 @@ namespace infrastructure {
 			WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue);
 			~WebSocketClientConnectionHandler();
 			URI GetURI();
-			void OpenConnection();
+			bool OpenConnection();
 			void CloseConnection();
 			bool IsConnected();
 			NotificationQueue* GetReceivedMessagesQueues();
