@@ -5,12 +5,12 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\..\infrastructure\networking\websockets\message\Message.h"
+#include "..\model\message\Message.h"
 
 #include <Poco\Notification.h>
 
 using Poco::Notification;
-using infrastructure::websocket::Message;
+using shared::model::message::Message;
 
 namespace shared {
 	namespace notifications {
@@ -19,7 +19,7 @@ namespace shared {
 		public:
 			MessageNotification(const Message* data);
 			~MessageNotification();
-			const Message* GetData();
+			const Message& GetData() const;
 		private:
 			const Message* data;
 		};

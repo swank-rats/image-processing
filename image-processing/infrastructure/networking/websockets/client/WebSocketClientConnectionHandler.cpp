@@ -122,14 +122,13 @@ namespace infrastructure {
 				if (messageNotification)
 				{
 					try {
-						const Message* message = messageNotification->GetData();
-						string temp = message->ToString();
+						const Message &message = messageNotification->GetData();
+						string temp = message.ToString();
 						buffer = temp.c_str();
 
 						length = webSocket->sendFrame(buffer, temp.length(), flags);
 
 						logger.information((length > 0) ? "message send!" : "message send failed");
-						message = nullptr;
 						messageNotification = nullptr;
 					}
 					catch (TimeoutException) {

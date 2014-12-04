@@ -75,6 +75,10 @@ namespace controller {
 
 		void ImageProcessingController::HandleMessageNotification(const AutoPtr<MessageNotification>& notification) {
 			//TODO handle message - eg simulate shot and so on
+			const Message &message = notification->GetData();
+
+			message.GetCmd();
+
 		}
 
 		void ImageProcessingController::CreateTrackBarView() {

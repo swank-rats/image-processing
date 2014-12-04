@@ -12,17 +12,19 @@
 using std::string;
 using Poco::HashMap;
 
-namespace infrastructure {
-	namespace websocket {
-		enum MessageHeaderEnum { to, cmd, params, data };
-		typedef HashMap<string, MessageHeaderEnum> StringMsgHeadersMap;
+namespace shared {
+	namespace model {
+		namespace message {
+			enum MessageHeaderEnum { to, cmd, params, data };
+			typedef HashMap<string, MessageHeaderEnum> StringMsgHeadersMap;
 
-		class MessageHeaders {
-		public:
-			MessageHeaders();
-			StringMsgHeadersMap& GetMap();
-		private:
-			StringMsgHeadersMap map;
-		};
+			class MessageHeaders {
+			public:
+				MessageHeaders();
+				StringMsgHeadersMap& GetMap();
+			private:
+				StringMsgHeadersMap map;
+			};
+		}
 	}
 }

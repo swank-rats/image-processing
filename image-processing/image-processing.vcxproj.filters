@@ -51,12 +51,6 @@
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\message\Message.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="infrastructure\networking\websockets\message\MessageHeaders.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="services\simulation\ShotSimulationService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -67,6 +61,12 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="shared\notifications\PlayerHitNotification.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="shared\model\message\Message.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="shared\model\message\MessageHeaders.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,12 +107,6 @@
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\message\Message.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="infrastructure\networking\websockets\message\MessageHeaders.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="shared\model\Shot.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -129,6 +123,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="shared\notifications\PlayerHitNotification.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\model\message\Message.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\model\message\MessageHeaders.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\message\Message.h"
+#include "..\..\..\..\shared\model\message\Message.h"
 #include "WebSocketClientConnectionHandler.h"
 
 #include <Poco\URI.h>
@@ -24,7 +24,7 @@ using Poco::Activity;
 using Poco::Net::HTTPSClientSession;
 using Poco::Net::Context;
 using Poco::Net::WebSocket;
-using infrastructure::websocket::Message;
+using shared::model::message::Message;
 
 namespace infrastructure {
 	namespace websocket {
