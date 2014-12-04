@@ -18,6 +18,11 @@
 
 #include "Poco/HashMap.h"
 
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/video/background_segm.hpp"
+#include <stdio.h>
+#include <string>
+
 using namespace cv;
 using namespace std;
 
@@ -26,6 +31,48 @@ static Mat src_graydetect2;
 static int threshdetect2;
 static int max_threshdetect2;
 static RNG rngdetect2;
+
+
+
+
+static void refineSegments(const Mat& img, Mat& mask, Mat& dst)
+{
+	int niters = 3;
+
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+
+	Mat temp;
+
+	dilate(mask, temp, Mat(), Point(-1, -1), niters);
+	erode(temp, temp, Mat(), Point(-1, -1), niters * 2);
+	dilate(temp, temp, Mat(), Point(-1, -1), niters);
+
+	findContours(temp, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+
+	dst = Mat::zeros(img.size(), CV_8UC3);
+
+	if (contours.size() == 0)
+		return;
+
+	// iterate through all the top-level contours,
+	// draw each connected component with its own random color
+	int idx = 0, largestComp = 0;
+	double maxArea = 0;
+
+	for (; idx >= 0; idx = hierarchy[idx][0])
+	{
+		const vector<Point>& c = contours[idx];
+		double area = fabs(contourArea(Mat(c)));
+		if (area > maxArea)
+		{
+			maxArea = area;
+			largestComp = idx;
+		}
+	}
+	Scalar color(0, 0, 255);
+	drawContours(dst, contours, largestComp, color, CV_FILLED, 8, hierarchy);
+}
 
 static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons, vector<vector<cv::Point>> triangles, vector<int> pentagonContourPositions, vector<int> triangleContourPositions, vector<int> *allowedTriangles)
 {
@@ -197,7 +244,7 @@ static void thresh_callbackdetect3(int, void*)
 	threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
 
 	/// Find contours
-	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
 
 	/// Draw contours
 	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
@@ -210,7 +257,8 @@ static void thresh_callbackdetect3(int, void*)
 	{
 		// Approximate contour with accuracy proportional
 		// to the contour perimeter
-		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
+		// original elipse value 0.02
+		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
 
 		// Skip small or non-convex objects
 		if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
@@ -236,6 +284,8 @@ static void thresh_callbackdetect3(int, void*)
 		}
 	}
 
+
+
 	allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions, trianglePositions, &allowedTriangles);
 	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTriangles);
 
@@ -245,8 +295,9 @@ static void thresh_callbackdetect3(int, void*)
 		{
 			if (allowedRectanglesContourPositions[y] == i)
 			{
-				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+				//Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 0));
+				Scalar color = Scalar(255, 0, 0);
+				drawContours(srcdetect2, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
 
 				cv::Moments mom;
 
@@ -254,7 +305,7 @@ static void thresh_callbackdetect3(int, void*)
 
 				cv::Point point = Point(mom.m10 / mom.m00, mom.m01 / mom.m00);
 				// draw mass center
-				cv::circle(drawing, point
+				cv::circle(srcdetect2, point
 					// position of mass center converted to integer
 					,
 					2, cv::Scalar(255, 255, 255), 2);// draw white dot
@@ -264,7 +315,7 @@ static void thresh_callbackdetect3(int, void*)
 
 				std::string zeichenkette = "x: " + xAsString + " y: " + yAsString;
 
-				setLabel2(drawing, zeichenkette, contours[i]);
+				setLabel2(srcdetect2, zeichenkette, contours[i]);
 			}
 		}
 
@@ -273,7 +324,7 @@ static void thresh_callbackdetect3(int, void*)
 			if (allowedPentagonsContourPosition[y] == i)
 			{
 				Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-				drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+				drawContours(canny_output, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
 
 				cv::Moments mom;
 
@@ -281,7 +332,7 @@ static void thresh_callbackdetect3(int, void*)
 
 				cv::Point point = Point(mom.m10 / mom.m00, mom.m01 / mom.m00);
 				// draw mass center
-				cv::circle(drawing, point
+				cv::circle(canny_output, point
 					// position of mass center converted to integer
 					,
 					2, cv::Scalar(255, 255, 255), 2);// draw white dot
@@ -291,7 +342,7 @@ static void thresh_callbackdetect3(int, void*)
 
 				std::string zeichenkette = "x: " + xAsString + " y: " + yAsString;
 
-				setLabel2(drawing, zeichenkette, contours[i]);
+				setLabel2(canny_output, zeichenkette, contours[i]);
 			}
 
 			for (size_t y = 0; y < allowedTriangles.size(); y++)
@@ -299,7 +350,7 @@ static void thresh_callbackdetect3(int, void*)
 				if (allowedTriangles[y] == i)
 				{
 					Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-					drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+					drawContours(canny_output, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
 				}
 			}
 		}
@@ -307,7 +358,7 @@ static void thresh_callbackdetect3(int, void*)
 
 	/// Show in a window
 	namedWindow("Contours", WINDOW_AUTOSIZE);
-	imshow("Contours", drawing);
+	imshow("Contours", srcdetect2);
 }
 
 /**
@@ -524,8 +575,8 @@ public:
 		////camera settings
 		capture.set(CV_CAP_PROP_FPS, 30);
 		////Possible resolutions : 640x480; 440x330
-		//capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
-		//capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
+	/*	capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+		capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);*/
 
 		cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
 		cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
@@ -853,7 +904,21 @@ public:
 
 	void Test6(){
 
-		Mat img2 = imread("C:/Users/GIGI/Downloads/img/DetectingContours.jpg", CV_LOAD_IMAGE_COLOR);
+
+		VideoCapture capture = VideoCapture();
+
+		capture.open(0);
+
+		////camera settings
+		capture.set(CV_CAP_PROP_FPS, 30);
+		////Possible resolutions : 640x480; 440x330
+		//capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+		//capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
+
+		cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
+		cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+
+		//Mat img2 = imread("C:/Users/GIGI/Downloads/img/DetectingContours.jpg", CV_LOAD_IMAGE_COLOR);
 		Mat imgGrayScale2;
 
 		//VideoCapture capture = VideoCapture();
@@ -870,12 +935,12 @@ public:
 		// Finding rects,tris and pentagons
 		std::vector<cv::Point> approx;
 
+		Mat img2;
+	
 
-		//capture.open(0);
-
-		/*while (true)
-		{*/
-		//capture >> img;
+		while (true)
+		{
+		capture >> img2;
 
 		//show the original image
 		cvNamedWindow("Original");
@@ -905,7 +970,7 @@ public:
 		imshow("Thresholded Image", imgGrayScale2);
 
 
-		imgGrayScale = cvCloneImage(&(IplImage)imgGrayScale2);
+		//imgGrayScale = cvCloneImage(&(IplImage)imgGrayScale2);
 
 
 		//CvSeq* contour;  //hold the pointer to a contour
@@ -973,12 +1038,12 @@ public:
 		cvNamedWindow("Tracked");
 		imshow("Tracked", img2);
 
-		//	if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-		//	{
-		//		break;
-		//	}
+			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+			{
+				break;
+			}
 
-		//}
+		}
 
 		cvWaitKey(0); //wait for a key press
 
@@ -990,4 +1055,45 @@ public:
 
 
 	}
+
+	void DetectObject7()
+	{
+		VideoCapture cap;
+		bool update_bg_model = true;
+
+		cap.open(0);
+
+		Mat tmp_frame, bgmask, out_frame;
+
+		cap >> tmp_frame;
+	
+
+		namedWindow("video", 1);
+		namedWindow("segmented", 1);
+
+		BackgroundSubtractorMOG bgsubtractor;
+		bgsubtractor.set("noiseSigma", 10);
+
+		for (;;)
+		{
+			cap >> tmp_frame;
+			if (!tmp_frame.data)
+				break;
+			bgsubtractor(tmp_frame, bgmask, update_bg_model ? -1 : 0);
+			refineSegments(tmp_frame, bgmask, out_frame);
+			imshow("video", tmp_frame);
+			imshow("segmented", out_frame);
+			int keycode = waitKey(30);
+			if (keycode == 27)
+				break;
+			if (keycode == ' ')
+			{
+				update_bg_model = !update_bg_model;
+				printf("Learn background is in state = %d\n", update_bg_model);
+			}
+		}
+
+	
+	}
+
 };
