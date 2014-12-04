@@ -61,7 +61,7 @@ namespace services {
 
 					if (iter->SimulateEndExplosion()) {
 						//simulate explosion
-						SimulationShot::SimulationHitStatus status = iter->GetHitStatus();
+						SimulationShot::SimulationHitStatus status = iter->status;
 						bool hitPlayer = false;
 
 						if (status == SimulationShot::SimulationHitStatus::UNKNOWN) {
@@ -74,7 +74,7 @@ namespace services {
 							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
 
 							if (status != SimulationShot::HIT_PLAYER) {
-								iter->SetStatusHitPlayer();
+								iter->status = SimulationShot::HIT_PLAYER;
 							}
 						}
 						else if (status == SimulationShot::HIT_WALL) {
@@ -83,14 +83,14 @@ namespace services {
 							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
 
 							if (status != SimulationShot::HIT_WALL) {
-								iter->SetStatusHitWall();
+								iter->status = SimulationShot::HIT_WALL;
 							}
 						}
 
 						if (iter->IsSimulationFinished()) {
 							// TODO concrete player
 							if (status == SimulationShot::HIT_PLAYER) {
-								playerHitQueue.enqueueNotification(new PlayerHitNotification(Player()));
+								playerHitQueue.enqueueNotification(new PlayerHitNotification(iter->hitPlayer));
 							}
 
 							deleteShots.push_back(*iter);

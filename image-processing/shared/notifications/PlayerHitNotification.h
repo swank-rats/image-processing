@@ -9,19 +9,21 @@
 
 #include <Poco\Notification.h>
 
-using Poco::Notification;
 using shared::model::Player;
+using Poco::Notification;
 
 namespace shared {
 	namespace notifications {
 		class PlayerHitNotification : public Notification
 		{
 		public:
-			PlayerHitNotification(Player hittenPlayer);
+			PlayerHitNotification(Player hitPlayer, unsigned char precision = 100);
 			~PlayerHitNotification();
-			Player GetHittenPlayer();
+			Player GetHitPlayer();
+			unsigned char GetPrecision();
 		private:
-			Player hittenPlayer;
+			Player hitPlayer;
+			unsigned char precision;
 		};
 	}
 }

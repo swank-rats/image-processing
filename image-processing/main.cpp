@@ -33,7 +33,7 @@
 #include <Poco\Util\OptionCallback.h>
 #include <Poco\Util\HelpFormatter.h>
 #include <Poco\Net\SSLManager.h>
-#include "Poco/SharedPtr.h"
+#include <Poco\SharedPtr.h>
 
 using namespace cv;
 using namespace std;
@@ -138,17 +138,21 @@ private:
 		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri, context));
 
 		ImageProcessingController imgProcCtrl(webcamService, webSocketCtrl);
+		//TODO remove if NodeJS sends commands
 		imgProcCtrl.StartImageProcessing();
 
 		VideoStreamingController vidStreamCtrl(webcamService);
+		//TODO remove if NodeJS sends commands
 		vidStreamCtrl.StartStreamingServer();
 
 		//TODO ask wolfi how to solve
 		//WebSocketController::MessageCallback callback = reinterpret_cast<WebSocketController::MessageCallback>(imgProcCtrl.HandleMessageNotification);
 		//webSocketCtrl.AddMessageOberver(imgProcCtrl, &callback);
 		webSocketCtrl->GetNotificationCenter().addObserver(NObserver<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
+		webSocketCtrl->GetNotificationCenter().addObserver(NObserver<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
 		webSocketCtrl->StartWebSocketClient();
 
+		//TODO remove if NodeJS sends shot commands
 		TimerCallback<ImageProcessingController> callback(imgProcCtrl, &ImageProcessingController::OnTimer);
 		Timer timer(1000, 2000); //start after 1 sec, recall every 2 sec
 		timer.start(callback);

@@ -8,12 +8,17 @@
 
 namespace shared {
 	namespace notifications {
-		PlayerHitNotification::PlayerHitNotification(Player hittenPlayer) : hittenPlayer(hittenPlayer) { }
+		PlayerHitNotification::PlayerHitNotification(Player hitPlayer, unsigned char precision)
+			: hitPlayer(hitPlayer), precision(precision) {}
 
 		PlayerHitNotification::~PlayerHitNotification() { }
 
-		Player PlayerHitNotification::GetHittenPlayer() {
-			return hittenPlayer;
+		Player PlayerHitNotification::GetHitPlayer() {
+			return hitPlayer;
+		}
+
+		unsigned char PlayerHitNotification::GetPrecision() {
+			return precision;
 		}
 	}
 }
