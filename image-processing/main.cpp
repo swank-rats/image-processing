@@ -200,7 +200,8 @@ private:
 		//th.Test6();
 		//th.DetectObject7();
 		//th.MovingDetection();
-		th.startMotionTracking();
+		//th.startMotionTracking();
+		th.Test11();
 	}
 };
 
