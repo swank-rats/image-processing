@@ -63,6 +63,7 @@ static Rect objectBoundingRectangle = Rect(0, 0, 0, 0);
 static Mat img; static Mat templ; static Mat result;
 const static char* image_window = "Source Image";
 const static char* result_window = "Result window";
+const static char* search_window = "Search window";
 
 static int match_method;
 static int max_Trackbar = 5;
@@ -113,6 +114,7 @@ static void MatchingMethod(int, void*)
 
 	imshow(image_window, img_display);
 	imshow(result_window, result);
+	imshow(search_window, templ);
 
 	return;
 }
@@ -144,7 +146,7 @@ static void searchForMovement(Mat thresholdImage, Mat &cameraFeed){
 	findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);// retrieves external contours
 
 	//if contours vector is not empty, we have found some objects
-	if (contours.size()>0)objectDetected = true;
+	if (contours.size() > 0)objectDetected = true;
 	else objectDetected = false;
 
 	if (objectDetected){
@@ -720,8 +722,8 @@ public:
 		////camera settings
 		capture.set(CV_CAP_PROP_FPS, 30);
 		////Possible resolutions : 640x480; 440x330
-	/*	capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
-		capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);*/
+		/*	capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);*/
 
 		cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
 		cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
@@ -1081,107 +1083,107 @@ public:
 		std::vector<cv::Point> approx;
 
 		Mat img2;
-	
+
 
 		while (true)
 		{
-		capture >> img2;
+			capture >> img2;
 
-		//show the original image
-		cvNamedWindow("Original");
-		imshow("Original", img2);
+			//show the original image
+			cvNamedWindow("Original");
+			imshow("Original", img2);
 
-		//smooth the original image using Gaussian kernel to remove noise
-		//cvSmooth(img, img, CV_GAUSSIAN, 3, 3);
-		GaussianBlur(img2, img2, Size(1, 1), 3, 3);
-
-		
+			//smooth the original image using Gaussian kernel to remove noise
+			//cvSmooth(img, img, CV_GAUSSIAN, 3, 3);
+			GaussianBlur(img2, img2, Size(1, 1), 3, 3);
 
 
-		//////converting the original image into grayscale
-		//imgGrayScale2 = cvCreateImage(cvGetSize(img), 8, 1);
-		//cvCvtColor(img, imgGrayScale, CV_BGR2GRAY);
-
-		cvtColor(img2, imgGrayScale2, CV_RGB2GRAY);
-
-		cvNamedWindow("GrayScale Image");
-		imshow("GrayScale Image", imgGrayScale2);
-		
-
-		//thresholding the grayscale image to get better results
-		threshold(imgGrayScale2, imgGrayScale2, 100, 255, CV_THRESH_BINARY_INV);
-
-		cvNamedWindow("Thresholded Image");
-		imshow("Thresholded Image", imgGrayScale2);
 
 
-		//imgGrayScale = cvCloneImage(&(IplImage)imgGrayScale2);
+			//////converting the original image into grayscale
+			//imgGrayScale2 = cvCreateImage(cvGetSize(img), 8, 1);
+			//cvCvtColor(img, imgGrayScale, CV_BGR2GRAY);
+
+			cvtColor(img2, imgGrayScale2, CV_RGB2GRAY);
+
+			cvNamedWindow("GrayScale Image");
+			imshow("GrayScale Image", imgGrayScale2);
 
 
-		//CvSeq* contour;  //hold the pointer to a contour
-		//CvSeq* result;   //hold sequence of points of a contour
-		//storage = cvCreateMemStorage(0); //storage area for all contours
+			//thresholding the grayscale image to get better results
+			threshold(imgGrayScale2, imgGrayScale2, 100, 255, CV_THRESH_BINARY_INV);
 
-		////finding all contours in the image
-		//cvFindContours(imgGrayScale, storage, &contour, sizeof(CvContour), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, cvPoint(0, 0));
-
-		////iterating through each contour
-		//while (contour)
-		//{
-		//	//obtain a sequence of points of the countour, pointed by the variable 'countour'
-		//	result = cvApproxPoly(contour, sizeof(CvContour), storage, CV_POLY_APPROX_DP, cvContourPerimeter(contour)*0.02, 0);
-		//	approxPolyDP(contour)
-
-		//	//if there are 3 vertices  in the contour and the area of the triangle is more than 100 pixels
-		//	if (result->total == 3 && fabs(cvContourArea(result, CV_WHOLE_SEQ))>100)
-		//	{
-		//		//iterating through each point
-		//		CvPoint *pt[3];
-		//		for (int i = 0; i<3; i++){
-		//			pt[i] = (CvPoint*)cvGetSeqElem(result, i);
-		//		}
-
-		//		//drawing lines around the triangle
-		//		line(img2, *pt[0], *pt[1], cvScalar(255, 0, 0), 4);
-		//		line(img2, *pt[1], *pt[2], cvScalar(255, 0, 0), 4);
-		//		line(img2, *pt[2], *pt[0], cvScalar(255, 0, 0), 4);
-
-		//	}
-
-		//	//obtain the next contour
-		//	contour = contour->h_next;
-		//}
+			cvNamedWindow("Thresholded Image");
+			imshow("Thresholded Image", imgGrayScale2);
 
 
-		/// Find contours
-		findContours(imgGrayScale2, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+			//imgGrayScale = cvCloneImage(&(IplImage)imgGrayScale2);
 
-		for (size_t i = 0; i < contours.size(); i++)
-		{
-			// Approximate contour with accuracy proportional
-			// to the contour perimeter
-			cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
 
-			// Skip small or non-convex objects
-			if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
-				continue;
+			//CvSeq* contour;  //hold the pointer to a contour
+			//CvSeq* result;   //hold sequence of points of a contour
+			//storage = cvCreateMemStorage(0); //storage area for all contours
 
-			
+			////finding all contours in the image
+			//cvFindContours(imgGrayScale, storage, &contour, sizeof(CvContour), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, cvPoint(0, 0));
 
-			if (approx.size() == 3 && std::fabs(cv::contourArea(contours[i])) >10)
+			////iterating through each contour
+			//while (contour)
+			//{
+			//	//obtain a sequence of points of the countour, pointed by the variable 'countour'
+			//	result = cvApproxPoly(contour, sizeof(CvContour), storage, CV_POLY_APPROX_DP, cvContourPerimeter(contour)*0.02, 0);
+			//	approxPolyDP(contour)
+
+			//	//if there are 3 vertices  in the contour and the area of the triangle is more than 100 pixels
+			//	if (result->total == 3 && fabs(cvContourArea(result, CV_WHOLE_SEQ))>100)
+			//	{
+			//		//iterating through each point
+			//		CvPoint *pt[3];
+			//		for (int i = 0; i<3; i++){
+			//			pt[i] = (CvPoint*)cvGetSeqElem(result, i);
+			//		}
+
+			//		//drawing lines around the triangle
+			//		line(img2, *pt[0], *pt[1], cvScalar(255, 0, 0), 4);
+			//		line(img2, *pt[1], *pt[2], cvScalar(255, 0, 0), 4);
+			//		line(img2, *pt[2], *pt[0], cvScalar(255, 0, 0), 4);
+
+			//	}
+
+			//	//obtain the next contour
+			//	contour = contour->h_next;
+			//}
+
+
+			/// Find contours
+			findContours(imgGrayScale2, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+
+			for (size_t i = 0; i < contours.size(); i++)
 			{
-				drawContours(img2, contours, (int)i,Scalar(255,0,0) , 2, 8, hierarchy, 0, Point());
+				// Approximate contour with accuracy proportional
+				// to the contour perimeter
+				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.02, true);
+
+				// Skip small or non-convex objects
+				if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+					continue;
+
+
+
+				if (approx.size() == 3 && std::fabs(cv::contourArea(contours[i])) >10)
+				{
+					drawContours(img2, contours, (int)i, Scalar(255, 0, 0), 2, 8, hierarchy, 0, Point());
+				}
+
+
 			}
 
-	
-		}
 
 
 
-
-		//show the image in which identified shapes are marked   
-		cvNamedWindow("Tracked");
-		imshow("Tracked", img2);
+			//show the image in which identified shapes are marked   
+			cvNamedWindow("Tracked");
+			imshow("Tracked", img2);
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
@@ -1211,7 +1213,7 @@ public:
 		Mat tmp_frame, bgmask, out_frame;
 
 		cap >> tmp_frame;
-	
+
 
 		namedWindow("video", 1);
 		namedWindow("segmented", 1);
@@ -1238,11 +1240,11 @@ public:
 			}
 		}
 
-	
+
 	}
 
 	void MovingDetection(){
-	
+
 
 		const int nmixtures = 3;
 		const bool bShadowDetection = true;
@@ -1255,7 +1257,7 @@ public:
 
 		cv::BackgroundSubtractorMOG2 bg(history, nmixtures, bShadowDetection);
 
-	
+
 		std::vector<std::vector<cv::Point> > contours;
 
 		cv::namedWindow("Frame");
@@ -1419,23 +1421,40 @@ public:
 
 
 	void Test11(){
-	
+
+		//video capture object.
+		VideoCapture capture;
+
+		capture.open(0);
+
+
+
 		/// Load image and template
-		img = imread("C:/Users/GIGI/Downloads/img/one.jpg", 1);
-		templ = imread("C:/Users/GIGI/Downloads/img/two.jpg", 1);
+		templ = imread("C:/Users/GIGI/Downloads/img/two_2.jpg", 1);
 
 		/// Create windows
 		namedWindow(image_window, WINDOW_AUTOSIZE);
 		namedWindow(result_window, WINDOW_AUTOSIZE);
+		namedWindow(search_window, WINDOW_AUTOSIZE);
 
 		/// Create Trackbar
 		const char* trackbar_label = "Method: \n 0: SQDIFF \n 1: SQDIFF NORMED \n 2: TM CCORR \n 3: TM CCORR NORMED \n 4: TM COEFF \n 5: TM COEFF NORMED";
 		createTrackbar(trackbar_label, image_window, &match_method, max_Trackbar, MatchingMethod);
 
-		MatchingMethod(0, 0);
+		for (;;)
+		{
+			//check if the video has reach its last frame.
+			//we add '-1' because we are reading two frames from the video at a time.
+			//if this is not included, we get a memory error!
+			//read first frame
+			capture.read(img);
+			MatchingMethod(0, 0);
+
+			if (cv::waitKey(30) >= 0) break;
+		}
 
 		waitKey(0);
-	
+
 	}
 
 };
