@@ -33,7 +33,7 @@
 #include <Poco\Util\OptionCallback.h>
 #include <Poco\Util\HelpFormatter.h>
 #include <Poco\Net\SSLManager.h>
-#include <Poco\SharedPtr.h>
+#include <Poco\SharedPtr.h>
 
 using namespace cv;
 using namespace std;
@@ -145,9 +145,6 @@ private:
 		//TODO remove if NodeJS sends commands
 		vidStreamCtrl.StartStreamingServer();
 
-		//TODO ask wolfi how to solve
-		//WebSocketController::MessageCallback callback = reinterpret_cast<WebSocketController::MessageCallback>(imgProcCtrl.HandleMessageNotification);
-		//webSocketCtrl.AddMessageOberver(imgProcCtrl, &callback);
 		webSocketCtrl->GetNotificationCenter().addObserver(NObserver<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
 		webSocketCtrl->GetNotificationCenter().addObserver(NObserver<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
 		webSocketCtrl->StartWebSocketClient();
@@ -204,7 +201,6 @@ private:
 		//th.DetectObject7();
 		//th.MovingDetection();
 		th.startMotionTracking();
-
 	}
 };
 

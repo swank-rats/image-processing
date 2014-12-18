@@ -69,6 +69,9 @@
     <ClCompile Include="shared\model\message\MessageHeaders.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="shared\model\message\MessageCommands.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
@@ -129,6 +132,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="shared\model\message\MessageHeaders.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\model\message\MessageCommands.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

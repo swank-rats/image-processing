@@ -16,8 +16,14 @@ namespace shared {
 				map.insert(StringMsgHeadersMap::ValueType("data", MessageHeaderEnum::data));
 			}
 
-			StringMsgHeadersMap& MessageHeaders::GetMap() {
-				return map;
+			MessageHeaderEnum MessageHeaders::GetHeaderEnum(const string& header) {
+				StringMsgHeadersMap::Iterator it = map.find(header);
+
+				if (it != map.end()) {
+					return it->second;
+				}
+
+				return MessageHeaderEnum::unknown;
 			}
 		}
 	}

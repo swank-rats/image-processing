@@ -5,6 +5,9 @@
 // Description :
 //============================================================================
 #include "VideoStreamingController.h"
+#include "..\shared\model\message\MessageCommands.h"
+
+using shared::model::message::MessageCommandEnum;
 
 namespace controller {
 	namespace video_streaming {
@@ -27,7 +30,16 @@ namespace controller {
 		}
 
 		void VideoStreamingController::HandleMessageNotification(const AutoPtr<MessageNotification>& notification) {
-			//TODO handle message - eg simulate shot and so on
+			const Message &message = notification->GetData();
+
+			switch (message.GetCmd()) {
+			case MessageCommandEnum::start:
+				StartStreamingServer();
+				break;
+			case MessageCommandEnum::stop:
+				StopStreamingServer();
+				break;
+			}
 		}
 	}
 }

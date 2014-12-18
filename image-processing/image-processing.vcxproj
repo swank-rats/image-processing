@@ -118,6 +118,7 @@
     <ClCompile Include="controller\VideoStreamingController.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.cpp" />
     <ClCompile Include="shared\model\message\Message.cpp" />
+    <ClCompile Include="shared\model\message\MessageCommands.cpp" />
     <ClCompile Include="shared\model\message\MessageHeaders.cpp" />
     <ClCompile Include="shared\notifications\PlayerHitNotification.cpp" />
     <ClCompile Include="shared\notifications\MessageNotification.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="controller\VideoStreamingController.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h" />
     <ClInclude Include="shared\model\message\Message.h" />
+    <ClInclude Include="shared\model\message\MessageCommands.h" />
     <ClInclude Include="shared\model\message\MessageHeaders.h" />
     <ClInclude Include="shared\notifications\PlayerHitNotification.h" />
     <ClInclude Include="shared\notifications\MessageNotification.h" />

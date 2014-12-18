@@ -31,7 +31,7 @@ using shared::model::message::MessageHeaderEnum;
 namespace shared {
 	namespace model {
 		namespace message {
-			Message::Message(const string& cmd, const string& to, StringMap *params, const string& data)
+			Message::Message(const MessageCommandEnum cmd, const string& to, StringMap *params, const string& data)
 				: cmd(cmd), to(to), data(data) {
 				this->params = params == nullptr ? new StringMap() : params;
 			}
@@ -49,7 +49,7 @@ namespace shared {
 				return to;
 			}
 
-			string Message::GetCmd() const {
+			MessageCommandEnum Message::GetCmd() const {
 				return cmd;
 			}
 
@@ -83,10 +83,6 @@ namespace shared {
 				if (!to.empty()) {
 					stream << "\"to\":\"" << to << "\"";
 					addComma = true;
-				}
-
-				if (cmd.empty()) {
-					//TODO ERROR?
 				}
 
 				if (addComma) {
@@ -134,7 +130,8 @@ namespace shared {
 
 			Message* Message::Parse(const string& message) {
 				Logger& logger = Logger::get("WebSocketMessage");
-				static StringMsgHeadersMap map = MessageHeaders().GetMap();
+				static MessageHeaders headers = MessageHeaders();
+				static MessageCommands commands = MessageCommands();
 
 				try {
 					/* Protocol (based on JSON object)
@@ -162,13 +159,13 @@ namespace shared {
 					vector<string> paramsNames;
 
 					for (vector<string>::size_type i = 0; i != names.size(); i++) {
-						switch (map[names[i]])
+						switch (headers.GetHeaderEnum(names[i]))
 						{
 						case MessageHeaderEnum::to:
 							tempMessage->to = root->getValue<string>(names[i]);
 							break;
 						case MessageHeaderEnum::cmd:
-							tempMessage->cmd = root->getValue<string>(names[i]);
+							tempMessage->cmd = commands.GetCommandEnum(root->getValue<string>(names[i]));
 							break;
 						case MessageHeaderEnum::params:
 							params = root->getObject(names[i]);

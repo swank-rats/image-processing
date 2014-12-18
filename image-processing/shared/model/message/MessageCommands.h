@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : MessageHeaders.h
+// Name        : MessageCommands.h
 // Author      : ITM13
 // Version     : 1.0
 // Description :
@@ -15,15 +15,15 @@ using Poco::HashMap;
 namespace shared {
 	namespace model {
 		namespace message {
-			enum MessageHeaderEnum { unknown, to, cmd, params, data };
-			typedef HashMap<string, MessageHeaderEnum> StringMsgHeadersMap;
+			enum MessageCommandEnum { invalid, init, start, stop, shot, hit };
+			typedef HashMap<string, MessageCommandEnum> StringMsgCommandMap;
 
-			class MessageHeaders {
+			class MessageCommands {
 			public:
-				MessageHeaders();
-				MessageHeaderEnum GetHeaderEnum(const string& header);
+				MessageCommands();
+				MessageCommandEnum GetCommandEnum(const string& header);
 			private:
-				StringMsgHeadersMap map;
+				StringMsgCommandMap map;
 			};
 		}
 	}

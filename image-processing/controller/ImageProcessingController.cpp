@@ -9,6 +9,7 @@
 #include "..\services\ObjectDetectionService.h"
 #include "..\shared\notifications\PlayerHitNotification.h"
 #include "..\shared\model\Player.h"
+#include "..\shared\model\message\MessageCommands.h"
 
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
@@ -23,6 +24,7 @@ using cv::Point;
 using Poco::TimerCallback;
 using shared::notifications::PlayerHitNotification;
 using shared::model::Player;
+using shared::model::message::MessageCommandEnum;
 
 namespace controller {
 	namespace image_processing {
@@ -77,8 +79,17 @@ namespace controller {
 			//TODO handle message - eg simulate shot and so on
 			const Message &message = notification->GetData();
 
-			message.GetCmd();
-
+			switch (message.GetCmd()) {
+			case MessageCommandEnum::start:
+				StartImageProcessing();
+				break;
+			case MessageCommandEnum::stop:
+				StopImageProcessing();
+				break;
+			case MessageCommandEnum::shot:
+				//TODO implement shot method and so
+				break;
+			}
 		}
 
 		void ImageProcessingController::CreateTrackBarView() {
@@ -109,7 +120,7 @@ namespace controller {
 				PlayerHitNotification* playerHitNotification = dynamic_cast<PlayerHitNotification*>(notification.get());
 				if (playerHitNotification)
 				{
-					Message* msg = new Message("hit", "server");
+					Message* msg = new Message(MessageCommandEnum::hit);
 					msg->AddParam("player", std::to_string(playerHitNotification->GetHitPlayer().playerId));
 					msg->AddParam("precision", std::to_string(playerHitNotification->GetPrecision()));
 					websocketController->Send(msg);

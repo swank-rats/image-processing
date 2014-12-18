@@ -6,6 +6,7 @@
 //============================================================================
 #pragma once
 #include "MessageHeaders.h"
+#include "MessageCommands.h"
 
 #include <Poco\HashMap.h>
 
@@ -14,6 +15,7 @@
 using std::string;
 using std::vector;
 using Poco::HashMap;
+using shared::model::message::MessageCommands;
 
 namespace shared {
 	namespace model {
@@ -23,13 +25,13 @@ namespace shared {
 			class Message
 			{
 			public:
-				Message(const string& cmd, const string& to = "", StringMap *params = new StringMap(), const string& data = "");
+				Message(const MessageCommandEnum cmd, const string& to = "server", StringMap *params = new StringMap(), const string& data = "");
 				Message(const Message& msg);
 				Message(const Message* msg);
 
 				~Message();
 				string GetTo() const;
-				string GetCmd() const;
+				MessageCommandEnum GetCmd() const;
 				string GetData() const;
 
 				bool Message::GetParam(const string name, string& out);
@@ -38,9 +40,9 @@ namespace shared {
 
 				static Message* Parse(const string& message);
 			private:
-				Message() : Message("") {}
+				Message() : Message(MessageCommandEnum::invalid) {}
 				string to;
-				string cmd;
+				MessageCommandEnum cmd;
 				StringMap* params;
 				string data;
 			};
