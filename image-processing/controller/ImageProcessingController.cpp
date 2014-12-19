@@ -120,7 +120,7 @@ namespace controller {
 				PlayerHitNotification* playerHitNotification = dynamic_cast<PlayerHitNotification*>(notification.get());
 				if (playerHitNotification)
 				{
-					Message* msg = new Message(MessageCommandEnum::hit);
+					Message* msg = new Message(MessageCommandEnum::hit, "server");
 					msg->AddParam("player", std::to_string(playerHitNotification->GetHitPlayer().playerId));
 					msg->AddParam("precision", std::to_string(playerHitNotification->GetPrecision()));
 					websocketController->Send(msg);

@@ -39,7 +39,7 @@ namespace infrastructure {
 
 		void WebSocketClient::OpenConnection() {
 			if (connHandler->OpenConnection()) {
-				Send(new Message(MessageCommandEnum::init));
+				Send(new Message(MessageCommandEnum::init, "server"));
 			}
 		}
 

@@ -25,7 +25,7 @@ namespace shared {
 			class Message
 			{
 			public:
-				Message(const MessageCommandEnum cmd, const string& to = "server", StringMap *params = new StringMap(), const string& data = "");
+				Message(const MessageCommandEnum cmd, const string& to = "", StringMap *params = new StringMap(), const string& data = "");
 				Message(const Message& msg);
 				Message(const Message* msg);
 
