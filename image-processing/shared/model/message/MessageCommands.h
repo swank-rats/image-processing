@@ -21,7 +21,8 @@ namespace shared {
 			class MessageCommands {
 			public:
 				MessageCommands();
-				MessageCommandEnum GetCommandEnum(const string& header);
+				MessageCommandEnum GetCommandEnum(const string& command);
+				string GetCommandEnumString(const MessageCommandEnum command);
 			private:
 				StringMsgCommandMap map;
 			};

@@ -74,6 +74,8 @@ namespace shared {
 			}
 
 			string Message::ToString() const {
+				static MessageCommands commands = MessageCommands();
+
 				stringstream stream;
 				string comma = ", ";
 				bool addComma = false;
@@ -89,7 +91,7 @@ namespace shared {
 					stream << comma;
 				}
 
-				stream << "\"cmd\":\"" << cmd << "\"";
+				stream << "\"cmd\":\"" << commands.GetCommandEnumString(cmd) << "\"";
 				addComma = true;
 
 				if (!params->empty()) {

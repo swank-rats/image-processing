@@ -26,6 +26,21 @@ namespace shared {
 
 				return MessageCommandEnum::invalid;
 			}
+
+			string MessageCommands::GetCommandEnumString(const MessageCommandEnum command) {
+				StringMsgCommandMap::Iterator iter = map.begin();
+
+				while (iter != map.end()) {
+					if (iter->second == command) {
+						return iter->first;
+					}
+
+					++iter;
+				}
+
+				return "";
+			}
+
 		}
 	}
 }

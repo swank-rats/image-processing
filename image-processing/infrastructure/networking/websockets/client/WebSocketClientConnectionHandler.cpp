@@ -79,19 +79,6 @@ namespace infrastructure {
 			catch (Exception& e) {
 				logger.error(e.displayText());
 				logger.error("Error code: " + std::to_string(e.code()));
-
-				switch (e.code())
-				{
-				case WebSocket::WS_ERR_HANDSHAKE_UNSUPPORTED_VERSION:
-					break;
-				case WebSocket::WS_ERR_NO_HANDSHAKE:
-					break;
-				case WebSocket::WS_ERR_HANDSHAKE_NO_VERSION:
-					break;
-				case WebSocket::WS_ERR_HANDSHAKE_NO_KEY:
-					break;
-				}
-
 				return false;
 			}
 		}
