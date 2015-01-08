@@ -400,7 +400,7 @@ Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
 Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player) {
 
 
-	Robot robotShootPlayer = DetectRobot(player, frame);
+	/*Robot robotShootPlayer = DetectRobot(player, frame);
 
 	if (robotShootPlayer.robotForm.size() <= 0)
 		return Shot();
@@ -428,7 +428,7 @@ Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player) {
 	}
 
 
-	return Shot(player, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));
+	return Shot(player, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));*/
 
 
 	// TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
