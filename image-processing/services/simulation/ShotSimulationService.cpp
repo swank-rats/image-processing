@@ -44,11 +44,11 @@ namespace services {
 		void ShotSimulationService::SimulateShot(Shot shot) {
 			MutexThreadLock.lock();
 			shots.insert(ShotsSetType::ValueType(SimulationShot(shot)));
-			errorCount = 0;
 			MutexThreadLock.unlock();
 		}
 
 		void ShotSimulationService::Update(WebcamService* observable) {
+			//MutexThreadLock.lock();
 			if (shots.empty()) {
 				return;
 			}
@@ -118,6 +118,8 @@ namespace services {
 				Logger& logger = Logger::get("Test");
 				logger.error(e.what());
 			}
+
+			//MutexThreadLock.unlock();
 		}
 
 		void ShotSimulationService::OverlayImage(cv::Mat &background, const cv::Mat &foreground, cv::Point2i &location) {
