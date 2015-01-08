@@ -294,7 +294,8 @@ static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangle
 
 				if (pointPolygonTest(Mat(rectangles[a]), triPointOne, true) > 0 && pointPolygonTest(Mat(rectangles[a]), triPointTwo, true) > 0 && pointPolygonTest(Mat(rectangles[a]), triPointThree, true) > 0){
 					allowedRectanglesContourPositions.push_back(rectanglesContourPositions[a]);
-					allowedTriangles->push_back(triangleContourPositions[i]);
+					//allowedTriangles->push_back(triangleContourPositions[i]);
+					allowedTriangles->push_back(i);
 					found = true;
 					break;
 				}
@@ -306,6 +307,46 @@ static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangle
 	}
 
 	return allowedRectanglesContourPositions;
+}
+
+static vector<Point> GetFrontOfTriangle(vector<Point> tri)
+{
+	Point p1 = tri[0];
+	Point p2 = tri[1];
+	Point p3 = tri[2];
+
+
+	Point lP1P2 =p1 - p2;
+	Point lP2P3 = p2 - p3;
+	Point lP3P1 = p3 - p1;
+
+	double l1 = sqrt((lP1P2.x*lP1P2.x) + (lP1P2.y*lP1P2.y));
+	double l2 = sqrt((lP2P3.x*lP2P3.x) + (lP2P3.y*lP2P3.y));
+	double l3 = sqrt((lP3P1.x*lP3P1.x) + (lP3P1.y*lP3P1.y));
+
+	double shortes = l1;
+	Point toReturn = p3;
+	Point dir = Point(lP1P2.x/ 2,lP1P2.y/2) + p2;
+
+	if (l2 < shortes)
+	{
+		shortes = l2;
+		toReturn = p1;
+		dir = Point(lP2P3.x / 2, lP2P3.y / 2) + p3;
+	}
+	if (l3 < shortes)
+	{
+		shortes = l3;
+		toReturn = p2;
+		dir = Point(lP3P1.x / 2, lP3P1.y / 2) + p1;
+	}
+
+	Point direction = toReturn-dir;
+	vector<Point> points;
+	points.push_back(direction);
+	points.push_back(toReturn);
+	return points;
+
 }
 
 static void setLabel2(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour)
@@ -378,6 +419,7 @@ static void thresh_callbackdetect3(int, void*)
 	vector<int> allowedRectanglesContourPositions;
 	vector<int> allowedPentagonsContourPosition;
 	vector<int> allowedTriangles;
+	vector<int> allowedTrianglesPoly;
 
 	//dilate(src_graydetect2, src_graydetect2, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
@@ -431,7 +473,22 @@ static void thresh_callbackdetect3(int, void*)
 
 
 	allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions, trianglePositions, &allowedTriangles);
-	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTriangles);
+	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTrianglesPoly);
+
+
+	if (allowedTriangles.size() > 0){
+		Point dir;
+		Point PosTop;
+		vector<Point> pointsTriRect = GetFrontOfTriangle(triangles[allowedTriangles[0]]);
+		dir = pointsTriRect[0];
+		PosTop = pointsTriRect[1];
+
+
+
+		circle(srcdetect2, PosTop, 10.0, Scalar(0, 0, 255), 1, 8);
+		circle(srcdetect2, PosTop-dir, 10.0, Scalar(0, 0, 255), 1, 8);
+
+	}
 
 	for (size_t i = 0; i < contours.size(); i++)
 	{
@@ -489,7 +546,7 @@ static void thresh_callbackdetect3(int, void*)
 				setLabel2(canny_output, zeichenkette, contours[i]);
 			}
 
-			for (size_t y = 0; y < allowedTriangles.size(); y++)
+			/*for (size_t y = 0; y < allowedTriangles.size(); y++)
 			{
 				if (allowedTriangles[y] == i)
 				{
@@ -497,6 +554,15 @@ static void thresh_callbackdetect3(int, void*)
 					drawContours(canny_output, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
 				}
 			}
+
+			for (size_t y = 0; y < allowedTrianglesPoly.size(); y++)
+			{
+				if (allowedTrianglesPoly[y] == i)
+				{
+					Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+					drawContours(canny_output, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+				}
+			}*/
 		}
 	}
 
