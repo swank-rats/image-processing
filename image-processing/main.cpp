@@ -138,21 +138,23 @@ private:
 		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri, context));
 
 		ImageProcessingController imgProcCtrl(webcamService, webSocketCtrl);
-		//TODO remove if NodeJS sends commands
-		imgProcCtrl.StartImageProcessing();
-
 		VideoStreamingController vidStreamCtrl(webcamService);
-		//TODO remove if NodeJS sends commands
-		vidStreamCtrl.StartStreamingServer();
 
 		webSocketCtrl->GetNotificationCenter().addObserver(NObserver<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
 		webSocketCtrl->GetNotificationCenter().addObserver(NObserver<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
+		
+#if defined(THOMAS) || defined(STANDALONE)
 		webSocketCtrl->StartWebSocketClient();
 
-		//TODO remove if NodeJS sends shot commands
+		imgProcCtrl.StartImageProcessing();
+
+		vidStreamCtrl.StartStreamingServer();
+
+		//automatic shot simulation
 		TimerCallback<ImageProcessingController> callback(imgProcCtrl, &ImageProcessingController::OnTimer);
 		Timer timer(1000, 2000); //start after 1 sec, recall every 2 sec
 		timer.start(callback);
+#endif
 
 		char key;
 		while (1) {
@@ -163,7 +165,10 @@ private:
 			}
 		}
 
+#if defined(THOMAS) || defined(STANDALONE)
 		timer.stop();
+#endif
+
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();
 		webSocketCtrl->StopWebSocketClient();

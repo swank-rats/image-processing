@@ -115,6 +115,8 @@ Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player) {
 
 bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, Shot &shot) {
 	// TODO analyse frame and detect if a player is at shot endposition
+	//1. find opposite player
+
 	shot.hitPlayer = p;
 	return true;
 }

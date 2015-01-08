@@ -59,25 +59,26 @@ namespace services {
 						OverlayImage(frame, gunShotImg, iter->startPoint);
 					}
 
-					if (iter->SimulateEndExplosion()) {
-						//simulate explosion
-						SimulationShot::SimulationHitStatus status = iter->status;
-						bool hitPlayer = false;
+					//simulate explosion
+					SimulationShot::SimulationHitStatus status = iter->status;
+					if (status == SimulationShot::SimulationHitStatus::UNKNOWN) {
+						if (detectionService.HasShotHitPlayer(frame, *iter)) {
+							iter->status = SimulationShot::HIT_PLAYER;
+							iter->SetCurrentPointAsEndoint();
 
-						if (status == SimulationShot::SimulationHitStatus::UNKNOWN) {
-							hitPlayer = detectionService.HasShotHitPlayer(frame, *iter);
+							//Notify that player was hit
+							playerHitQueue.enqueueNotification(new PlayerHitNotification(iter->hitPlayer));
 						}
+					}
 
-						if (status == SimulationShot::HIT_PLAYER || hitPlayer) {
+					if (iter->SimulateEndExplosion()) {
+						if (status == SimulationShot::HIT_PLAYER) {
 							int explosionx = iter->endPoint.x - robotExplosionHalfXSize > 0 ? iter->endPoint.x - robotExplosionHalfXSize : 0;
 							int explosionY = iter->endPoint.y - robotExplosionHalfYSize > 0 ? iter->endPoint.y - robotExplosionHalfYSize : 0;
 							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
-
-							if (status != SimulationShot::HIT_PLAYER) {
-								iter->status = SimulationShot::HIT_PLAYER;
-							}
 						}
-						else if (status == SimulationShot::HIT_WALL) {
+						else {
+							// status == SimulationShot::HIT_WALL or UNKNOWN
 							int explosionx = iter->endPoint.x - wallExplosionHalfXSize > 0 ? iter->endPoint.x - wallExplosionHalfXSize : 0;
 							int explosionY = iter->endPoint.y - wallExplosionHalfYSize > 0 ? iter->endPoint.y - wallExplosionHalfYSize : 0;
 							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
@@ -88,11 +89,6 @@ namespace services {
 						}
 
 						if (iter->IsSimulationFinished()) {
-							// TODO concrete player
-							if (status == SimulationShot::HIT_PLAYER) {
-								playerHitQueue.enqueueNotification(new PlayerHitNotification(iter->hitPlayer));
-							}
-
 							deleteShots.push_back(*iter);
 						}
 					}

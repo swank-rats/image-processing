@@ -9,6 +9,7 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Thomas|Win32 = Debug Thomas|Win32
 		Debug|Win32 = Debug|Win32
+		DebugStandalone|Win32 = DebugStandalone|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -16,6 +17,8 @@ Global
 		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.Debug Thomas|Win32.Build.0 = Debug Thomas|Win32
 		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.Debug|Win32.ActiveCfg = Debug|Win32
 		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.Debug|Win32.Build.0 = Debug|Win32
+		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.DebugStandalone|Win32.ActiveCfg = DebugStandalone|Win32
+		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.DebugStandalone|Win32.Build.0 = DebugStandalone|Win32
 		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.Release|Win32.ActiveCfg = Release|Win32
 		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection

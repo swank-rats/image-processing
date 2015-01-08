@@ -70,11 +70,15 @@ namespace shared {
 			}
 
 			Point2i GetNextShotPoint() {
-				int nextX = startPoint.x + round(a * currPercentage);
-				int nextY = startPoint.y + round(b * currPercentage);
+				currX = startPoint.x + round(a * currPercentage);
+				currY = startPoint.y + round(b * currPercentage);
 				currPercentage += percentageStep;
 
-				return Point2i(nextX, nextY);
+				return Point2i(currX, currY);
+			}
+
+			Point2i GetCurrentShotPoint() {
+				return Point2i(currX, currY);
 			}
 
 			bool SimulateStartExplosion() {
@@ -82,7 +86,16 @@ namespace shared {
 				return startExplosionCtr <= maxStartExplosions;
 			}
 
+			void SetCurrentPointAsEndoint() {
+				endPoint = Point2i(currX, currY);
+			}
+
 			bool SimulateEndExplosion() {
+				if (status == HIT_PLAYER) {
+					currPercentage = 1.0;
+					return true;
+				}
+
 				if (currPercentage < 1.0) {
 					return false;
 				}
@@ -105,6 +118,8 @@ namespace shared {
 			bool hasStarted;
 			int xDirection;
 			int yDirection;
+			int currX;
+			int currY;
 			int a;
 			int b;
 			int startExplosionCtr;
