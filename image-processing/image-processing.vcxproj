@@ -175,6 +175,7 @@
     <ClInclude Include="shared\model\message\Message.h" />
     <ClInclude Include="shared\model\message\MessageCommands.h" />
     <ClInclude Include="shared\model\message\MessageHeaders.h" />
+    <ClInclude Include="shared\model\Robot.h" />
     <ClInclude Include="shared\notifications\PlayerHitNotification.h" />
     <ClInclude Include="shared\notifications\MessageNotification.h" />
     <ClInclude Include="services\ObjectDetectionService.h" />

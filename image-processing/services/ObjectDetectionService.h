@@ -6,12 +6,18 @@
 //============================================================================
 #pragma once
 #include "..\shared\model\Shot.h"
+#include "..\shared\model\Robot.h"
+
+#include <Poco\Logger.h>
+
 
 using namespace std;
 using namespace cv;
 using namespace shared::model;
 
 using shared::model::Shot;
+using shared::model::Robot;
+using Poco::Logger;
 
 class ObjectDetectionService
 {
@@ -19,11 +25,12 @@ public:
 	ObjectDetectionService();
 	virtual ~ObjectDetectionService();
 
-	void DetectObject(Mat src, int iLowH, int iLowS, int iLowV, int iHighH, int iHighS, int iHighV);
-	void ThreshCallback(int, void*, Mat src, Mat src_gray, int thresh);
+	Robot ObjectDetectionService::DetectRobot(Player player, const Mat &frame);
+	Robot ObjectDetectionService::DetectRobotRect(const Mat &frame);
+	Robot ObjectDetectionService::DetectRobotPent(const Mat &frame);
 
 	Shot DetectShotRoute(const Mat &frame, Player player); //TODO player parameter
-	bool HasShotHitPlayer(const Mat &frame, Shot &shot);
+	bool HasShotHitPlayer(const Mat &frame, SimulationShot &shot);
 private:
 	Mat src;
 	Mat src_gray;

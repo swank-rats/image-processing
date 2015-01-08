@@ -64,6 +64,9 @@ namespace shared {
 
 				currPercentage = percentageStep;
 
+				currX = start.x;
+				currY = start.y;
+
 				startExplosionCtr = 0;
 				endExplosionCtr = 0;
 				status = UNKNOWN;

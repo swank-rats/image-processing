@@ -137,6 +137,9 @@
     <ClInclude Include="shared\model\message\MessageCommands.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="shared\model\Robot.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\images\colored_squares.png">
