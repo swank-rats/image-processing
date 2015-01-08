@@ -26,7 +26,7 @@ namespace controller {
 		public:
 			VideoStreamingController(SharedPtr<WebcamService> webcamService);
 			~VideoStreamingController();
-			void HandleMessageNotification(const AutoPtr<MessageNotification>& notification);
+			void HandleMessageNotification(MessageNotification* notification);
 			void StartStreamingServer();
 			bool StopStreamingServer();
 		private:

@@ -21,12 +21,13 @@
 #include <Poco\Logger.h>
 #include <Poco\AutoPtr.h>
 #include <Poco\Timer.h>
+#include <Poco\Observer.h>
 #include <Poco\WindowsConsoleChannel.h>
 #include <Poco\FormattingChannel.h>
 #include <Poco\PatternFormatter.h>
 #include <Poco\Util\Application.h>
-#include <Poco\Net\AcceptCertificateHandler.h>
-#include <Poco\Net\InvalidCertificateHandler.h>
+#include <Poco\Net\HTTPSStreamFactory.h>
+#include <Poco\Net\KeyConsoleHandler.h>
 #include <Poco\Net\Context.h>
 #include <Poco\URI.h>
 #include <Poco\Util\OptionSet.h>
@@ -47,8 +48,9 @@ using Poco::FormattingChannel;
 using Poco::PatternFormatter;
 using Poco::Timestamp;
 using Poco::ThreadPool;
-using Poco::Net::InvalidCertificateHandler;
-using Poco::Net::AcceptCertificateHandler;
+using Poco::Observer;
+using Poco::Net::HTTPSStreamFactory;
+using Poco::Net::KeyConsoleHandler;
 using Poco::Net::Context;
 using Poco::Net::SSLManager;
 using Poco::Net::WebSocket;
@@ -56,6 +58,7 @@ using Poco::Util::Option;
 using Poco::Util::OptionSet;
 using Poco::Util::OptionCallback;
 using Poco::Util::HelpFormatter;
+using Poco::Util::LayeredConfiguration;
 
 using controller::image_processing::ImageProcessingController;
 using controller::video_streaming::VideoStreamingController;
@@ -66,18 +69,31 @@ class ImageProcessingServerApplication : public Poco::Util::Application {
 public:
 	ImageProcessingServerApplication() : helpRequested(false)
 	{
+		Poco::Net::initializeSSL();
+		Poco::Net::HTTPSStreamFactory::registerFactory();
+	}
+
+	~ImageProcessingServerApplication() {
+		Poco::Net::uninitializeSSL();
 	}
 protected:
 	void initialize(Application& self) {
 		InitLoggers();
-
 		loadConfiguration();
+
 		Application::initialize(self);
 
-		//accept everything!
-		Poco::SharedPtr<InvalidCertificateHandler> pAcceptCertHandler = new AcceptCertificateHandler(true);
-		context = new Context(Context::CLIENT_USE, "", "", "", Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
-		SSLManager::instance().initializeClient(NULL, pAcceptCertHandler, context);
+		//NOT NEEDED since it is done in config file
+		////accept everything!
+		//SharedPtr<InvalidCertificateHandler> pInvalidCertHandler = new ConsoleCertificateHandler(false);
+		//SharedPtr<PrivateKeyPassphraseHandler> pConsoleHandler = new KeyConsoleHandler(false);
+
+		////context = new Context(Context::CLIENT_USE, "resources\\openssl\\privkey.pem", "resources\\openssl\\cert.pem", "", Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
+		//context = new Context(Context::CLIENT_USE, "", "", "", Context::VERIFY_STRICT, 9, true, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
+		//context = new Poco::Net::Context(Context::CLIENT_USE, "", "rootcert.pem", "", Poco::Net::Context::VERIFY_RELAXED, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
+
+		////SSLManager::instance().initializeClient(pConsoleHandler, pInvalidCertHandler, context);
+		//SSLManager::instance().initializeClient(NULL, pInvalidCertHandler, context);
 	}
 
 	void reinitialize(Application& self) {
@@ -136,15 +152,15 @@ private:
 
 		SharedPtr<WebcamService> webcamService(new WebcamService());
 		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri, context));
+		webSocketCtrl->StartWebSocketClient();
 
 		ImageProcessingController imgProcCtrl(webcamService, webSocketCtrl);
 		VideoStreamingController vidStreamCtrl(webcamService);
 
-		webSocketCtrl->GetNotificationCenter().addObserver(NObserver<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
-		webSocketCtrl->GetNotificationCenter().addObserver(NObserver<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
+		webSocketCtrl->GetNotificationCenter().addObserver(Observer<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
+		webSocketCtrl->GetNotificationCenter().addObserver(Observer<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
 		
 #if defined(THOMAS) || defined(STANDALONE)
-		webSocketCtrl->StartWebSocketClient();
 
 		imgProcCtrl.StartImageProcessing();
 
@@ -195,11 +211,11 @@ private:
 	}
 
 	void TestThomas() {
-		ThomasTest th;
+		//ThomasTest th;
 
 		//th.DetectWihoutServices();
 		//th.DetectConture();
-		th.DetectConture2();
+		//th.DetectConture2();
 		//DetectConture3();
 		//th.Test5();
 		//th.Test6();

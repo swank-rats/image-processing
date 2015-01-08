@@ -38,20 +38,7 @@ namespace controller {
 			void StartWebSocketClient();
 			void StopWebSocketClient();
 			NotificationCenter& GetNotificationCenter();
-			void Send(const Message* message);
-
-			typedef void(*MessageCallback)(const AutoPtr<MessageNotification>&);
-
-			template<class T>
-			void AddMessageOberver(T target, void(*callback)(const AutoPtr<MessageNotification>&)) {
-				notificationCenter.addObserver(NObserver<T, MessageNotification>(target, callback));
-			}
-
-			template<class T>
-			void RemoveMessageOberver(T target, void(*callback)(const AutoPtr<MessageNotification>&)) {
-				notificationCenter.removeObserver(NObserver<T, MessageNotification>(target, callback));
-			}
-
+			void Send(Message* message);
 		private:
 			WebSocketClient* webSocketClient;
 			NotificationQueue receivedMessagesQueue;

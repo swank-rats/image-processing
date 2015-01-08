@@ -75,7 +75,7 @@ namespace controller {
 			//detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
 		}
 
-		void ImageProcessingController::HandleMessageNotification(const AutoPtr<MessageNotification>& notification) {
+		void ImageProcessingController::HandleMessageNotification(MessageNotification* notification) {
 			//TODO handle message - eg simulate shot and so on
 			const Message &message = notification->GetData();
 
@@ -90,6 +90,8 @@ namespace controller {
 				//TODO implement shot method and so
 				break;
 			}
+
+			notification->release();
 		}
 
 		void ImageProcessingController::CreateTrackBarView() {

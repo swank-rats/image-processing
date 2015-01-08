@@ -33,7 +33,7 @@ using shared::notifications::MessageNotification;
 namespace infrastructure {
 	namespace websocket {
 		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue)
-			: uri(uri), context(context), session(uri.getHost(), uri.getPort(), context), webSocket(nullptr), timeout(1000),
+			: uri(uri), session(uri.getHost(), uri.getPort()), webSocket(nullptr), timeout(1000),
 			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
 			receivedQueue(receivedQueue), sendingQueue(sendingQueue) { }
 
@@ -52,14 +52,13 @@ namespace infrastructure {
 
 		bool WebSocketClientConnectionHandler::OpenConnection() {
 			Logger& logger = Logger::get("WebSocketClient");
+			HTTPResponse res;
 
 			try {
 				//establish connection
 				HTTPRequest req(HTTPRequest::HTTP_GET, uri.getPath(), HTTPMessage::HTTP_1_1);
-				HTTPResponse res;
 				HTTPCredentials creds("user", "s3cr3t"); //add to websocket ctor as parameter with correct data
 				logger.information("Connecting to " + uri.getScheme() + "://" + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
-
 				webSocket = new WebSocket(session, req, res);
 
 				logger.information("Response status: " + std::to_string(res.getStatus()) + " reason: " + res.getReason());
@@ -79,6 +78,20 @@ namespace infrastructure {
 			}
 			catch (Exception& e) {
 				logger.error(e.displayText());
+				logger.error("Error code: " + std::to_string(e.code()));
+
+				switch (e.code())
+				{
+				case WebSocket::WS_ERR_HANDSHAKE_UNSUPPORTED_VERSION:
+					break;
+				case WebSocket::WS_ERR_NO_HANDSHAKE:
+					break;
+				case WebSocket::WS_ERR_HANDSHAKE_NO_VERSION:
+					break;
+				case WebSocket::WS_ERR_HANDSHAKE_NO_KEY:
+					break;
+				}
+
 				return false;
 			}
 		}
@@ -125,6 +138,8 @@ namespace infrastructure {
 						const Message &message = messageNotification->GetData();
 						string temp = message.ToString();
 						buffer = temp.c_str();
+
+						logger.information("sending " + temp);
 
 						length = webSocket->sendFrame(buffer, temp.length(), flags);
 

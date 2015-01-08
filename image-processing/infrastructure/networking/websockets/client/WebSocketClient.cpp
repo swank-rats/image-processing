@@ -53,10 +53,10 @@ namespace infrastructure {
 			return connHandler->IsConnected();
 		}
 
-		void WebSocketClient::Send(const Message* message) {
-			if (connHandler->IsConnected()) {
+		void WebSocketClient::Send(Message* message) {
+			//if (connHandler->IsConnected()) {
 				sendingQueue.enqueueNotification(new MessageNotification(message));
-			}
+			//}
 		}
 	}
 }

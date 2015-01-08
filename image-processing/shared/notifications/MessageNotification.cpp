@@ -8,7 +8,7 @@
 
 namespace shared {
 	namespace notifications {
-		MessageNotification::MessageNotification(const Message* data) {
+		MessageNotification::MessageNotification(Message *data) {
 			this->data = data;
 		}
 
@@ -17,7 +17,7 @@ namespace shared {
 			data = nullptr;
 		}
 
-		const Message& MessageNotification::GetData() const	{
+		Message* MessageNotification::GetData() {
 			return data;
 		}
 	}
