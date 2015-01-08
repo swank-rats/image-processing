@@ -165,10 +165,9 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="resources\AppConfig.xml" />
+    <None Include="rootcert.pem" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\openssl\privkey.pem" />
-    <None Include="resources\openssl\cert.pem" />
+    <Xml Include="image-processing.xml" />
   </ItemGroup>
 </Project>

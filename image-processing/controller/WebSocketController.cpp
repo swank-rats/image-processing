@@ -44,7 +44,7 @@ namespace controller {
 			return notificationCenter;
 		}
 
-		void WebSocketController::Send(const Message* message) {
+		void WebSocketController::Send(Message* message) {
 			webSocketClient->Send(message);
 		}
 

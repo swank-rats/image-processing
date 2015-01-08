@@ -29,10 +29,10 @@ namespace controller {
 			return true;
 		}
 
-		void VideoStreamingController::HandleMessageNotification(const AutoPtr<MessageNotification>& notification) {
-			const Message &message = notification->GetData();
+		void VideoStreamingController::HandleMessageNotification(MessageNotification* notification) {
+			Message *message = notification->GetData();
 
-			switch (message.GetCmd()) {
+			switch (message->GetCmd()) {
 			case MessageCommandEnum::start:
 				StartStreamingServer();
 				break;
@@ -40,6 +40,8 @@ namespace controller {
 				StopStreamingServer();
 				break;
 			}
+
+			notification->release();
 		}
 	}
 }

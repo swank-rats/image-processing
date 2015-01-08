@@ -17,11 +17,11 @@ namespace shared {
 		class MessageNotification : public Notification
 		{
 		public:
-			MessageNotification(const Message* data);
+			MessageNotification(Message *data);
 			~MessageNotification();
-			const Message& GetData() const;
+			Message* GetData();
 		private:
-			const Message* data;
+			Message *data;
 		};
 	}
 }

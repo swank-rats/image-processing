@@ -12,6 +12,7 @@
 #include <Poco\Timespan.h>
 #include <Poco\Net\HTTPServer.h>
 #include <Poco\Net\Context.h>
+#include <Poco\Net\HTTPClientSession.h>
 #include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\WebSocket.h>
 #include <Poco\Activity.h>
@@ -23,6 +24,7 @@ using Poco::Timespan;
 using Poco::Activity;
 using Poco::NotificationQueue;
 using Poco::Net::Context;
+using Poco::Net::HTTPClientSession;
 using Poco::Net::HTTPSClientSession;
 using Poco::Net::WebSocket;
 using shared::model::message::Message;
@@ -41,10 +43,9 @@ namespace infrastructure {
 			NotificationQueue* GetReceivedMessagesQueues();
 		private:
 			URI uri;
-			Context::Ptr context;
 			Activity<WebSocketClientConnectionHandler> receiveActity;
 			Activity<WebSocketClientConnectionHandler> sendActity;
-			HTTPSClientSession session;
+			HTTPClientSession session;
 			WebSocket* webSocket;
 			Timespan timeout;
 			NotificationQueue &sendingQueue;

@@ -44,7 +44,7 @@ namespace controller {
 			void StopImageProcessing();
 			void Update(WebcamService* observable);
 			IplImage* GetLastFrame();
-			void HandleMessageNotification(const AutoPtr<MessageNotification>& notification);
+			void HandleMessageNotification(MessageNotification* notification);
 			void OnTimer(Timer& timer);
 		private:
 			SharedPtr<WebcamService> webcamService;
