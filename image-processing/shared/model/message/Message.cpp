@@ -37,15 +37,11 @@ namespace shared {
 			}
 
 			Message::Message(const Message& msg) : to(msg.to), cmd(msg.cmd), data(msg.data) {
-				//TODO copy params
-				params = new StringMap();
-
+				params = new StringMap(*msg.params);
 			}
 
 			Message::Message(const Message* msg) : to(msg->to), cmd(msg->cmd), data(msg->data) {
-				//TODO copy params
-				params = new StringMap();
-				//params = msg->params == nullptr ? new StringMap() : new StringMap(msg->params);
+				params = new StringMap(*msg->params);
 			}
 
 			Message::~Message() {
