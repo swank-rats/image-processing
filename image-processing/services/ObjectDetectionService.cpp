@@ -420,7 +420,7 @@ Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player) {
 		
 		if(!rect.contains(currentPoint))
 		{
-			endPoint = currentPoint;
+			endPoint = currentPoint-normDirection;
 			found = true;
 		}
 
