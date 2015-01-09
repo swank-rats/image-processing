@@ -48,7 +48,7 @@ namespace infrastructure {
 
 			std::ostream& out = response.send();
 
-			while (out.good()) {
+			while (out.good() && webcamService->IsRecording()) {
 				MultipartWriter writer(out, boundary);
 
 				cv::Mat& image = webcamService->GetLastImage();

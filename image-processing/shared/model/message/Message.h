@@ -43,7 +43,7 @@ namespace shared {
 				Message() : Message(MessageCommandEnum::invalid) {}
 				string to;
 				MessageCommandEnum cmd;
-				StringMap* params;
+				StringMap *params;
 				string data;
 			};
 		}

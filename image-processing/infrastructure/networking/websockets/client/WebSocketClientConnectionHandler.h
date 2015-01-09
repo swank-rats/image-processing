@@ -45,7 +45,7 @@ namespace infrastructure {
 			URI uri;
 			Activity<WebSocketClientConnectionHandler> receiveActity;
 			Activity<WebSocketClientConnectionHandler> sendActity;
-			HTTPClientSession session;
+			HTTPSClientSession session;
 			WebSocket* webSocket;
 			Timespan timeout;
 			NotificationQueue &sendingQueue;

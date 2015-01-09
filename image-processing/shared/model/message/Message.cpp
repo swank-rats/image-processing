@@ -36,13 +36,23 @@ namespace shared {
 				this->params = params == nullptr ? new StringMap() : params;
 			}
 
-			Message::Message(const Message& msg) : to(msg.to), cmd(msg.cmd), params(msg.params), data(msg.data) { }
+			Message::Message(const Message& msg) : to(msg.to), cmd(msg.cmd), data(msg.data) {
+				//TODO copy params
+				params = new StringMap();
 
-			Message::Message(const Message* msg) : to(msg->to), cmd(msg->cmd), params(msg->params), data(msg->data) { }
+			}
+
+			Message::Message(const Message* msg) : to(msg->to), cmd(msg->cmd), data(msg->data) {
+				//TODO copy params
+				params = new StringMap();
+				//params = msg->params == nullptr ? new StringMap() : new StringMap(msg->params);
+			}
 
 			Message::~Message() {
-				delete params;
-				params = nullptr;
+				if (params != nullptr) {
+					delete params;
+					params = nullptr;
+				}
 			}
 
 			string Message::GetTo() const {

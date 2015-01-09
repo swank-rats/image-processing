@@ -58,7 +58,9 @@ namespace infrastructure {
 				//establish connection
 				HTTPRequest req(HTTPRequest::HTTP_GET, uri.getPath(), HTTPMessage::HTTP_1_1);
 				HTTPCredentials creds("user", "s3cr3t"); //add to websocket ctor as parameter with correct data
+
 				logger.information("Connecting to " + uri.getScheme() + "://" + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
+
 				webSocket = new WebSocket(session, req, res);
 
 				logger.information("Response status: " + std::to_string(res.getStatus()) + " reason: " + res.getReason());
@@ -166,6 +168,8 @@ namespace infrastructure {
 						if (length > 0) {
 							string receivedMessage = string(buffer, length);
 							Message* message = Message::Parse(receivedMessage);
+
+							logger.information("Received message: " + message->ToString());
 
 							if (message) {
 								receivedQueue.enqueueNotification(new MessageNotification(message));
