@@ -15,8 +15,7 @@
 #include <Poco\HashSet.h>
 #include <Poco\SharedPtr.h>
 #include <Poco\NotificationQueue.h>
-#include <Poco/Mutex.h>
-
+#include "Poco\Mutex.h"
 #include <memory>
 
 using cv::Mat;
@@ -27,6 +26,7 @@ using shared::model::SimulationShot;
 using Poco::HashSet;
 using Poco::SharedPtr;
 using Poco::NotificationQueue;
+using Poco::Mutex;
 
 namespace services {
 	namespace simulation {
@@ -46,12 +46,10 @@ namespace services {
 			int robotExplosionHalfYSize;
 			int wallExplosionHalfXSize;
 			int wallExplosionHalfYSize;
-			Mutex MutexThreadLock;
+			Poco::Mutex mutexThreadLock;
 			SharedPtr<WebcamService> webcamService;
 			ObjectDetectionService detectionService;
 			NotificationQueue& playerHitQueue;
-
-			int errorCount;
 
 			typedef HashSet<SimulationShot, SimulationShot> ShotsSetType;
 			ShotsSetType shots;

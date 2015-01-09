@@ -7,7 +7,6 @@
 #include "ShotSimulationService.h"
 #include "..\..\shared\notifications\PlayerHitNotification.h"
 
-
 #include <algorithm>
 #include <vector>
 
@@ -15,7 +14,6 @@ using std::max;
 using std::vector;
 using cv::imread;
 using shared::notifications::PlayerHitNotification;
-
 
 namespace services {
 	namespace simulation {
@@ -42,10 +40,8 @@ namespace services {
 		}
 
 		void ShotSimulationService::SimulateShot(Shot shot) {
-			MutexThreadLock.lock();
+			Poco::Mutex::ScopedLock lock(mutexThreadLock); //will be released after leaving scop
 			shots.insert(ShotsSetType::ValueType(SimulationShot(shot)));
-			errorCount = 0;
-			MutexThreadLock.unlock();
 		}
 
 		void ShotSimulationService::Update(WebcamService* observable) {
@@ -53,11 +49,13 @@ namespace services {
 				return;
 			}
 
+			Poco::Mutex::ScopedLock lock(mutexThreadLock); //will be released after leaving scop
+
 			try {
 				Mat frame = observable->GetLastImage().clone();
 				ShotsSetType::Iterator iter = shots.begin();
 				vector<Shot> deleteShots;
-				errorCount++;
+
 				while (iter != shots.end()){
 					
 					if (iter->SimulateStartExplosion()) {
@@ -107,12 +105,10 @@ namespace services {
 				}
 
 				//delete finished simulations
-				MutexThreadLock.lock();
 				for each (Shot shot in deleteShots)
 				{
 					shots.erase(shot);
 				}
-				MutexThreadLock.unlock();
 			}
 			catch (cv::Exception& e) {
 				Logger& logger = Logger::get("Test");
