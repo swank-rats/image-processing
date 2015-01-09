@@ -165,9 +165,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="rootcert.pem" />
-  </ItemGroup>
-  <ItemGroup>
     <Xml Include="image-processing.xml" />
   </ItemGroup>
 </Project>

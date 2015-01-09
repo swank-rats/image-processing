@@ -10,7 +10,6 @@
 #include "..\shared\model\message\Message.h"
 
 #include <Poco\URI.h>
-#include <Poco\Net\Context.h>
 #include <Poco\NotificationQueue.h>
 #include <Poco\Activity.h>
 #include <Poco\NObserver.h>
@@ -18,7 +17,6 @@
 #include <Poco\AutoPtr.h>
 
 using Poco::URI;
-using Poco::Net::Context;
 using Poco::AutoPtr;
 using Poco::NotificationQueue;
 using Poco::NotificationCenter;
@@ -33,7 +31,7 @@ namespace controller {
 		class WebSocketController
 		{
 		public:
-			WebSocketController(URI uri, Context::Ptr context);
+			WebSocketController(URI uri);
 			~WebSocketController();
 			void StartWebSocketClient();
 			void StopWebSocketClient();

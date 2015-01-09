@@ -27,13 +27,10 @@
 #include <Poco\PatternFormatter.h>
 #include <Poco\Util\Application.h>
 #include <Poco\Net\HTTPSStreamFactory.h>
-#include <Poco\Net\KeyConsoleHandler.h>
-#include <Poco\Net\Context.h>
 #include <Poco\URI.h>
 #include <Poco\Util\OptionSet.h>
 #include <Poco\Util\OptionCallback.h>
 #include <Poco\Util\HelpFormatter.h>
-#include <Poco\Net\SSLManager.h>
 #include <Poco\SharedPtr.h>
 
 using namespace cv;
@@ -42,6 +39,7 @@ using Poco::Logger;
 using Poco::SharedPtr;
 using Poco::AutoPtr;
 using Poco::Timer;
+using Poco::URI;
 using Poco::TimerCallback;
 using Poco::WindowsConsoleChannel;
 using Poco::FormattingChannel;
@@ -50,9 +48,6 @@ using Poco::Timestamp;
 using Poco::ThreadPool;
 using Poco::Observer;
 using Poco::Net::HTTPSStreamFactory;
-using Poco::Net::KeyConsoleHandler;
-using Poco::Net::Context;
-using Poco::Net::SSLManager;
 using Poco::Net::WebSocket;
 using Poco::Util::Option;
 using Poco::Util::OptionSet;
@@ -134,7 +129,6 @@ protected:
 
 private:
 	bool helpRequested;
-	Context::Ptr context;
 	URI uri;
 
 	void InitLoggers() {
@@ -151,7 +145,7 @@ private:
 		logger.information("Threads were used");
 
 		SharedPtr<WebcamService> webcamService(new WebcamService());
-		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri, context));
+		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri));
 		webSocketCtrl->StartWebSocketClient();
 
 		ImageProcessingController imgProcCtrl(webcamService, webSocketCtrl);

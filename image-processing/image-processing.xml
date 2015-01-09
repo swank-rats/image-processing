@@ -2,7 +2,6 @@
 <AppConfig>
   <openSSL>
     <client>
-      <caConfig>${application.configDir}rootcert.pem</caConfig>
       <verificationMode>relaxed</verificationMode>
       <verificationDepth>9</verificationDepth>
       <loadDefaultCAFile>true</loadDefaultCAFile>

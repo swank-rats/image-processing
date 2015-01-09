@@ -13,7 +13,6 @@
 #include <Poco\Net\HTTPServer.h>
 #include <Poco\Net\HTTPSClientSession.h>
 #include <Poco\Net\WebSocket.h>
-#include <Poco\Net\Context.h>
 #include <Poco\NotificationQueue.h>
 #include <Poco\Activity.h>
 
@@ -22,7 +21,6 @@ using Poco::URI;
 using Poco::NotificationQueue;
 using Poco::Activity;
 using Poco::Net::HTTPSClientSession;
-using Poco::Net::Context;
 using Poco::Net::WebSocket;
 using shared::model::message::Message;
 
@@ -31,7 +29,7 @@ namespace infrastructure {
 		class WebSocketClient
 		{
 		public:
-			WebSocketClient(URI uri, Context::Ptr context, NotificationQueue &receivedQueue);
+			WebSocketClient(URI uri, NotificationQueue &receivedQueue);
 			~WebSocketClient();
 			void OpenConnection();
 			void CloseConnection();

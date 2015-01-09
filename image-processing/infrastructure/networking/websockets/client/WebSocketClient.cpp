@@ -27,8 +27,8 @@ using shared::model::message::MessageCommandEnum;
 
 namespace infrastructure {
 	namespace websocket {
-		WebSocketClient::WebSocketClient(URI uri, Context::Ptr context, NotificationQueue &receivedQueue)
-			: connHandler(new WebSocketClientConnectionHandler(uri, context, receivedQueue, sendingQueue)) {
+		WebSocketClient::WebSocketClient(URI uri, NotificationQueue &receivedQueue)
+			: connHandler(new WebSocketClientConnectionHandler(uri, receivedQueue, sendingQueue)) {
 		}
 
 		WebSocketClient::~WebSocketClient() {

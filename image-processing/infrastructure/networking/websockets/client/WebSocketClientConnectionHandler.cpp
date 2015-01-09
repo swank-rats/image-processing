@@ -32,7 +32,7 @@ using shared::notifications::MessageNotification;
 
 namespace infrastructure {
 	namespace websocket {
-		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, Context::Ptr context, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue)
+		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue)
 			: uri(uri), session(uri.getHost(), uri.getPort()), webSocket(nullptr), timeout(1000),
 			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
 			receivedQueue(receivedQueue), sendingQueue(sendingQueue) { }
