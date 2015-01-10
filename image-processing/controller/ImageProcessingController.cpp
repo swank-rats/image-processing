@@ -54,8 +54,6 @@ namespace controller {
 		}
 
 		void ImageProcessingController::StartImageProcessing() {
-			webcamService->AddObserver(this);
-
 			CreateTrackBarView();
 
 			webcamService->StartRecording();
@@ -64,28 +62,13 @@ namespace controller {
 
 		void ImageProcessingController::StopImageProcessing() {
 			webcamService->StopRecording();
-
-			webcamService->RemoveObserver(this);
 			playerHitActivity.stop();
 		}
 
-		void ImageProcessingController::Update(WebcamService* observable) {
-			Mat frame = observable->GetLastImage();
-
-			//detectService->DetectObject(frame, iLowH, iLowS, iLowV, iHighH, iHighS, iHighV);
-		}
-
 		void ImageProcessingController::HandleMessageNotification(MessageNotification* notification) {
-			//TODO handle message - eg simulate shot and so on
 			const Message &message = notification->GetData();
 
 			switch (message.GetCmd()) {
-			case MessageCommandEnum::start:
-				StartImageProcessing();
-				break;
-			case MessageCommandEnum::stop:
-				StopImageProcessing();
-				break;
 			case MessageCommandEnum::shot:
 				//TODO implement shot method and so
 				break;

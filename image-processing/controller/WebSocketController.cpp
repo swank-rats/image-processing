@@ -10,7 +10,7 @@ namespace controller {
 	namespace websocket {
 		WebSocketController::WebSocketController(URI uri)
 			: messageHandlerActivity(this, &WebSocketController::HandleReceivedMessages),
-			webSocketClient(new WebSocketClient(uri, receivedMessagesQueue)) {
+			webSocketClient(new WebSocketClient(uri, receivedMessagesQueue)), notificationCenter() {
 		}
 
 		WebSocketController::~WebSocketController() {

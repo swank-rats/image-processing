@@ -35,14 +35,13 @@ using controller::websocket::WebSocketController;
 
 namespace controller {
 	namespace image_processing {
-		class ImageProcessingController : public IObserver < WebcamService >
+		class ImageProcessingController
 		{
 		public:
 			ImageProcessingController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> websocketController);
 			~ImageProcessingController();
 			void StartImageProcessing();
 			void StopImageProcessing();
-			void Update(WebcamService* observable);
 			IplImage* GetLastFrame();
 			void HandleMessageNotification(MessageNotification* notification);
 			void OnTimer(Timer& timer);

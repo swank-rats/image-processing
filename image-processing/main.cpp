@@ -146,18 +146,19 @@ private:
 
 		SharedPtr<WebcamService> webcamService(new WebcamService());
 		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri));
-		webSocketCtrl->StartWebSocketClient();
 
 		ImageProcessingController imgProcCtrl(webcamService, webSocketCtrl);
+
 		VideoStreamingController vidStreamCtrl(webcamService);
 
 		webSocketCtrl->GetNotificationCenter().addObserver(Observer<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
 		webSocketCtrl->GetNotificationCenter().addObserver(Observer<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
-		
-#if defined(THOMAS) || defined(STANDALONE)
 
 		imgProcCtrl.StartImageProcessing();
 
+		webSocketCtrl->StartWebSocketClient();
+
+#if defined(THOMAS) || defined(STANDALONE)
 		vidStreamCtrl.StartStreamingServer();
 
 		//automatic shot simulation
@@ -185,7 +186,7 @@ private:
 		webSocketCtrl = nullptr; //will call destructor since it is a shared pointer
 
 		destroyAllWindows();
-	}
+			}
 
 	void displayHelp() {
 		HelpFormatter helpFormatter(options());
@@ -218,6 +219,6 @@ private:
 		//th.startMotionTracking();
 		//th.Test11();
 	}
-};
+		};
 
 POCO_APP_MAIN(ImageProcessingServerApplication);

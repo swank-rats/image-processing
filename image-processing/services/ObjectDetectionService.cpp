@@ -43,12 +43,6 @@ Shot shots[] = {
 	Shot(p, Point2i(400, 50), Point2i(50, 50))
 };
 
-
-
-
-
-
-
 static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons, vector<vector<cv::Point>> triangles, vector<int> pentagonContourPositions, vector<int> triangleContourPositions, vector<int> *allowedTriangles)
 {
 	int pentagonPos;
@@ -147,7 +141,6 @@ static vector<Point> GetFrontOfTriangle(vector<Point> tri)
 	Point p2 = tri[1];
 	Point p3 = tri[2];
 
-
 	Point lP1P2 = p1 - p2;
 	Point lP2P3 = p2 - p3;
 	Point lP3P1 = p3 - p1;
@@ -178,14 +171,11 @@ static vector<Point> GetFrontOfTriangle(vector<Point> tri)
 	points.push_back(direction);
 	points.push_back(dir);
 	return points;
-
 }
-
 
 ObjectDetectionService::ObjectDetectionService() { }
 
 ObjectDetectionService::~ObjectDetectionService() { }
-
 
 Robot ObjectDetectionService::DetectRobot(Player player, const Mat &frame)
 {
@@ -197,6 +187,8 @@ Robot ObjectDetectionService::DetectRobot(Player player, const Mat &frame)
 	{
 		return DetectRobotPent(frame);
 	}
+
+	return Robot(); //TODO THOMAS??
 }
 
 Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
@@ -210,7 +202,6 @@ Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
 
 	cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
 	blur(src_graydetect2, src_graydetect2, Size(3, 3));
-
 
 	//Drawing and contours
 	Mat canny_output;
@@ -271,23 +262,17 @@ Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
 			triangles.push_back(approx);
 			trianglePositions.push_back(i);
 		}
-
-
 	}
-
 
 	allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions, trianglePositions, &allowedTriangles);
 	vector<Point> pointsTriRect;
 	vector<Point> contoursRect;
 	if (allowedTriangles.size() > 0){
-
 		pointsTriRect = GetFrontOfTriangle(triangles[allowedTriangles[0]]);
-
 	}
 
 	if (allowedRectanglesContourPositions.size() > 0)
 	{
-
 		contoursRect = contours[allowedRectanglesContourPositions[0]];
 	}
 
@@ -295,11 +280,9 @@ Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
 		return Robot(pointsTriRect[1], pointsTriRect[0], contoursRect);
 	else
 		return Robot(Point(), Point(), contoursRect);
-
 }
 
 Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
-
 	Mat srcdetect2;
 	Mat src_graydetect2;
 	int threshdetect2 = 110;
@@ -311,7 +294,6 @@ Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
 	cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
 	blur(src_graydetect2, src_graydetect2, Size(3, 3));
 
-
 	//Drawing and contours
 	Mat canny_output;
 	vector<vector<Point> > contours;
@@ -319,7 +301,6 @@ Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
 
 	// Finding rects,tris and pentagons
 	std::vector<cv::Point> approx;
-
 
 	vector<vector<cv::Point>> pentagons;
 	vector<int> pentagonsContourPositions;
@@ -361,7 +342,6 @@ Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
 
 		// Rectangles
 
-
 		if (approx.size() == 3)
 		{
 			triangles.push_back(approx);
@@ -375,19 +355,16 @@ Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
 		}
 	}
 
-
 	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTrianglesPoly);
 
 	vector<Point> pointsTriRect;
 	vector<Point> contoursPent;
 	if (allowedTrianglesPoly.size() > 0){
 		pointsTriRect = GetFrontOfTriangle(triangles[allowedTrianglesPoly[0]]);
-
 	}
 
 	if (allowedPentagonsContourPosition.size() > 0)
 	{
-
 		contoursPent = contours[allowedPentagonsContourPosition[0]];
 	}
 	if (pointsTriRect.size() == 2)
@@ -396,14 +373,11 @@ Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
 		return Robot(Point(), Point(), contoursPent);
 }
 
-
 Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player) {
-
-
 	/*Robot robotShootPlayer = DetectRobot(player, frame);
 
 	if (robotShootPlayer.robotForm.size() <= 0)
-		return Shot();
+	return Shot();
 
 	double length = sqrt(pow(robotShootPlayer.shotDirection.x, 2) + pow(robotShootPlayer.shotDirection.y, 2));
 
@@ -417,19 +391,16 @@ Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player) {
 
 	while (!found)
 	{
-		
-		if(!rect.contains(currentPoint))
-		{
-			endPoint = currentPoint-normDirection;
-			found = true;
-		}
-
-		currentPoint += normDirection;
+	if(!rect.contains(currentPoint))
+	{
+	endPoint = currentPoint-normDirection;
+	found = true;
 	}
 
+	currentPoint += normDirection;
+	}
 
 	return Shot(player, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));*/
-
 
 	// TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
 	++nextShot;
@@ -463,17 +434,8 @@ bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, SimulationShot &
 	logger.information("X: " + std::to_string(tmp.x));
 	logger.information("y: " + std::to_string(tmp.y));
 
-
-
-
-
 	if (pointPolygonTest(Mat(robotHitPlayer.robotForm), currentShotingPoint, true) > 0)
 		return true;
 	else
 		return false;
-
-
 }
-
-
-
