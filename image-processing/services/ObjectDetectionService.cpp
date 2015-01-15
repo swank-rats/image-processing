@@ -401,7 +401,7 @@ namespace services {
 			{
 				if (!rect.contains(currentPoint))
 				{
-					endPoint = currentPoint - normDirection;
+					endPoint = currentPoint - 3*normDirection;
 					found = true;
 				}
 
