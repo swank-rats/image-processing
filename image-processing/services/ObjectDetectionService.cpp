@@ -18,30 +18,30 @@ using namespace std;
 
 RNG rng(12345);
 
-int nextShot = -1;
-int shotsSize = 8;
-Player p;
-Shot shots[] = {
-	//top to bottom, right to left
-	Shot(p, Point2i(350, 50), Point2i(50, 350)),
-	//bottom to top, right to left
-	Shot(p, Point2i(350, 350), Point2i(50, 50)),
-
-	//top to bottom, left to right
-	Shot(p, Point2i(15, 50), Point2i(380, 240)),
-	//bottom to top, left to right
-	Shot(p, Point2i(50, 380), Point2i(370, 30)),
-
-	//top to bottom
-	Shot(p, Point2i(50, 50), Point2i(50, 350)),
-	//bottom to top
-	Shot(p, Point2i(50, 350), Point2i(50, 50)),
-
-	//left to right
-	Shot(p, Point2i(50, 50), Point2i(400, 50)),
-	//right to left
-	Shot(p, Point2i(400, 50), Point2i(50, 50))
-};
+//int nextShot = -1;
+//int shotsSize = 8;
+//Player p;
+//Shot shots[] = {
+//	//top to bottom, right to left
+//	Shot(p, Point2i(350, 50), Point2i(50, 350)),
+//	//bottom to top, right to left
+//	Shot(p, Point2i(350, 350), Point2i(50, 50)),
+//
+//	//top to bottom, left to right
+//	Shot(p, Point2i(15, 50), Point2i(380, 240)),
+//	//bottom to top, left to right
+//	Shot(p, Point2i(50, 380), Point2i(370, 30)),
+//
+//	//top to bottom
+//	Shot(p, Point2i(50, 50), Point2i(50, 350)),
+//	//bottom to top
+//	Shot(p, Point2i(50, 350), Point2i(50, 50)),
+//
+//	//left to right
+//	Shot(p, Point2i(50, 50), Point2i(400, 50)),
+//	//right to left
+//	Shot(p, Point2i(400, 50), Point2i(50, 50))
+//};
 
 static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons, vector<vector<cv::Point>> triangles, vector<int> pentagonContourPositions, vector<int> triangleContourPositions, vector<int> *allowedTriangles)
 {
@@ -376,15 +376,21 @@ namespace services {
 		}
 
 		Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player) {
+
+
+			Logger& logger = Logger::get("ObjectDetectionService");
+
+			logger.information("Entered Detect ShotRoute");
+
 			Robot robotShootPlayer = DetectRobot(player, frame);
 
 			if (robotShootPlayer.robotForm.size() <= 0)
-			return Shot();
+				return Shot();
 
 			double length = sqrt(pow(robotShootPlayer.shotDirection.x, 2) + pow(robotShootPlayer.shotDirection.y, 2));
 
 			int multiplier = 5;
-			Point normDirection = Point(robotShootPlayer.shotDirection.x / length * multiplier, robotShootPlayer.shotDirection.x / length * multiplier);
+			Point normDirection = Point(robotShootPlayer.shotDirection.x / length * multiplier, robotShootPlayer.shotDirection.y / length * multiplier);
 			bool found = false;
 			Point endPoint;
 			Point startPoint = robotShootPlayer.shotStartingPoint + normDirection;
@@ -393,32 +399,38 @@ namespace services {
 
 			while (!found)
 			{
-			if(!rect.contains(currentPoint))
-			{
-			endPoint = currentPoint-normDirection;
-			found = true;
+				if (!rect.contains(currentPoint))
+				{
+					endPoint = currentPoint - normDirection;
+					found = true;
+				}
+
+				currentPoint += normDirection;
 			}
 
-			currentPoint += normDirection;
-			}
+			logger.information("Route Start Point: ");
+			logger.information("X: " + std::to_string(robotShootPlayer.shotStartingPoint.x));
+			logger.information("y: " + std::to_string(robotShootPlayer.shotStartingPoint.y));
+
+			logger.information("Route End Point: ");
+			logger.information("X: " + std::to_string(endPoint.x));
+			logger.information("y: " + std::to_string(endPoint.y));
 
 			return Shot(player, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));
 
-			 //TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
-			/*++nextShot;
+			// //TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
+			//++nextShot;
 
-			if (nextShot >= shotsSize) {
-				nextShot = 0;
-			}
+			//if (nextShot >= shotsSize) {
+			//	nextShot = 0;
+			//}
 
-			return shots[nextShot];*/
+			//return shots[nextShot];
 		}
 
 		bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, SimulationShot &shot) {
 			// TODO analyse frame and detect if a player is at shot endposition
 			//1. find opposite player
-
-			shot.hitPlayer = p;
 
 			Robot robotHitPlayer = DetectRobot(shot.hitPlayer, frame);
 

@@ -18,16 +18,11 @@ namespace controller {
 		ShotSimulationController::ShotSimulationController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> websocketController) :
 			webCamSrv(webcamService), playerHitQueue(), shotSimulation(webcamService, playerHitQueue), websocketController(websocketController) {
 			//TODO THOMAS Init players
-
+			playerRect.form = "square";
+			playerRect.playerId = 0;
+			playerPent.form = "pentagon";
+			playerPent.playerId = 1;
 			detectionService = new ObjectDetectionService();
-
-#if defined(STANDALONE)
-			//automatic shot simulation
-			TimerCallback<ShotSimulationController> callback(*this, &ShotSimulationController::OnTimer);
-			timer.setStartInterval(1000);
-			timer.setPeriodicInterval(2000);
-			timer.start(callback);
-#endif
 		}
 
 
@@ -80,17 +75,33 @@ namespace controller {
 		void ShotSimulationController::StartShotSimulation(string playerType) {
 			//TODO THOMAS
 			Player shootingPlayer;
-			if (playerType == "SUPER") {
+			Player hitPlayer;
+			if (playerType == "rectangle") {
 				shootingPlayer = playerRect;
+				hitPlayer = playerPent;
+			}
+			else
+			{
+				shootingPlayer = playerPent;
+				hitPlayer = playerRect;
 			}
 
 			Shot shot = detectionService->DetectShotRoute(webCamSrv->GetLastImage(), shootingPlayer);
+			shot.hitPlayer = hitPlayer;
 			shotSimulation.SimulateShot(shot);
 		}
 
 		// ONLY FOR TESTING PURPOSE
 		void ShotSimulationController::OnTimer(Timer& timer) {
 			StartShotSimulation("rectangle");
+		}
+
+		void ShotSimulationController::StartTestingSimulation() {
+			//automatic shot simulation
+			TimerCallback<ShotSimulationController> callback(*this, &ShotSimulationController::OnTimer);
+			timer.setStartInterval(5000);
+			timer.setPeriodicInterval(10000);
+			timer.start(callback);
 		}
 	}
 }
