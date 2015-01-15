@@ -100,7 +100,7 @@ namespace controller {
 			//automatic shot simulation
 			TimerCallback<ShotSimulationController> callback(*this, &ShotSimulationController::OnTimer);
 			timer.setStartInterval(5000);
-			timer.setPeriodicInterval(2000);
+			timer.setPeriodicInterval(10000);
 			timer.start(callback);
 		}
 	}

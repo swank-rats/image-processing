@@ -390,7 +390,7 @@ namespace services {
 			double length = sqrt(pow(robotShootPlayer.shotDirection.x, 2) + pow(robotShootPlayer.shotDirection.y, 2));
 
 			int multiplier = 5;
-			Point normDirection = Point(robotShootPlayer.shotDirection.x / length * multiplier, robotShootPlayer.shotDirection.x / length * multiplier);
+			Point normDirection = Point(robotShootPlayer.shotDirection.x / length * multiplier, robotShootPlayer.shotDirection.y / length * multiplier);
 			bool found = false;
 			Point endPoint;
 			Point startPoint = robotShootPlayer.shotStartingPoint + normDirection;
@@ -440,13 +440,13 @@ namespace services {
 			Point2i tmp = shot.GetCurrentShotPoint();
 			Point2f currentShotingPoint = Point2f(tmp.x, tmp.y);
 
-			/*Logger& logger = Logger::get("ObjectDetectionService");
+			Logger& logger = Logger::get("ObjectDetectionService");
 
 			logger.information("Found Rect");
 
 			logger.information("Point: ");
 			logger.information("X: " + std::to_string(tmp.x));
-			logger.information("y: " + std::to_string(tmp.y));*/
+			logger.information("y: " + std::to_string(tmp.y));
 
 			if (pointPolygonTest(Mat(robotHitPlayer.robotForm), currentShotingPoint, true) > 0)
 				return true;
