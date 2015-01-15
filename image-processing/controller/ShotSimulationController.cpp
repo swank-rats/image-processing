@@ -49,7 +49,10 @@ namespace controller {
 
 			switch (message.GetCmd()) {
 			case MessageCommandEnum::shot:
-				StartShotSimulation(message.GetData());
+				string form;
+				if (message.GetParam("form", form)) {
+					StartShotSimulation(form);
+				}
 			break;
 			}
 

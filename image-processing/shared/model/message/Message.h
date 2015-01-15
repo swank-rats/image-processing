@@ -34,7 +34,7 @@ namespace shared {
 				MessageCommandEnum GetCmd() const;
 				string GetData() const;
 
-				bool Message::GetParam(const string name, string& out);
+				bool Message::GetParam(const string name, string& out) const;
 				void AddParam(const string& key, const string& value);
 				string ToString() const;
 

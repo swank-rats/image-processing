@@ -63,7 +63,7 @@ namespace shared {
 				return data;
 			}
 
-			bool Message::GetParam(const string name, string& out) {
+			bool Message::GetParam(const string name, string& out) const {
 				StringMap::Iterator iter = params->find(name);
 
 				if (iter == params->end()) {
