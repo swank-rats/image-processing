@@ -52,7 +52,7 @@ namespace services {
 			Poco::Mutex::ScopedLock lock(mutexThreadLock); //will be released after leaving scop
 
 			try {
-				Mat frame = observable->GetLastImage().clone();
+				Mat frame = observable->GetLastImage();//.clone();
 				ShotsSetType::Iterator iter = shots.begin();
 				vector<Shot> deleteShots;
 
