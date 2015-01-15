@@ -196,6 +196,7 @@ private:
 	}
 
 	void TestThomas() {
+#ifdef THOMAS
 		ThomasTest th;
 
 		//th.DetectWihoutServices();
@@ -208,7 +209,8 @@ private:
 		//th.MovingDetection();
 		//th.startMotionTracking();
 		//th.Test11();
+#endif
 	}
-		};
+};
 
 POCO_APP_MAIN(ImageProcessingServerApplication);
