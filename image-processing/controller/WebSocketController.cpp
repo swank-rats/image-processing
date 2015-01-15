@@ -23,20 +23,23 @@ namespace controller {
 		}
 
 		void WebSocketController::StartWebSocketClient() {
-			webSocketClient->OpenConnection();
-
-			messageHandlerActivity.start();
+			if (!webSocketClient->IsConnected()) {
+				webSocketClient->OpenConnection();
+				messageHandlerActivity.start();
+			}
 		}
 
 		void WebSocketController::StopWebSocketClient() {
-			receivedMessagesQueue.clear();
-			receivedMessagesQueue.wakeUpAll();
+			if (webSocketClient->IsConnected()) {
+				receivedMessagesQueue.clear();
+				receivedMessagesQueue.wakeUpAll();
 
-			webSocketClient->CloseConnection();
+				webSocketClient->CloseConnection();
 
-			if (messageHandlerActivity.isRunning()) {
-				messageHandlerActivity.stop();
-				messageHandlerActivity.wait();
+				if (messageHandlerActivity.isRunning()) {
+					messageHandlerActivity.stop();
+					messageHandlerActivity.wait();
+				}
 			}
 		}
 

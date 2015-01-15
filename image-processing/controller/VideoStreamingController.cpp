@@ -21,11 +21,16 @@ namespace controller {
 		}
 
 		void VideoStreamingController::StartStreamingServer() {
-			streamingServer->StartServer();
+			if (!streamingServer->IsRunning()) {
+				streamingServer->StartServer();
+			}
 		}
 
 		bool VideoStreamingController::StopStreamingServer() {
-			streamingServer->StopServer();
+			if (streamingServer->IsRunning()) {
+				streamingServer->StopServer();
+			}
+
 			return true;
 		}
 

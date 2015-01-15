@@ -9,6 +9,7 @@
 
 #include <Poco\Logger.h>
 #include <Poco\Exception.h>
+#include <Poco\Net\NetException.h>
 #include <Poco\AutoPtr.h>
 #include <Poco\Net\HTTPRequest.h>
 #include <Poco\Net\HTTPMessage.h>
@@ -27,6 +28,7 @@ using Poco::Net::HTTPMessage;
 using Poco::Net::HTTPRequest;
 using Poco::Net::HTTPResponse;
 using Poco::Net::HTTPCredentials;
+using Poco::Net::WebSocketException;
 
 using shared::notifications::MessageNotification;
 
@@ -181,12 +183,25 @@ namespace infrastructure {
 						}
 					}
 				}
-				catch (TimeoutException) {
-					logger.information("nothing received");
+				catch (TimeoutException& e) {
+					logger.error("Connection timeout: " + e.displayText());
+
+					if (!session.connected()) {
+						logger.error("Connection was closed!");
+						break;
+					}
+				}
+				catch (WebSocketException& e) {
+					logger.error("WebSocket Exception: " + e.displayText());
+
+					if (!session.connected()) {
+						logger.error("Connection was closed!");
+						break;
+					}
 				}
 				catch (Exception& e)
 				{
-					logger.error(e.displayText());
+					logger.error("General exception: " + e.displayText());
 
 					if (!session.connected()) {
 						logger.error("Connection was closed!");

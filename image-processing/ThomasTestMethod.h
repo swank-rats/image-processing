@@ -5,6 +5,7 @@
 // Description : Image process start point
 //============================================================================
 
+#ifdef THOMAS
 #include <iostream>
 #include <list>
 
@@ -1523,15 +1524,4 @@ public:
 	}
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
+#endif
