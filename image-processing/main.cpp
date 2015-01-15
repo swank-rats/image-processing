@@ -159,6 +159,8 @@ private:
 
 #if defined(THOMAS) || defined(STANDALONE)
 		vidStreamCtrl.StartStreamingServer();
+
+		shotSimCtrl.StartTestingSimulation();
 #endif
 
 		char key;
