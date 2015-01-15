@@ -54,7 +54,7 @@ namespace controller {
 		}
 
 		void ImageProcessingController::StartImageProcessing() {
-			CreateTrackBarView();
+			//CreateTrackBarView();
 
 			webcamService->StartRecording();
 			playerHitActivity.start();
