@@ -29,6 +29,9 @@ namespace services {
 			robotExplosionHalfXSize = robotExplosionImg.cols / 2;
 			robotExplosionHalfYSize = robotExplosionImg.rows / 2;
 
+			startExplostionHalfXSize = gunShotImg.cols / 2;
+			startExplostionHalfYSize = gunShotImg.rows / 2;
+
 			webcamService->AddObserver(this);
 		}
 
@@ -60,7 +63,9 @@ namespace services {
 					
 					if (iter->SimulateStartExplosion()) {
 						//simulate gun explosion
-						OverlayImage(frame, gunShotImg, iter->startPoint);
+						int explosionx = iter->startPoint.x - startExplostionHalfXSize > 0 ? iter->startPoint.x - startExplostionHalfXSize : 0;
+						int explosionY = iter->startPoint.y - startExplostionHalfYSize > 0 ? iter->startPoint.y - startExplostionHalfYSize : 0;
+						OverlayImage(frame, gunShotImg, Point2i(explosionx, explosionY));
 					}
 
 					//simulate explosion

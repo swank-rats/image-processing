@@ -47,6 +47,8 @@ namespace services {
 			int robotExplosionHalfYSize;
 			int wallExplosionHalfXSize;
 			int wallExplosionHalfYSize;
+			int startExplostionHalfXSize;
+			int startExplostionHalfYSize;
 			Poco::Mutex mutexThreadLock;
 			SharedPtr<WebcamService> webcamService;
 			ObjectDetectionService detectionService;
