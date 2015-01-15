@@ -37,7 +37,10 @@ namespace infrastructure {
 		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue)
 			: uri(uri), session(uri.getHost(), uri.getPort()), webSocket(nullptr), timeout(1000),
 			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
-			receivedQueue(receivedQueue), sendingQueue(sendingQueue) { }
+			receivedQueue(receivedQueue), sendingQueue(sendingQueue) {
+		
+			isConnected = false;
+		}
 
 		WebSocketClientConnectionHandler::~WebSocketClientConnectionHandler() {
 			if (IsConnected()) {
@@ -72,9 +75,11 @@ namespace infrastructure {
 					webSocket->setSendTimeout(timeout);
 
 					logger.information("Connection established");
+
+					isConnected = true;
+
 					receiveActity.start();
 					sendActity.start();
-
 					return true;
 				}
 
@@ -83,6 +88,7 @@ namespace infrastructure {
 			catch (Exception& e) {
 				logger.error(e.displayText());
 				logger.error("Error code: " + std::to_string(e.code()));
+				isConnected = false;
 				return false;
 			}
 		}
@@ -104,6 +110,8 @@ namespace infrastructure {
 				if (session.connected()) {
 					webSocket->shutdown();
 				}
+
+				isConnected = false;
 			}
 			catch (Exception& e) {
 				logger.error(e.displayText());
@@ -111,7 +119,7 @@ namespace infrastructure {
 		}
 
 		bool WebSocketClientConnectionHandler::IsConnected() {
-			return session.connected();
+			return isConnected;
 		}
 
 		void WebSocketClientConnectionHandler::Send() {
@@ -123,7 +131,7 @@ namespace infrastructure {
 
 			while (!sendActity.isStopped() && notification) {
 				MessageNotification* messageNotification = dynamic_cast<MessageNotification*>(notification.get());
-				if (messageNotification)
+				if (messageNotification && isConnected)
 				{
 					try {
 						const Message &message = messageNotification->GetData();
@@ -139,15 +147,12 @@ namespace infrastructure {
 					}
 					catch (TimeoutException) {
 						logger.error("send failed cause of timeout");
+						isConnected = false;
 					}
 					catch (Exception& e)
 					{
 						logger.error(e.displayText());
-
-						if (!session.connected()) {
-							logger.error("Connection was closed!");
-							break;
-						}
+						isConnected = false;
 					}
 				}
 
@@ -164,7 +169,7 @@ namespace infrastructure {
 
 			while (!receiveActity.isStopped()) {
 				try {
-					if (webSocket->poll(timeout, WebSocket::SELECT_READ || WebSocket::SELECT_ERROR)) {
+					if (webSocket->poll(timeout, WebSocket::SELECT_READ || WebSocket::SELECT_ERROR) && isConnected) {
 						length = webSocket->receiveFrame(buffer, sizeof(buffer), flags);
 
 						if (length > 0) {
@@ -185,30 +190,28 @@ namespace infrastructure {
 				}
 				catch (TimeoutException& e) {
 					logger.error("Connection timeout: " + e.displayText());
-
-					if (!session.connected()) {
-						logger.error("Connection was closed!");
-						break;
-					}
+					isConnected = false;
 				}
 				catch (WebSocketException& e) {
 					logger.error("WebSocket Exception: " + e.displayText());
-
-					if (!session.connected()) {
-						logger.error("Connection was closed!");
-						break;
-					}
+					isConnected = false;
 				}
 				catch (Exception& e)
 				{
 					logger.error("General exception: " + e.displayText());
-
-					if (!session.connected()) {
-						logger.error("Connection was closed!");
-						break;
-					}
+					isConnected = false;
 				}
 			}
+		}
+
+		void WebSocketClientConnectionHandler::CheckConnectionState() {
+			//if (!session.connected()) {
+			//	Logger& logger = Logger::get("WebSocketClient");
+
+			//	logger.error("Connection was closed!");
+
+			//	isConnected = false;
+			//}
 		}
 	}
 }

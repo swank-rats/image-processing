@@ -48,9 +48,11 @@ namespace infrastructure {
 			Timespan timeout;
 			NotificationQueue &sendingQueue;
 			NotificationQueue &receivedQueue;
+			bool isConnected;
 
 			void Listen();
 			void Send();
+			void CheckConnectionState();
 		};
 	}
 }
