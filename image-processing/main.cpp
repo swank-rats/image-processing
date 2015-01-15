@@ -196,11 +196,11 @@ private:
 	}
 
 	void TestThomas() {
-		//ThomasTest th;
+		ThomasTest th;
 
 		//th.DetectWihoutServices();
 		//th.DetectConture();
-		//th.DetectConture2();
+		th.DetectConture2();
 		//DetectConture3();
 		//th.Test5();
 		//th.Test6();

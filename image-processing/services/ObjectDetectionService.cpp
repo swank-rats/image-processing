@@ -196,7 +196,7 @@ namespace services {
 		Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			int threshdetect2 = 110;
+			int threshdetect2 = 50;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
@@ -376,7 +376,7 @@ namespace services {
 		}
 
 		Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player) {
-			/*Robot robotShootPlayer = DetectRobot(player, frame);
+			Robot robotShootPlayer = DetectRobot(player, frame);
 
 			if (robotShootPlayer.robotForm.size() <= 0)
 			return Shot();
@@ -402,16 +402,16 @@ namespace services {
 			currentPoint += normDirection;
 			}
 
-			return Shot(player, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));*/
+			return Shot(player, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));
 
-			// TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
-			++nextShot;
+			 //TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
+			/*++nextShot;
 
 			if (nextShot >= shotsSize) {
 				nextShot = 0;
 			}
 
-			return shots[nextShot];
+			return shots[nextShot];*/
 		}
 
 		bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, SimulationShot &shot) {

@@ -7,14 +7,23 @@
 //============================================================================
 #pragma once
 
-#include <string.h>
+#include <iostream>
+#include <string>
+
+using namespace std;
+
 
 namespace shared {
 	namespace model {
 		struct Player
 		{
 			unsigned char playerId;
-			/*string playerName;*/
+			string form;
+
+			Player() { }
+
+			Player(unsigned char playerId, string form)
+				:playerId(playerId), form(form){}
 		};
 	}
 }

@@ -82,7 +82,7 @@ namespace controller {
 			}
 
 			Shot shot = detectionService->DetectShotRoute(webCamSrv->GetLastImage(), shootingPlayer);
-			shotSimulation.SimulateShot(Shot());
+			shotSimulation.SimulateShot(shot);
 		}
 
 		// ONLY FOR TESTING PURPOSE
