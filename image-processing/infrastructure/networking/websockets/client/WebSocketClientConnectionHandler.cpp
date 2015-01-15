@@ -14,7 +14,6 @@
 #include <Poco\Net\HTTPRequest.h>
 #include <Poco\Net\HTTPMessage.h>
 #include <Poco\Net\HTTPResponse.h>
-#include <Poco\Net\HTTPCredentials.h>
 
 #include <string>
 
@@ -27,15 +26,15 @@ using Poco::AutoPtr;
 using Poco::Net::HTTPMessage;
 using Poco::Net::HTTPRequest;
 using Poco::Net::HTTPResponse;
-using Poco::Net::HTTPCredentials;
-using Poco::Net::WebSocketException;
+using Poco::Net::ConnectionAbortedException;
+using Poco::Net::ConnectionResetException;
 
 using shared::notifications::MessageNotification;
 
 namespace infrastructure {
 	namespace websocket {
 		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue)
-			: uri(uri), session(uri.getHost(), uri.getPort()), webSocket(nullptr), timeout(1000),
+			: uri(uri), session(uri.getHost(), uri.getPort()), webSocket(nullptr), timeout(100),
 			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
 			receivedQueue(receivedQueue), sendingQueue(sendingQueue) {
 		
@@ -58,14 +57,13 @@ namespace infrastructure {
 		bool WebSocketClientConnectionHandler::OpenConnection() {
 			Logger& logger = Logger::get("WebSocketClient");
 			HTTPResponse res;
+			res.setKeepAlive(true);
+
+			logger.information("Connecting to " + uri.getScheme() + "://" + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
 
 			try {
 				//establish connection
 				HTTPRequest req(HTTPRequest::HTTP_GET, uri.getPath(), HTTPMessage::HTTP_1_1);
-				HTTPCredentials creds("user", "s3cr3t"); //add to websocket ctor as parameter with correct data
-
-				logger.information("Connecting to " + uri.getScheme() + "://" + uri.getHost() + ":" + std::to_string(uri.getPort()) + uri.getPath());
-
 				webSocket = new WebSocket(session, req, res);
 
 				logger.information("Response status: " + std::to_string(res.getStatus()) + " reason: " + res.getReason());
@@ -73,17 +71,16 @@ namespace infrastructure {
 				if (res.getStatus() == res.HTTP_SWITCHING_PROTOCOLS) {
 					webSocket->setReceiveTimeout(timeout);
 					webSocket->setSendTimeout(timeout);
+					webSocket->setKeepAlive(true);
 
 					logger.information("Connection established");
-
+				
 					isConnected = true;
 
 					receiveActity.start();
 					sendActity.start();
 					return true;
 				}
-
-				return false;
 			}
 			catch (Exception& e) {
 				logger.error(e.displayText());
@@ -91,6 +88,8 @@ namespace infrastructure {
 				isConnected = false;
 				return false;
 			}
+
+			return false;
 		}
 
 		void WebSocketClientConnectionHandler::CloseConnection() {
@@ -107,11 +106,10 @@ namespace infrastructure {
 					sendActity.wait();
 				}
 
-				if (session.connected()) {
+				if (isConnected) {
 					webSocket->shutdown();
+					isConnected = false;
 				}
-
-				isConnected = false;
 			}
 			catch (Exception& e) {
 				logger.error(e.displayText());
@@ -131,7 +129,7 @@ namespace infrastructure {
 
 			while (!sendActity.isStopped() && notification) {
 				MessageNotification* messageNotification = dynamic_cast<MessageNotification*>(notification.get());
-				if (messageNotification && isConnected)
+				if (isConnected && messageNotification)
 				{
 					try {
 						const Message &message = messageNotification->GetData();
@@ -145,14 +143,18 @@ namespace infrastructure {
 						logger.information((length > 0) ? "message send!" : "message send failed");
 						messageNotification = nullptr;
 					}
-					catch (TimeoutException) {
-						logger.error("send failed cause of timeout");
-						isConnected = false;
+					catch (TimeoutException& e) {
+						logger.error("Websocket connection timeout: " + e.displayText());
+					}
+					catch (ConnectionAbortedException& e) {
+						logger.error("Websocket connection Aborted: " + e.displayText());
+					}
+					catch (ConnectionResetException& e) {
+						logger.error("Websocket connection Reset: " + e.displayText());
 					}
 					catch (Exception& e)
 					{
-						logger.error(e.displayText());
-						isConnected = false;
+						logger.error("Websocket general exception: " + e.displayText());
 					}
 				}
 
@@ -163,13 +165,13 @@ namespace infrastructure {
 		void WebSocketClientConnectionHandler::Listen() {
 			Logger& logger = Logger::get("WebSocketClient");
 
-			char buffer[1024]; //TODO set correct buffer size
+			char buffer[1024];
 			int flags = WebSocket::FRAME_TEXT;
 			int length;
 
 			while (!receiveActity.isStopped()) {
 				try {
-					if (webSocket->poll(timeout, WebSocket::SELECT_READ || WebSocket::SELECT_ERROR) && isConnected) {
+					if (webSocket->poll(timeout, WebSocket::SELECT_READ || WebSocket::SELECT_ERROR)) {
 						length = webSocket->receiveFrame(buffer, sizeof(buffer), flags);
 
 						if (length > 0) {
@@ -184,34 +186,23 @@ namespace infrastructure {
 						}
 						else {
 							logger.error("Connection was closed by server!");
-							break;
 						}
 					}
 				}
 				catch (TimeoutException& e) {
-					logger.error("Connection timeout: " + e.displayText());
-					isConnected = false;
+					logger.error("Websocket connection timeout: " + e.displayText());
 				}
-				catch (WebSocketException& e) {
-					logger.error("WebSocket Exception: " + e.displayText());
-					isConnected = false;
+				catch (ConnectionAbortedException& e) {
+					logger.error("Websocket connection Aborted: " + e.displayText());
+				}
+				catch (ConnectionResetException& e) {
+					logger.error("Websocket connection Reset: " + e.displayText());
 				}
 				catch (Exception& e)
 				{
-					logger.error("General exception: " + e.displayText());
-					isConnected = false;
+					logger.error("Websocket general exception: " + e.displayText());
 				}
 			}
-		}
-
-		void WebSocketClientConnectionHandler::CheckConnectionState() {
-			//if (!session.connected()) {
-			//	Logger& logger = Logger::get("WebSocketClient");
-
-			//	logger.error("Connection was closed!");
-
-			//	isConnected = false;
-			//}
 		}
 	}
 }

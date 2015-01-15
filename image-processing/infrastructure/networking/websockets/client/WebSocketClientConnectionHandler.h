@@ -52,7 +52,6 @@ namespace infrastructure {
 
 			void Listen();
 			void Send();
-			void CheckConnectionState();
 		};
 	}
 }
