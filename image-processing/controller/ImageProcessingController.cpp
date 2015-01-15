@@ -18,11 +18,15 @@ namespace controller {
 		}
 
 		void ImageProcessingController::StartImageProcessing() {
-			webcamService->StartRecording();
+			if (!webcamService->IsRecording()) {
+				webcamService->StartRecording();
+			}
 		}
 
 		void ImageProcessingController::StopImageProcessing() {
-			webcamService->StopRecording();
+			if (webcamService->IsRecording()) {
+				webcamService->StopRecording();
+			}
 		}
 	}
 }

@@ -36,12 +36,17 @@ namespace infrastructure {
 			server = nullptr;
 		}
 
+		bool VideoStreamingServer::IsRunning() {
+			return isRunning;
+		}
+
 		void VideoStreamingServer::StartServer() {
 			Logger& logger = Logger::get("VideoStreamingServer");
 
 			logger.information("starting video streaming server...");
 			server->start();
 			logger.information("video streaming server started - waiting for requests");
+			isRunning = true;
 		}
 
 		void VideoStreamingServer::StopServer() {
@@ -51,6 +56,7 @@ namespace infrastructure {
 			server->stopAll(true);
 			threadPool.stopAll();
 			logger.information("stopped video streaming server");
+			isRunning = false;
 		}
 	}
 }

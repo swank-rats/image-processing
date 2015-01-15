@@ -33,10 +33,12 @@ namespace infrastructure {
 			~VideoStreamingServer();
 			void StartServer();
 			void StopServer();
+			bool IsRunning();
 		private:
 			HTTPServer* server;
 			ServerSocket socket;
 			ThreadPool threadPool;
+			bool isRunning;
 		};
 	}
 }
