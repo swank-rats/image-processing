@@ -385,7 +385,7 @@ namespace services {
 			Robot robotShootPlayer = DetectRobot(player, frame);
 
 			if (robotShootPlayer.robotForm.size() <= 0)
-				return Shot();
+				return Shot(player, Point2i(0,0), Point2i(0, 0));
 
 			double length = sqrt(pow(robotShootPlayer.shotDirection.x, 2) + pow(robotShootPlayer.shotDirection.y, 2));
 
@@ -401,7 +401,7 @@ namespace services {
 			{
 				if (!rect.contains(currentPoint))
 				{
-					endPoint = currentPoint - 3*normDirection;
+					endPoint = currentPoint - normDirection;
 					found = true;
 				}
 

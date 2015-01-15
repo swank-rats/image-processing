@@ -64,6 +64,7 @@ static Mat img; static Mat templ; static Mat result;
 const static char* image_window = "Source Image";
 const static char* result_window = "Result window";
 const static char* search_window = "Search window";
+const static char* middle_window = "Temp window";
 
 static int match_method;
 static int max_Trackbar = 5;
@@ -316,7 +317,7 @@ static vector<Point> GetFrontOfTriangle(vector<Point> tri)
 	Point p3 = tri[2];
 
 
-	Point lP1P2 =p1 - p2;
+	Point lP1P2 = p1 - p2;
 	Point lP2P3 = p2 - p3;
 	Point lP3P1 = p3 - p1;
 
@@ -326,7 +327,7 @@ static vector<Point> GetFrontOfTriangle(vector<Point> tri)
 
 	double shortes = l1;
 	Point toReturn = p3;
-	Point dir = Point(lP1P2.x/ 2,lP1P2.y/2) + p2;
+	Point dir = Point(lP1P2.x / 2, lP1P2.y / 2) + p2;
 
 	if (l2 < shortes)
 	{
@@ -341,7 +342,7 @@ static vector<Point> GetFrontOfTriangle(vector<Point> tri)
 		dir = Point(lP3P1.x / 2, lP3P1.y / 2) + p1;
 	}
 
-	Point direction = toReturn-dir;
+	Point direction = toReturn - dir;
 	vector<Point> points;
 	points.push_back(direction);
 	points.push_back(toReturn);
@@ -486,7 +487,7 @@ static void thresh_callbackdetect3(int, void*)
 
 
 		circle(srcdetect2, PosTop, 10.0, Scalar(0, 0, 255), 1, 8);
-		circle(srcdetect2, PosTop-dir, 10.0, Scalar(0, 0, 255), 1, 8);
+		circle(srcdetect2, PosTop - dir, 10.0, Scalar(0, 0, 255), 1, 8);
 
 	}
 
@@ -548,20 +549,20 @@ static void thresh_callbackdetect3(int, void*)
 
 			/*for (size_t y = 0; y < allowedTriangles.size(); y++)
 			{
-				if (allowedTriangles[y] == i)
-				{
-					Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-					drawContours(canny_output, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
-				}
+			if (allowedTriangles[y] == i)
+			{
+			Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+			drawContours(canny_output, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+			}
 			}
 
 			for (size_t y = 0; y < allowedTrianglesPoly.size(); y++)
 			{
-				if (allowedTrianglesPoly[y] == i)
-				{
-					Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
-					drawContours(canny_output, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
-				}
+			if (allowedTrianglesPoly[y] == i)
+			{
+			Scalar color = Scalar(rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255), rngdetect2.uniform(0, 255));
+			drawContours(canny_output, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+			}
 			}*/
 		}
 	}
@@ -798,7 +799,7 @@ public:
 		const char* source_window = "Source";
 		namedWindow(source_window, WINDOW_AUTOSIZE);
 
-		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect3);
+		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
 
 		while (true)
 		{
@@ -829,7 +830,7 @@ public:
 			//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
 			//thresh_callbackdetect2(0, 0);
 
-			thresh_callbackdetect3(0, 0);
+			thresh_callbackdetect2(0, 0);
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
@@ -1519,6 +1520,88 @@ public:
 			if (cv::waitKey(30) >= 0) break;
 		}
 
+		waitKey(0);
+
+	}
+
+	void WallDetectionTestOne(){
+
+		Mat src; Mat src_gray;
+		int thresh = 100;
+		int max_thresh = 255;
+		RNG rng(12345);
+
+		Mat threshold_output;
+		vector<vector<Point> > contours;
+		vector<Vec4i> hierarchy;
+
+
+
+		//video capture object.
+		VideoCapture capture;
+
+		capture.open(0);
+
+
+		for (;;)
+		{
+
+			capture >> src;
+			/// Convert image to gray and blur it
+			cvtColor(src, src_gray, CV_BGR2GRAY);
+			blur(src_gray, src_gray, Size(3, 3));
+
+
+			/// Detect edges using Threshold
+			threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
+			/// Find contours
+			findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+
+			/// Approximate contours to polygons + get bounding rects and circles
+			vector<vector<Point> > contours_poly(contours.size());
+			vector<Rect> boundRect(contours.size());
+			vector<Point2f>center(contours.size());
+			vector<float>radius(contours.size());
+
+			for (int i = 0; i < contours.size(); i++)
+			{
+				approxPolyDP(Mat(contours[i]), contours_poly[i], 3, true);
+				boundRect[i] = boundingRect(Mat(contours_poly[i]));
+				//minEnclosingCircle((Mat)contours_poly[i], center[i], radius[i]);
+			}
+
+
+			/// Draw polygonal contour + bonding rects + circles
+			Mat drawing = Mat::zeros(threshold_output.size(), CV_8UC3);
+			for (int i = 0; i < contours.size(); i++)
+			{
+				Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+				drawContours(drawing, contours_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point());
+				Point size = boundRect[i].tl() - boundRect[i].br();
+				size.x = abs(size.x);
+				size.y = abs(size.y);
+				if ((size.x>10 && size.x<50) || (size.y > 10 && size.y < 50))
+				{
+
+					rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
+				}
+				//circle(drawing, center[i], (int)radius[i], color, 2, 8, 0);
+			}
+
+			/// Show in a window
+			namedWindow("Contours", CV_WINDOW_AUTOSIZE);
+			imshow("Contours", drawing);
+
+			/// Create Window
+			char* source_window = "Source";
+			namedWindow(source_window, CV_WINDOW_AUTOSIZE);
+			imshow(source_window, src);
+
+			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+			{
+				break;
+			}
+		}
 		waitKey(0);
 
 	}

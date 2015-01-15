@@ -178,7 +178,7 @@ private:
 		webSocketCtrl = nullptr; //will call destructor since it is a shared pointer
 
 		destroyAllWindows();
-			}
+	}
 
 	void displayHelp() {
 		HelpFormatter helpFormatter(options());
@@ -203,7 +203,7 @@ private:
 
 		//th.DetectWihoutServices();
 		//th.DetectConture();
-		th.DetectConture2();
+		//th.DetectConture2();
 		//DetectConture3();
 		//th.Test5();
 		//th.Test6();
@@ -211,6 +211,7 @@ private:
 		//th.MovingDetection();
 		//th.startMotionTracking();
 		//th.Test11();
+		th.WallDetectionTestOne();
 #endif
 	}
 };
