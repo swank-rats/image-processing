@@ -61,12 +61,12 @@ namespace services {
 
 				while (iter != shots.end()){
 					
-					if (iter->SimulateStartExplosion()) {
-						//simulate gun explosion
-						int explosionx = iter->startPoint.x - startExplostionHalfXSize > 0 ? iter->startPoint.x - startExplostionHalfXSize : 0;
-						int explosionY = iter->startPoint.y - startExplostionHalfYSize > 0 ? iter->startPoint.y - startExplostionHalfYSize : 0;
-						OverlayImage(frame, gunShotImg, Point2i(explosionx, explosionY));
-					}
+					//if (iter->SimulateStartExplosion()) {
+					//	//simulate gun explosion
+					//	int explosionx = iter->startPoint.x - startExplostionHalfXSize > 0 ? iter->startPoint.x - startExplostionHalfXSize : 0;
+					//	int explosionY = iter->startPoint.y - startExplostionHalfYSize > 0 ? iter->startPoint.y - startExplostionHalfYSize : 0;
+					//	OverlayImage(frame, gunShotImg, Point2i(explosionx, explosionY));
+					//}
 
 					//simulate explosion
 					SimulationShot::SimulationHitStatus status = iter->status;
