@@ -166,6 +166,7 @@
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClient.cpp" />
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp" />
     <ClCompile Include="services\simulation\ShotSimulationService.cpp" />
+    <ClCompile Include="controller\ShotSimulationController.cpp" />
     <ClCompile Include="ThomasTestMethod.h" />
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +192,7 @@
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClient.h" />
     <ClInclude Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.h" />
     <ClInclude Include="services\simulation\ShotSimulationService.h" />
+    <ClInclude Include="controller\ShotSimulationController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>

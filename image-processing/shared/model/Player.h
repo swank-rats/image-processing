@@ -14,7 +14,7 @@ namespace shared {
 		struct Player
 		{
 			unsigned char playerId;
-			string playerName;
+			/*string playerName;*/
 		};
 	}
 }

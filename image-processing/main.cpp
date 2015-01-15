@@ -9,6 +9,7 @@
 #include "controller\ImageProcessingController.h"
 #include "controller\VideoStreamingController.h"
 #include "controller\WebSocketController.h"
+#include "controller\ShotSimulationController.h"
 
 #include "ThomasTestMethod.h"
 
@@ -20,7 +21,6 @@
 
 #include <Poco\Logger.h>
 #include <Poco\AutoPtr.h>
-#include <Poco\Timer.h>
 #include <Poco\Observer.h>
 #include <Poco\WindowsConsoleChannel.h>
 #include <Poco\FormattingChannel.h>
@@ -38,9 +38,7 @@ using namespace std;
 using Poco::Logger;
 using Poco::SharedPtr;
 using Poco::AutoPtr;
-using Poco::Timer;
 using Poco::URI;
-using Poco::TimerCallback;
 using Poco::WindowsConsoleChannel;
 using Poco::FormattingChannel;
 using Poco::PatternFormatter;
@@ -57,6 +55,7 @@ using Poco::Util::LayeredConfiguration;
 
 using controller::image_processing::ImageProcessingController;
 using controller::video_streaming::VideoStreamingController;
+using controller::shot_simulation::ShotSimulationController;
 using controller::websocket::WebSocketController;
 using services::webcam::WebcamService;
 
@@ -147,11 +146,11 @@ private:
 		SharedPtr<WebcamService> webcamService(new WebcamService());
 		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri));
 
-		ImageProcessingController imgProcCtrl(webcamService, webSocketCtrl);
-
+		ImageProcessingController imgProcCtrl(webcamService);
 		VideoStreamingController vidStreamCtrl(webcamService);
+		ShotSimulationController shotSimCtrl(webcamService, webSocketCtrl);
 
-		webSocketCtrl->GetNotificationCenter().addObserver(Observer<ImageProcessingController, MessageNotification>(imgProcCtrl, &ImageProcessingController::HandleMessageNotification));
+		webSocketCtrl->GetNotificationCenter().addObserver(Observer<ShotSimulationController, MessageNotification>(shotSimCtrl, &ShotSimulationController::HandleMessageNotification));
 		webSocketCtrl->GetNotificationCenter().addObserver(Observer<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
 
 		imgProcCtrl.StartImageProcessing();
@@ -160,11 +159,6 @@ private:
 
 #if defined(THOMAS) || defined(STANDALONE)
 		vidStreamCtrl.StartStreamingServer();
-
-		//automatic shot simulation
-		TimerCallback<ImageProcessingController> callback(imgProcCtrl, &ImageProcessingController::OnTimer);
-		Timer timer(1000, 2000); //start after 1 sec, recall every 2 sec
-		timer.start(callback);
 #endif
 
 		char key;
@@ -175,10 +169,6 @@ private:
 				break; //If you hit ESC key loop will break.
 			}
 		}
-
-#if defined(THOMAS) || defined(STANDALONE)
-		timer.stop();
-#endif
 
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();

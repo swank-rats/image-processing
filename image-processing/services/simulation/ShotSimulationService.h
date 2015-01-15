@@ -21,6 +21,7 @@
 using cv::Mat;
 using cv::Point2i;
 using services::webcam::WebcamService;
+using services::object_detection::ObjectDetectionService;
 using shared::model::Shot;
 using shared::model::SimulationShot;
 using Poco::HashSet;
