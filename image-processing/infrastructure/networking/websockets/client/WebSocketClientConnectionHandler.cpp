@@ -37,7 +37,6 @@ namespace infrastructure {
 			: uri(uri), session(uri.getHost(), uri.getPort()), webSocket(nullptr), timeout(100),
 			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
 			receivedQueue(receivedQueue), sendingQueue(sendingQueue) {
-		
 			isConnected = false;
 		}
 
@@ -74,7 +73,7 @@ namespace infrastructure {
 					webSocket->setKeepAlive(true);
 
 					logger.information("Connection established");
-				
+
 					isConnected = true;
 
 					receiveActity.start();
@@ -125,40 +124,47 @@ namespace infrastructure {
 			int flags = WebSocket::FRAME_TEXT;
 			int length;
 			const char* buffer;
-			AutoPtr<Notification> notification(sendingQueue.waitDequeueNotification());
 
-			while (!sendActity.isStopped() && notification) {
-				MessageNotification* messageNotification = dynamic_cast<MessageNotification*>(notification.get());
-				if (isConnected && messageNotification)
-				{
-					try {
-						const Message &message = messageNotification->GetData();
-						string temp = message.ToString();
-						buffer = temp.c_str();
+			while (!sendActity.isStopped()) {
+				Notification::Ptr notification(sendingQueue.waitDequeueNotification());
 
-						logger.information("sending " + temp);
+				if (notification) {
+					MessageNotification::Ptr messageNotification = notification.cast<MessageNotification>();
 
-						length = webSocket->sendFrame(buffer, temp.length(), flags);
-
-						logger.information((length > 0) ? "message send!" : "message send failed");
-						messageNotification = nullptr;
-					}
-					catch (TimeoutException& e) {
-						logger.error("Websocket connection timeout: " + e.displayText());
-					}
-					catch (ConnectionAbortedException& e) {
-						logger.error("Websocket connection Aborted: " + e.displayText());
-					}
-					catch (ConnectionResetException& e) {
-						logger.error("Websocket connection Reset: " + e.displayText());
-					}
-					catch (Exception& e)
+					if (messageNotification && isConnected)
 					{
-						logger.error("Websocket general exception: " + e.displayText());
+						try {
+							const Message &message = messageNotification->GetData();
+							string temp = message.ToString();
+							buffer = temp.c_str();
+
+							logger.information("sending " + temp);
+
+							length = webSocket->sendFrame(buffer, temp.length(), flags);
+
+							logger.information((length > 0) ? "message send!" : "message send failed");
+							messageNotification = nullptr;
+						}
+						catch (TimeoutException& e) {
+							logger.error("Websocket connection timeout: " + e.displayText());
+						}
+						catch (ConnectionAbortedException& e) {
+							logger.error("Websocket connection Aborted: " + e.displayText());
+						}
+						catch (ConnectionResetException& e) {
+							logger.error("Websocket connection Reset: " + e.displayText());
+						}
+						catch (Exception& e)
+						{
+							logger.error("Websocket general exception: " + e.displayText());
+						}
 					}
 				}
-
-				notification = sendingQueue.waitDequeueNotification();
+				else {
+					//null signals that worker should stop polling queue
+					sendActity.stop();
+					break;
+				}
 			}
 		}
 

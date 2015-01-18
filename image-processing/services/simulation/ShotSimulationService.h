@@ -15,7 +15,8 @@
 #include <Poco\HashSet.h>
 #include <Poco\SharedPtr.h>
 #include <Poco\NotificationQueue.h>
-#include "Poco\Mutex.h"
+#include <Poco\Mutex.h>
+
 #include <memory>
 
 using cv::Mat;
