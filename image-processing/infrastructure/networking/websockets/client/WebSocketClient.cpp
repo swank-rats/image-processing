@@ -14,6 +14,7 @@
 #include <Poco\Net\HTTPRequest.h>
 #include <Poco\Net\HTTPResponse.h>
 #include <Poco\AutoPtr.h>
+#include <Poco\Delegate.h>
 
 #include <string>
 
@@ -29,7 +30,7 @@ namespace infrastructure {
 	namespace websocket {
 		WebSocketClient::WebSocketClient(URI uri, NotificationQueue &receivedQueue)
 			: connHandler(new WebSocketClientConnectionHandler(uri, receivedQueue, sendingQueue)) {
-		}
+			connHandler->LostConnection += Poco::delegate(this, &WebSocketClient::OnLostconnection);		}
 
 		WebSocketClient::~WebSocketClient() {
 			if (connHandler->IsConnected()) {
@@ -39,7 +40,7 @@ namespace infrastructure {
 
 		void WebSocketClient::OpenConnection() {
 			if (connHandler->OpenConnection()) {
-				Send(new Message(MessageCommandEnum::init, "server"));
+				SendInitMessage();
 			}
 		}
 
@@ -54,9 +55,17 @@ namespace infrastructure {
 		}
 
 		void WebSocketClient::Send(Message* message) {
-			//if (connHandler->IsConnected()) {
 			sendingQueue.enqueueNotification(new MessageNotification(message));
-			//}
+		}
+
+		void WebSocketClient::OnLostconnection(const void* pSender, int& arg) {
+			if (!connHandler->IsReconnecting() && connHandler->Reconnect()) {
+				SendInitMessage();
+			}
+		}
+
+		void WebSocketClient::SendInitMessage() {
+			Send(new Message(MessageCommandEnum::init, "server"));
 		}
 	}
 }

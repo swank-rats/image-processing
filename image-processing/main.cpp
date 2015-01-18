@@ -10,6 +10,7 @@
 #include "controller\VideoStreamingController.h"
 #include "controller\WebSocketController.h"
 #include "controller\ShotSimulationController.h"
+#include "shared\model\message\MessageHeaders.h"
 
 #include "ThomasTestMethod.h"
 
@@ -33,6 +34,7 @@
 #include <Poco\Util\OptionCallback.h>
 #include <Poco\Util\HelpFormatter.h>
 #include <Poco\SharedPtr.h>
+#include <Poco\Thread.h>
 
 using namespace cv;
 using namespace std;
@@ -45,6 +47,7 @@ using Poco::FormattingChannel;
 using Poco::PatternFormatter;
 using Poco::Timestamp;
 using Poco::ThreadPool;
+using Poco::Thread;
 using Poco::Observer;
 using Poco::Net::HTTPSStreamFactory;
 using Poco::Net::WebSocket;
@@ -55,6 +58,7 @@ using Poco::Util::HelpFormatter;
 using Poco::Util::LayeredConfiguration;
 using Poco::Util::ServerApplication;
 
+using shared::model::message::MessageCommandEnum;
 using controller::image_processing::ImageProcessingController;
 using controller::video_streaming::VideoStreamingController;
 using controller::shot_simulation::ShotSimulationController;
@@ -158,6 +162,20 @@ private:
 		imgProcCtrl.StartImageProcessing();
 
 		webSocketCtrl->StartWebSocketClient();
+
+#if defined(CONNTEST)
+
+		Thread::sleep(3500);
+		webSocketCtrl->Send(new Message(MessageCommandEnum::hit));
+		logger.information("CLOSE SERVER NOW");
+
+		Thread::sleep(2000);
+		webSocketCtrl->Send(new Message(MessageCommandEnum::hit));
+		Thread::sleep(500);
+		webSocketCtrl->Send(new Message(MessageCommandEnum::hit));
+		Thread::sleep(500);
+		webSocketCtrl->Send(new Message(MessageCommandEnum::hit));
+#endif
 
 #if defined(THOMAS) || defined(STANDALONE)
 		vidStreamCtrl.StartStreamingServer();
