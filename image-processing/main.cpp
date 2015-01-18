@@ -26,6 +26,7 @@
 #include <Poco\FormattingChannel.h>
 #include <Poco\PatternFormatter.h>
 #include <Poco\Util\Application.h>
+#include <Poco\Util\ServerApplication.h>
 #include <Poco\Net\HTTPSStreamFactory.h>
 #include <Poco\URI.h>
 #include <Poco\Util\OptionSet.h>
@@ -52,6 +53,7 @@ using Poco::Util::OptionSet;
 using Poco::Util::OptionCallback;
 using Poco::Util::HelpFormatter;
 using Poco::Util::LayeredConfiguration;
+using Poco::Util::ServerApplication;
 
 using controller::image_processing::ImageProcessingController;
 using controller::video_streaming::VideoStreamingController;
@@ -59,7 +61,7 @@ using controller::shot_simulation::ShotSimulationController;
 using controller::websocket::WebSocketController;
 using services::webcam::WebcamService;
 
-class ImageProcessingServerApplication : public Poco::Util::Application {
+class ImageProcessingServerApplication : public ServerApplication {
 public:
 	ImageProcessingServerApplication() : helpRequested(false)
 	{
@@ -75,7 +77,7 @@ protected:
 		InitLoggers();
 		loadConfiguration();
 
-		Application::initialize(self);
+		ServerApplication::initialize(self);
 
 		//NOT NEEDED since it is done in config file
 		////accept everything!
@@ -163,22 +165,15 @@ private:
 		shotSimCtrl.StartTestingSimulation();
 #endif
 
-		char key;
-		while (1) {
-			key = cvWaitKey(10);
-
-			if (char(key) == 27) {
-				break; //If you hit ESC key loop will break.
-			}
-		}
+		waitForTerminationRequest();
 
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();
 		webSocketCtrl->StopWebSocketClient();
-		webSocketCtrl = nullptr; //will call destructor since it is a shared pointer
+		webSocketCtrl = nullptr;
 
 		destroyAllWindows();
-			}
+	}
 
 	void displayHelp() {
 		HelpFormatter helpFormatter(options());
@@ -215,4 +210,4 @@ private:
 	}
 };
 
-POCO_APP_MAIN(ImageProcessingServerApplication);
+POCO_SERVER_MAIN(ImageProcessingServerApplication);

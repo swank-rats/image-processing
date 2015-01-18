@@ -27,6 +27,9 @@ namespace controller {
 		}
 
 		ShotSimulationController::~ShotSimulationController() {
+			playerHitQueue.clear();
+			playerHitQueue.wakeUpAll();
+
 			//do not delete, since it is a shared pointer
 			websocketController = nullptr;
 
