@@ -23,13 +23,6 @@ namespace services {
 
 		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
 			isRecording = false;
-
-			capture.open(CV_CAP_ANY);
-			//camera settings
-			capture.set(CV_CAP_PROP_FPS, 30);
-			//Possible resolutions : 1280x720, 640x480; 440x330
-			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
-			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 		}
 
 		WebcamService::~WebcamService() {
@@ -142,6 +135,18 @@ namespace services {
 			Stopwatch sw;
 
 			cv::Mat frame;
+
+			capture.open(CV_CAP_ANY);
+
+			if (!capture.isOpened()){
+				return;
+			}
+
+			//camera settings
+			capture.set(CV_CAP_PROP_FPS, 15);
+			//Possible resolutions : 1280x720, 640x480; 440x330
+			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 
 			while (1) {
 				sw.restart();
