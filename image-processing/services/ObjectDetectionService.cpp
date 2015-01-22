@@ -200,7 +200,8 @@ namespace services {
 		Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			int threshdetect2 = 50;
+			//int threshdetect2 = 50;
+			int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
@@ -291,7 +292,8 @@ namespace services {
 		Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			int threshdetect2 = 30;
+			//int threshdetect2 = 30;
+			int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 

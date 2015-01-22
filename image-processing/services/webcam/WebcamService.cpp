@@ -7,8 +7,15 @@
 #include "WebcamService.h"
 
 #include <Poco\Thread.h>
+#include <Poco\Stopwatch.h>
+
+#include <iostream>
+#include <iomanip>
 
 using Poco::Thread;
+using Poco::Stopwatch;
+
+using std::cout;
 
 namespace services {
 	namespace webcam {
@@ -46,10 +53,10 @@ namespace services {
 			}
 
 			logger.information("starting recording...");
-			cvNamedWindow(windowName, CV_WINDOW_AUTOSIZE);
+			//cvNamedWindow(windowName, CV_WINDOW_AUTOSIZE);
 
 			//camera settings
-			capture.set(CV_CAP_PROP_FPS, 30);
+			capture.set(CV_CAP_PROP_FPS, 15);
 			//Possible resolutions : 1280x720, 640x480; 440x330
 			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
 			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
@@ -88,13 +95,13 @@ namespace services {
 		}
 
 		bool WebcamService::IsRecording() {
-			//return capture.isOpened() && recordingActivity.isRunning();
-			return isRecording;
+			return capture.isOpened() && recordingActivity.isRunning();
+			//return isRecording;
 		}
 
 		void WebcamService::RecordingCore() {
 			Logger& logger = Logger::get("WebcamService");
-
+			Stopwatch sw;
 			cv::Mat frame;
 
 			while (!recordingActivity.isStopped()) {
@@ -102,6 +109,9 @@ namespace services {
 					logger.error("Lost connection to webcam!");
 					break;
 				}
+
+				sw.restart();
+
 				//Create image frames from capture
 				capture >> frame;
 
@@ -117,6 +127,9 @@ namespace services {
 				else {
 					logger.warning("Captured empty webcam frame!");
 				}
+
+				sw.stop();
+				cout << sw.elapsed() * 0.001 << " ms\n\r";
 			}
 		}
 
@@ -126,10 +139,13 @@ namespace services {
 
 		void WebcamService::Record() {
 			isRecording = true;
+			Stopwatch sw;
 
 			cv::Mat frame;
 
 			while (1) {
+				sw.restart();
+
 				if (!capture.isOpened()) {
 					break;
 				}
@@ -145,6 +161,8 @@ namespace services {
 				}
 
 				//Thread::sleep(10);
+				sw.stop();
+				cout << sw.elapsed() * 0.001 << " ms\n\r";
 			}
 
 			isRecording = false;
