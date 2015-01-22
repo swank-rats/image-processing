@@ -52,16 +52,21 @@ namespace controller {
 		}
 
 		void WebSocketController::HandleReceivedMessages() {
-			AutoPtr<Notification> notification(receivedMessagesQueue.waitDequeueNotification());
+			while (!messageHandlerActivity.isStopped()) {
+				Notification::Ptr notification(receivedMessagesQueue.waitDequeueNotification());
 
-			while (!messageHandlerActivity.isStopped() && notification) {
-				MessageNotification* messageNotification = dynamic_cast<MessageNotification*>(notification.get());
-				if (messageNotification)
-				{
-					notificationCenter.postNotification(messageNotification);
+				if (notification) {
+					MessageNotification::Ptr messageNotification = notification.cast<MessageNotification>();
+					if (messageNotification)
+					{
+						notificationCenter.postNotification(messageNotification);
+					}
 				}
-
-				notification = receivedMessagesQueue.waitDequeueNotification();
+				else {
+					//null signals that worker should stop polling queue
+					messageHandlerActivity.stop();
+					break;
+				}
 			}
 		}
 	}

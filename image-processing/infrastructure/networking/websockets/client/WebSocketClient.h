@@ -38,6 +38,8 @@ namespace infrastructure {
 		private:
 			WebSocketClientConnectionHandler* connHandler;
 			NotificationQueue sendingQueue;
+			void OnLostconnection(const void* pSender, int& arg);
+			void SendInitMessage();
 		};
 	}
 }

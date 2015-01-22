@@ -12,6 +12,7 @@
 using shared::notifications::PlayerHitNotification;
 using shared::model::message::MessageCommandEnum;
 using Poco::TimerCallback;
+using Poco::FastMutex;
 
 namespace controller {
 	namespace shot_simulation {
@@ -25,8 +26,10 @@ namespace controller {
 			detectionService = new ObjectDetectionService();
 		}
 
-
 		ShotSimulationController::~ShotSimulationController() {
+			playerHitQueue.clear();
+			playerHitQueue.wakeUpAll();
+
 			//do not delete, since it is a shared pointer
 			websocketController = nullptr;
 
@@ -38,37 +41,38 @@ namespace controller {
 #endif
 		}
 
-
 		void ShotSimulationController::HandleMessageNotification(MessageNotification* notification) {
-			const Message &message = notification->GetData();
+			Message *message = notification->GetData();
 
-			switch (message.GetCmd()) {
+			switch (message->GetCmd()) {
 			case MessageCommandEnum::shot:
 				string form;
-				if (message.GetParam("form", form)) {
+				if (message->GetParam("form", form)) {
 					StartShotSimulation(form);
 				}
-			break;
+				break;
 			}
 
 			notification->release();
 		}
 
 		void ShotSimulationController::HandlePlayerHitNotification() {
-			AutoPtr<Notification> notification(playerHitQueue.waitDequeueNotification());
-
-			while (notification) {
-
-				PlayerHitNotification* playerHitNotification = dynamic_cast<PlayerHitNotification*>(notification.get());
-				if (playerHitNotification)
+			for (;;)
+			{
+				Notification::Ptr notification(playerHitQueue.waitDequeueNotification());
+				if (notification)
 				{
-					Message* msg = new Message(MessageCommandEnum::hit, "server");
-					msg->AddParam("player", std::to_string(playerHitNotification->GetHitPlayer().playerId));
-					msg->AddParam("precision", std::to_string(playerHitNotification->GetPrecision()));
-					websocketController->Send(msg);
-				}
+					PlayerHitNotification::Ptr playerHitNotification = notification.cast<PlayerHitNotification>();
+					if (playerHitNotification)
+					{
+						Message* msg = new Message(MessageCommandEnum::hit, "server");
+						msg->AddParam("player", std::to_string(playerHitNotification->GetHitPlayer().playerId));
+						msg->AddParam("precision", std::to_string(playerHitNotification->GetPrecision()));
 
-				notification = playerHitQueue.waitDequeueNotification();
+						websocketController->Send(msg);
+					}
+				}
+				else break; //null signals that worker should stop polling queue
 			}
 		}
 

@@ -10,6 +10,7 @@
 #include "controller\VideoStreamingController.h"
 #include "controller\WebSocketController.h"
 #include "controller\ShotSimulationController.h"
+#include "shared\model\message\MessageHeaders.h"
 
 #include "ThomasTestMethod.h"
 
@@ -26,12 +27,14 @@
 #include <Poco\FormattingChannel.h>
 #include <Poco\PatternFormatter.h>
 #include <Poco\Util\Application.h>
+#include <Poco\Util\ServerApplication.h>
 #include <Poco\Net\HTTPSStreamFactory.h>
 #include <Poco\URI.h>
 #include <Poco\Util\OptionSet.h>
 #include <Poco\Util\OptionCallback.h>
 #include <Poco\Util\HelpFormatter.h>
 #include <Poco\SharedPtr.h>
+#include <Poco\Thread.h>
 
 using namespace cv;
 using namespace std;
@@ -44,6 +47,7 @@ using Poco::FormattingChannel;
 using Poco::PatternFormatter;
 using Poco::Timestamp;
 using Poco::ThreadPool;
+using Poco::Thread;
 using Poco::Observer;
 using Poco::Net::HTTPSStreamFactory;
 using Poco::Net::WebSocket;
@@ -52,14 +56,16 @@ using Poco::Util::OptionSet;
 using Poco::Util::OptionCallback;
 using Poco::Util::HelpFormatter;
 using Poco::Util::LayeredConfiguration;
+using Poco::Util::ServerApplication;
 
+using shared::model::message::MessageCommandEnum;
 using controller::image_processing::ImageProcessingController;
 using controller::video_streaming::VideoStreamingController;
 using controller::shot_simulation::ShotSimulationController;
 using controller::websocket::WebSocketController;
 using services::webcam::WebcamService;
 
-class ImageProcessingServerApplication : public Poco::Util::Application {
+class ImageProcessingServerApplication : public ServerApplication {
 public:
 	ImageProcessingServerApplication() : helpRequested(false)
 	{
@@ -75,7 +81,7 @@ protected:
 		InitLoggers();
 		loadConfiguration();
 
-		Application::initialize(self);
+		ServerApplication::initialize(self);
 
 		//NOT NEEDED since it is done in config file
 		////accept everything!
@@ -157,25 +163,32 @@ private:
 
 		webSocketCtrl->StartWebSocketClient();
 
+#if defined(CONNTEST)
+
+		Thread::sleep(3500);
+		webSocketCtrl->Send(new Message(MessageCommandEnum::hit));
+		logger.information("CLOSE SERVER NOW");
+
+		Thread::sleep(2000);
+		webSocketCtrl->Send(new Message(MessageCommandEnum::hit));
+		Thread::sleep(500);
+		webSocketCtrl->Send(new Message(MessageCommandEnum::hit));
+		Thread::sleep(500);
+		webSocketCtrl->Send(new Message(MessageCommandEnum::hit));
+#endif
+
 #if defined(THOMAS) || defined(STANDALONE)
 		vidStreamCtrl.StartStreamingServer();
 
 		shotSimCtrl.StartTestingSimulation();
 #endif
 
-		char key;
-		while (1) {
-			key = cvWaitKey(10);
-
-			if (char(key) == 27) {
-				break; //If you hit ESC key loop will break.
-			}
-		}
+		waitForTerminationRequest();
 
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();
 		webSocketCtrl->StopWebSocketClient();
-		webSocketCtrl = nullptr; //will call destructor since it is a shared pointer
+		webSocketCtrl = nullptr;
 
 		destroyAllWindows();
 	}
@@ -216,4 +229,4 @@ private:
 	}
 };
 
-POCO_APP_MAIN(ImageProcessingServerApplication);
+POCO_SERVER_MAIN(ImageProcessingServerApplication);

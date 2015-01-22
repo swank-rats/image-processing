@@ -8,7 +8,9 @@
 #include "..\model\Player.h"
 
 #include <Poco\Notification.h>
+#include <Poco\AutoPtr.h>
 
+using Poco::AutoPtr;
 using shared::model::Player;
 using Poco::Notification;
 
@@ -17,6 +19,8 @@ namespace shared {
 		class PlayerHitNotification : public Notification
 		{
 		public:
+			typedef AutoPtr<PlayerHitNotification> Ptr;
+
 			PlayerHitNotification(Player hitPlayer, unsigned char precision = 100);
 			~PlayerHitNotification();
 			Player GetHitPlayer();
