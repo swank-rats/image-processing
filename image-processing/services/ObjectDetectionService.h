@@ -31,7 +31,7 @@ namespace services {
 			Robot ObjectDetectionService::DetectRobotRect(const Mat &frame);
 			Robot ObjectDetectionService::DetectRobotPent(const Mat &frame);
 
-			Shot DetectShotRoute(const Mat &frame, Player player); //TODO player parameter
+			Shot DetectShotRoute(const Mat &frame, Player player, Player hitPlayer); //TODO player parameter
 			bool HasShotHitPlayer(const Mat &frame, SimulationShot &shot);
 		private:
 			Mat src;

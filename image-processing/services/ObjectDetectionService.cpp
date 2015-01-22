@@ -181,6 +181,10 @@ namespace services {
 
 		Robot ObjectDetectionService::DetectRobot(Player player, const Mat &frame)
 		{
+			if (frame.empty()) {
+				return Robot();
+			}
+
 			if (player.playerId == 0)
 			{
 				return DetectRobotRect(frame);
@@ -287,7 +291,7 @@ namespace services {
 		Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			int threshdetect2 = 110;
+			int threshdetect2 = 30;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
@@ -375,17 +379,17 @@ namespace services {
 				return Robot(Point(), Point(), contoursPent);
 		}
 
-		Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player) {
+		Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player, Player hitPlayer) {
 
 
 			Logger& logger = Logger::get("ObjectDetectionService");
 
-			logger.information("Entered Detect ShotRoute");
+			logger.information("Entered Detect ShotRoute" + std::to_string(frame.size().width) + "x" + std::to_string(frame.size().height));
 
 			Robot robotShootPlayer = DetectRobot(player, frame);
 
 			if (robotShootPlayer.robotForm.size() <= 0)
-				return Shot(player, Point2i(0,0), Point2i(0, 0));
+				return Shot(player,hitPlayer, Point2i(0,0), Point2i(0, 0));
 
 			double length = sqrt(pow(robotShootPlayer.shotDirection.x, 2) + pow(robotShootPlayer.shotDirection.y, 2));
 
@@ -401,7 +405,7 @@ namespace services {
 			{
 				if (!rect.contains(currentPoint))
 				{
-					endPoint = currentPoint - normDirection;
+					endPoint = currentPoint - 2*normDirection;
 					found = true;
 				}
 
@@ -416,7 +420,7 @@ namespace services {
 			logger.information("X: " + std::to_string(endPoint.x));
 			logger.information("y: " + std::to_string(endPoint.y));
 
-			return Shot(player, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));
+			return Shot(player, hitPlayer, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));
 
 			// //TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
 			//++nextShot;

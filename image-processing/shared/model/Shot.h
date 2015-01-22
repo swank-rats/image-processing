@@ -24,8 +24,8 @@ namespace shared {
 
 			Shot() { }
 
-			Shot(Player shootingPlayer, Point2i start, Point2i end) 
-				: shootingPlayer(shootingPlayer), startPoint(start), endPoint(end) { }
+			Shot(Player shootingPlayer, Player hitPlayer, Point2i start, Point2i end)
+				: shootingPlayer(shootingPlayer), hitPlayer(hitPlayer), startPoint(start), endPoint(end) { }
 
 			std::size_t operator () (Shot value) const
 			{
@@ -57,8 +57,8 @@ namespace shared {
 			enum SimulationHitStatus { UNKNOWN, HIT_PLAYER, HIT_WALL };
 
 			SimulationShot() {}
-			SimulationShot(Shot shot) : SimulationShot(shot.shootingPlayer, shot.startPoint, shot.endPoint) { }
-			SimulationShot(Player shootingPlayer, Point2i start, Point2i end) : Shot(shootingPlayer, start, end) {
+			SimulationShot(Shot shot) : SimulationShot(shot.shootingPlayer,shot.hitPlayer, shot.startPoint, shot.endPoint) { }
+			SimulationShot(Player shootingPlayer,Player hitPlayer, Point2i start, Point2i end) : Shot(shootingPlayer,hitPlayer, start, end) {
 				a = end.x - start.x;
 				b = end.y - start.y;
 

@@ -90,13 +90,14 @@ namespace controller {
 				hitPlayer = playerRect;
 			}
 
-			Shot shot = detectionService->DetectShotRoute(webCamSrv->GetLastImage(), shootingPlayer);
-			shot.hitPlayer = hitPlayer;
+			Shot shot = detectionService->DetectShotRoute(webCamSrv->GetLastImage(), shootingPlayer,hitPlayer);
+			
 			shotSimulation.SimulateShot(shot);
 		}
 
 		// ONLY FOR TESTING PURPOSE
 		void ShotSimulationController::OnTimer(Timer& timer) {
+			//StartShotSimulation("pentagon");
 			StartShotSimulation("rectangle");
 		}
 
