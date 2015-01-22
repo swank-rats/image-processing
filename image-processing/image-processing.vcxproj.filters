@@ -75,6 +75,9 @@
     <ClCompile Include="controller\ShotSimulationController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="shared\notifications\ClientConnectionLostNotification.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
@@ -144,6 +147,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="controller\ShotSimulationController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\notifications\ClientConnectionLostNotification.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

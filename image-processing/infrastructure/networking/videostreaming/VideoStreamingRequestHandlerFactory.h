@@ -10,6 +10,7 @@
 #include <Poco\Net\HTTPRequestHandlerFactory.h>
 #include <Poco\Net\HTTPServerRequest.h>
 #include <Poco\SharedPtr.h>
+#include <Poco\NotificationQueue.h>
 
 #include <string>
 
@@ -18,6 +19,7 @@ using Poco::Net::HTTPRequestHandlerFactory;
 using Poco::Net::HTTPServerRequest;
 using Poco::Net::HTTPRequestHandler;
 using Poco::SharedPtr;
+using Poco::NotificationQueue;
 using services::webcam::WebcamService;
 
 namespace infrastructure {
@@ -25,11 +27,12 @@ namespace infrastructure {
 		class VideoStreamingRequestHandlerFactory : public HTTPRequestHandlerFactory
 		{
 		public:
-			VideoStreamingRequestHandlerFactory(SharedPtr<WebcamService> webcamService, const string& uri);
+			VideoStreamingRequestHandlerFactory(SharedPtr<WebcamService> webcamService, const string& uri, NotificationQueue& lostConnectionQueue);
 			~VideoStreamingRequestHandlerFactory();
 			HTTPRequestHandler* createRequestHandler(const HTTPServerRequest& request);
 		private:
 			SharedPtr<WebcamService> webcamService;
+			NotificationQueue& lostConnectionQueue;
 			string uri;
 		};
 	}

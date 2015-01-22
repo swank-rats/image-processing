@@ -5,6 +5,7 @@
 // Description :
 //============================================================================
 #include "VideoStreamingRequestHandler.h"
+#include "..\..\..\..\shared\notifications\ClientConnectionLostNotification.h"
 
 #include <Poco\Net\MultipartWriter.h>
 #include <Poco\Net\MessageHeader.h>
@@ -12,10 +13,12 @@
 using Poco::Net::MessageHeader;
 using Poco::Net::HTTPResponse;
 using Poco::Net::MultipartWriter;
+using shared::notifications::ClientConnectionLostNotification;
 
 namespace infrastructure {
 	namespace video_streaming {
-		VideoStreamingRequestHandler::VideoStreamingRequestHandler(SharedPtr<WebcamService> webcamService) : webcamService(webcamService) {
+		VideoStreamingRequestHandler::VideoStreamingRequestHandler(SharedPtr<WebcamService> webcamService, NotificationQueue& lostConnectionQueue)
+			: lostConnectionQueue(lostConnectionQueue), webcamService(webcamService) {
 			params = { CV_IMWRITE_JPEG_QUALITY, 30 };
 			boundary = "VIDEOSTREAM";
 		}
@@ -28,7 +31,7 @@ namespace infrastructure {
 		void VideoStreamingRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response) {
 			Poco::Logger& logger = Poco::Logger::get("VideoStreamingRequestHandler");
 			logger.information("Video stream request by client: " + request.clientAddress().toString());
-
+			
 			// check if webcam service is running correctly
 			if (!webcamService->IsRecording()) {
 				logger.warning("No stream available. Closing connection to " + request.clientAddress().toString());
@@ -72,6 +75,7 @@ namespace infrastructure {
 			}
 
 			logger.information("Video streaming stopped for client " + request.clientAddress().toString());
+			lostConnectionQueue.enqueueNotification(new ClientConnectionLostNotification(request.clientAddress()));
 		}
 	}
 }
