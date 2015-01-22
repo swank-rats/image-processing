@@ -15,6 +15,7 @@ namespace shared {
 				map.insert(StringMsgCommandMap::ValueType("stop", MessageCommandEnum::stop));
 				map.insert(StringMsgCommandMap::ValueType("shot", MessageCommandEnum::shot));
 				map.insert(StringMsgCommandMap::ValueType("hit", MessageCommandEnum::hit));
+				map.insert(StringMsgCommandMap::ValueType("connectionlost", MessageCommandEnum::connectionlost));
 			}
 
 			MessageCommandEnum MessageCommands::GetCommandEnum(const string& command) {

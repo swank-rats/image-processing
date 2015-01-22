@@ -6,27 +6,42 @@
 //============================================================================
 #include "VideoStreamingController.h"
 #include "..\shared\model\message\MessageCommands.h"
+#include "..\shared\notifications\ClientConnectionLostNotification.h"
 
 using shared::model::message::MessageCommandEnum;
+using shared::notifications::ClientConnectionLostNotification;
 
 namespace controller {
 	namespace video_streaming {
-		VideoStreamingController::VideoStreamingController(SharedPtr<WebcamService> webcamService) {
-			streamingServer = new VideoStreamingServer(4711, "/videostream", webcamService);
+		VideoStreamingController::VideoStreamingController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> webSocketController)
+			:lostConnectionQueue(), lostConnectionHandlerActivity(this, &VideoStreamingController::HandleLostConnections), webSocketController(webSocketController) {
+			streamingServer = new VideoStreamingServer(4711, "/videostream", webcamService, lostConnectionQueue);
+
 		}
 
 		VideoStreamingController::~VideoStreamingController() {
 			delete streamingServer;
 			streamingServer = nullptr;
+
+			webSocketController = nullptr; //do not delete - is shared pointer
 		}
 
 		void VideoStreamingController::StartStreamingServer() {
+			if (!lostConnectionHandlerActivity.isRunning()) {
+				lostConnectionHandlerActivity.start();
+			}
+
 			if (!streamingServer->IsRunning()) {
 				streamingServer->StartServer();
 			}
 		}
 
 		bool VideoStreamingController::StopStreamingServer() {
+			if (lostConnectionHandlerActivity.isRunning()) {
+				lostConnectionHandlerActivity.stop();
+				lostConnectionHandlerActivity.wait();
+			}
+
 			if (streamingServer->IsRunning()) {
 				streamingServer->StopServer();
 			}
@@ -47,6 +62,27 @@ namespace controller {
 			}
 
 			notification->release();
+		}
+
+		void VideoStreamingController::HandleLostConnections() {
+			while (!lostConnectionHandlerActivity.isStopped()) {
+				Notification::Ptr notification(lostConnectionQueue.waitDequeueNotification());
+
+				if (notification) {
+					ClientConnectionLostNotification::Ptr connLostNotification = notification.cast<ClientConnectionLostNotification>();
+					if (connLostNotification)
+					{
+						Message* message = new Message(MessageCommandEnum::connectionlost);
+						message->AddParam("ip", connLostNotification->GetSocketAddress().toString());
+						webSocketController->Send(message);
+					}
+				}
+				else {
+					//null signals that worker should stop polling queue
+					lostConnectionHandlerActivity.stop();
+					break;
+				}
+			}
 		}
 	}
 }

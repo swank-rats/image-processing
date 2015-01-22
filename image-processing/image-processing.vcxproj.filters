@@ -51,9 +51,6 @@
     <ClCompile Include="infrastructure\networking\websockets\client\WebSocketClientConnectionHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="services\simulation\ShotSimulationService.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="services\webcam\WebcamService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -73,6 +70,12 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="controller\ShotSimulationController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="shared\notifications\ClientConnectionLostNotification.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="services\simulation\ShotSimulationService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -116,9 +119,6 @@
     <ClInclude Include="shared\model\Shot.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="services\simulation\ShotSimulationService.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="services\webcam\WebcamService.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -144,6 +144,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="controller\ShotSimulationController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\notifications\ClientConnectionLostNotification.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="services\simulation\ShotSimulationService.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

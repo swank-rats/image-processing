@@ -16,7 +16,7 @@
 #include <Poco\Net\WebSocket.h>
 #include <Poco\Activity.h>
 #include <Poco\Mutex.h>
-#include <Poco\Event.h>
+#include <Poco\BasicEvent.h>
 #include <Poco\NotificationQueue.h>
 
 using Poco::Logger;

@@ -15,7 +15,7 @@ using Poco::HashMap;
 namespace shared {
 	namespace model {
 		namespace message {
-			enum MessageCommandEnum { invalid, init, start, stop, shot, hit };
+			enum MessageCommandEnum { invalid, init, start, stop, shot, hit, connectionlost };
 			typedef HashMap<string, MessageCommandEnum> StringMsgCommandMap;
 
 			class MessageCommands {

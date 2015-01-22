@@ -153,7 +153,7 @@ private:
 		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri));
 
 		ImageProcessingController imgProcCtrl(webcamService);
-		VideoStreamingController vidStreamCtrl(webcamService);
+		VideoStreamingController vidStreamCtrl(webcamService, webSocketCtrl);
 		ShotSimulationController shotSimCtrl(webcamService, webSocketCtrl);
 
 		webSocketCtrl->GetNotificationCenter().addObserver(Observer<ShotSimulationController, MessageNotification>(shotSimCtrl, &ShotSimulationController::HandleMessageNotification));
@@ -180,11 +180,17 @@ private:
 #if defined(THOMAS) || defined(STANDALONE)
 		vidStreamCtrl.StartStreamingServer();
 
-		shotSimCtrl.StartTestingSimulation();
+		//shotSimCtrl.StartTestingSimulation();
 #endif
 
-		waitForTerminationRequest();
+		char key;
+		while (1) {
+			key = cvWaitKey(10);
 
+			if (char(key) == 27) {
+				break; //If you hit ESC key loop will break.
+			}
+		}
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();
 		webSocketCtrl->StopWebSocketClient();
