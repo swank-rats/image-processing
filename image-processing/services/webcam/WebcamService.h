@@ -38,11 +38,14 @@ namespace services {
 			 */
 			bool StopRecording();
 
+			void Record();
+
 			Mat GetLastImage();
 
 			bool IsRecording();
 		private:
 			void RecordingCore();
+			bool isRecording;
 
 			VideoCapture capture;
 			Mat lastImage;

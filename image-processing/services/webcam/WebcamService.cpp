@@ -6,11 +6,23 @@
 //============================================================================
 #include "WebcamService.h"
 
+#include <Poco\Thread.h>
+
+using Poco::Thread;
+
 namespace services {
 	namespace webcam {
 		static const char* windowName = "Webcam stream";
 
 		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
+			isRecording = false;
+
+			capture.open(CV_CAP_ANY);
+			//camera settings
+			capture.set(CV_CAP_PROP_FPS, 30);
+			//Possible resolutions : 1280x720, 640x480; 440x330
+			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 		}
 
 		WebcamService::~WebcamService() {
@@ -76,7 +88,8 @@ namespace services {
 		}
 
 		bool WebcamService::IsRecording() {
-			return capture.isOpened() && recordingActivity.isRunning();
+			//return capture.isOpened() && recordingActivity.isRunning();
+			return isRecording;
 		}
 
 		void WebcamService::RecordingCore() {
@@ -108,6 +121,32 @@ namespace services {
 
 		cv::Mat WebcamService::GetLastImage() {
 			return lastImage;
+		}
+
+		void WebcamService::Record() {
+			isRecording = true;
+
+			cv::Mat frame;
+
+			while (1) {
+				if (!capture.isOpened()) {
+					break;
+				}
+
+				//Create image frames from capture
+				capture >> frame;
+
+				if (!frame.empty()) {
+					//Clone image
+					lastImage = frame;
+
+					Notify();
+				}
+
+				//Thread::sleep(10);
+			}
+
+			isRecording = false;
 		}
 	}
 }
