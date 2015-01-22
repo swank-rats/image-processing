@@ -94,9 +94,10 @@ namespace services {
 
 				if (!frame.empty()) {
 					//Show image frames on created window
-					cv::imshow(windowName, frame);
+					//cv::imshow(windowName, frame);
 					//Clone image
 					lastImage = frame;
+					//logger.warning("Captured webcam frame!" + std::to_string(frame.size().width) + "x" + std::to_string(frame.size().height));
 
 					Notify();
 				}

@@ -24,6 +24,8 @@ namespace shared {
 
 			Player(unsigned char playerId, string form)
 				:playerId(playerId), form(form){}
+
+			Player(const Player& p) : playerId(p.playerId), form(p.form) { }
 		};
 	}
 }

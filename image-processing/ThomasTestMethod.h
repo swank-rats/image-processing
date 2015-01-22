@@ -799,7 +799,7 @@ public:
 		const char* source_window = "Source";
 		namedWindow(source_window, WINDOW_AUTOSIZE);
 
-		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
+		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect3);
 
 		while (true)
 		{
@@ -830,7 +830,7 @@ public:
 			//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
 			//thresh_callbackdetect2(0, 0);
 
-			thresh_callbackdetect2(0, 0);
+			thresh_callbackdetect3(0, 0);
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
