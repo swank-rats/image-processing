@@ -13,8 +13,13 @@
 #include <iostream>
 #include <string>
 
+#include <Poco\Stopwatch.h>
+
+
 using namespace cv;
 using namespace std;
+
+using Poco::Stopwatch;
 
 RNG rng(12345);
 
@@ -181,16 +186,19 @@ namespace services {
 
 		Robot ObjectDetectionService::DetectRobot(Player player, const Mat &frame)
 		{
+
 			if (frame.empty()) {
 				return Robot();
 			}
 
 			if (player.playerId == 0)
 			{
+
 				return DetectRobotRect(frame);
 			}
 			if (player.playerId == 1)
 			{
+
 				return DetectRobotPent(frame);
 			}
 
@@ -198,6 +206,10 @@ namespace services {
 		}
 
 		Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
+
+			Stopwatch sw;
+			sw.start();
+
 			Mat srcdetect2;
 			Mat src_graydetect2;
 			int threshdetect2 = 50;
@@ -283,6 +295,9 @@ namespace services {
 				contoursRect = contours[allowedRectanglesContourPositions[0]];
 			}
 
+			sw.stop();
+			printf("Rect detection: %f ms\n", sw.elapsed() * 0.001);
+
 			if (pointsTriRect.size() == 2)
 				return Robot(pointsTriRect[1], pointsTriRect[0], contoursRect);
 			else
@@ -290,6 +305,10 @@ namespace services {
 		}
 
 		Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
+
+
+			Stopwatch sw;
+			sw.start();
 
 			Mat srcdetect2;
 			Mat src_graydetect2;
@@ -423,6 +442,9 @@ namespace services {
 				contoursPent.push_back(x);
 				contoursPent.push_back(y);
 
+				sw.stop();
+				printf("Circle detection: %f ms\n", sw.elapsed() * 0.001);
+
 				if (triangles.size() > 0 && triangleindex >= 0)
 					pointsTriRect = GetFrontOfTriangle(triangles[triangleindex]);
 				else
@@ -435,12 +457,17 @@ namespace services {
 			}
 			else
 			{
+				sw.stop();
+				printf("Error Circle: %f ms\n", sw.elapsed() * 0.001);
+
 				return Robot(Point(), Point(), contoursPent);
 			}
 		}
 
 		Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player, Player hitPlayer) {
 
+			Stopwatch sw;
+			sw.start();
 
 			Logger& logger = Logger::get("ObjectDetectionService");
 
@@ -449,7 +476,11 @@ namespace services {
 			Robot robotShootPlayer = DetectRobot(player, frame);
 
 			if (robotShootPlayer.robotForm.size() <= 0)
+			{
+				sw.stop();
+				printf("Error shot route: %f ms\n", sw.elapsed() * 0.001);
 				return Shot(player, hitPlayer, Point2i(0, 0), Point2i(0, 0));
+			}
 
 			double length = sqrt(pow(robotShootPlayer.shotDirection.x, 2) + pow(robotShootPlayer.shotDirection.y, 2));
 
@@ -480,6 +511,9 @@ namespace services {
 			logger.information("X: " + std::to_string(endPoint.x));
 			logger.information("y: " + std::to_string(endPoint.y));
 
+			sw.stop();
+			printf("Shot route detected: %f ms\n", sw.elapsed() * 0.001);
+
 			return Shot(player, hitPlayer, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));
 
 			// //TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
@@ -493,13 +527,20 @@ namespace services {
 		}
 
 		bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, SimulationShot &shot) {
-			// TODO analyse frame and detect if a player is at shot endposition
-			//1. find opposite player
+
+
+			Stopwatch sw;
+			sw.start();
+
 
 			Robot robotHitPlayer = DetectRobot(shot.hitPlayer, frame);
 
 			if (robotHitPlayer.robotForm.size() <= 0)
+			{
+				sw.stop();
+				printf("error hitting player: %f ms\n", sw.elapsed() * 0.001);
 				return false;
+			}
 
 			Point2i tmp = shot.GetCurrentShotPoint();
 			Point2f currentShotingPoint = Point2f(tmp.x, tmp.y);
@@ -513,9 +554,17 @@ namespace services {
 				logger.information("y: " + std::to_string(tmp.y));
 				*/
 			if (pointPolygonTest(Mat(robotHitPlayer.robotForm), currentShotingPoint, true) > 0)
+			{
+				sw.stop();
+				printf("Has hit player: %f ms\n", sw.elapsed() * 0.001);
 				return true;
+			}
 			else
+			{
+				sw.stop();
+				printf("Has not hit player: %f ms\n", sw.elapsed() * 0.001);
 				return false;
+			}
 		}
 	}
 }
