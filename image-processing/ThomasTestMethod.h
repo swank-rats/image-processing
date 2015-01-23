@@ -1575,7 +1575,7 @@ public:
 			}
 
 			cout << "Size: " << triangles.size() << std::endl;
-			cout << "Size Circle: " << circles.size() << std::endl;
+			//cout << "Size Circle: " << circles.size() << std::endl;
 
 
 			Point circleCenter;
@@ -1588,9 +1588,9 @@ public:
 
 				int radius = cvRound(circles[i][2]);
 				// circle center
-				//circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
-				//// circle outline
-				//circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
+				circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
+				// circle outline
+				circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
 			}
 
 			int triangleindex = 0;
@@ -1623,7 +1623,7 @@ public:
 				}
 			}
 
-			circle(srcdetect2, centerTri, 3, Scalar(0, 255, 0), -1, 8, 0);
+			//circle(srcdetect2, centerTri, 3, Scalar(0, 255, 0), -1, 8, 0);
 			Point x(centerTri.x - 50, centerTri.y - 50);
 			Point y(centerTri.x + 50, centerTri.y + 50);
 			rectangle(srcdetect2, x, y, Scalar(0, 255, 0), 1, 8, 0);
