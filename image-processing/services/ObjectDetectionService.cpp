@@ -13,8 +13,13 @@
 #include <iostream>
 #include <string>
 
+#include <Poco\Stopwatch.h>
+
+
 using namespace cv;
 using namespace std;
+
+using Poco::Stopwatch;
 
 RNG rng(12345);
 
@@ -181,16 +186,19 @@ namespace services {
 
 		Robot ObjectDetectionService::DetectRobot(Player player, const Mat &frame)
 		{
+
 			if (frame.empty()) {
 				return Robot();
 			}
 
 			if (player.playerId == 0)
 			{
+
 				return DetectRobotRect(frame);
 			}
 			if (player.playerId == 1)
 			{
+
 				return DetectRobotPent(frame);
 			}
 
@@ -198,10 +206,14 @@ namespace services {
 		}
 
 		Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
+
+			Stopwatch sw;
+			sw.start();
+
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			//int threshdetect2 = 50;
-			int threshdetect2 = 100;
+			int threshdetect2 = 50;
+			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
@@ -283,6 +295,9 @@ namespace services {
 				contoursRect = contours[allowedRectanglesContourPositions[0]];
 			}
 
+			sw.stop();
+			printf("Rect detection: %f ms\n", sw.elapsed() * 0.001);
+
 			if (pointsTriRect.size() == 2)
 				return Robot(pointsTriRect[1], pointsTriRect[0], contoursRect);
 			else
@@ -290,17 +305,45 @@ namespace services {
 		}
 
 		Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
+
+
+			Stopwatch sw;
+			sw.start();
+
+
+
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			//int threshdetect2 = 30;
-			int threshdetect2 = 100;
+			int threshdetect2 = 50;
+			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
 			srcdetect2 = frame;
 
+			/// Convert it to gray
+			Stopwatch cv;
+			cv.start();
 			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
-			blur(src_graydetect2, src_graydetect2, Size(3, 3));
+			cv.stop();
+			printf("CV: %f ms\n", cv.elapsed() * 0.001);
+
+			/// Reduce the noise so we avoid false circle detection
+			Stopwatch blur;
+			blur.start();
+			GaussianBlur(src_graydetect2, src_graydetect2, Size(9, 9), 2, 2);
+			blur.stop();
+			printf("blur: %f ms\n", blur.elapsed() * 0.001);
+
+			vector<Vec3f> circles;
+
+			/// Apply the Hough Transform to find the circles
+			Stopwatch hough;
+			hough.start();
+			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 60, 30, 0, 0);
+			hough.stop();
+			printf("hough: %f ms\n", hough.elapsed() * 0.001);
+
 
 			//Drawing and contours
 			Mat canny_output;
@@ -310,79 +353,150 @@ namespace services {
 			// Finding rects,tris and pentagons
 			std::vector<cv::Point> approx;
 
-			vector<vector<cv::Point>> pentagons;
-			vector<int> pentagonsContourPositions;
+
 			vector<vector<cv::Point>> triangles;
 			vector<int> trianglePositions;
 
-			//Found correct elements
-			vector<int> allowedPentagonsContourPosition;
-			vector<int> allowedTrianglesPoly;
-
-			//dilate(src_graydetect2, src_graydetect2, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-
-			/// Detect edges using canny
+			Stopwatch canny;
+			canny.start();
 			Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+			canny.stop();
+			printf("canny: %f ms\n", canny.elapsed() * 0.001);
 
 			//thresholding the grayscale image to get better results
+			Stopwatch thresh;
+			thresh.start();
 			threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
+			thresh.stop();
+			printf("threshold: %f ms\n", thresh.elapsed() * 0.001);
 
 			/// Find contours
+			Stopwatch contour;
+			contour.start();
 			findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+			contour.stop();
+			printf("contour: %f ms\n", contour.elapsed() * 0.001);
 
-			/// Draw contours
-			Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
+			Stopwatch rest;
+			rest.start();
 
-			/*
-			*	Starting detection process
-			*/
-
-			for (size_t i = 0; i < contours.size(); i++)
-			{
-				// Approximate contour with accuracy proportional
-				// to the contour perimeter
-				// original elipse value 0.02
-				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
-
-				// Skip small or non-convex objects
-				if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
-					continue;
-
-				// Rectangles
-
-				if (approx.size() == 3)
-				{
-					triangles.push_back(approx);
-					trianglePositions.push_back(i);
-				}
-
-				if (approx.size() == 5)
-				{
-					pentagons.push_back(contours[i]);
-					pentagonsContourPositions.push_back(i);
-				}
-			}
-
-			allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTrianglesPoly);
-
-			vector<Point> pointsTriRect;
 			vector<Point> contoursPent;
-			if (allowedTrianglesPoly.size() > 0){
-				pointsTriRect = GetFrontOfTriangle(triangles[allowedTrianglesPoly[0]]);
-			}
-
-			if (allowedPentagonsContourPosition.size() > 0)
+			if (circles.size() > 0)
 			{
-				contoursPent = contours[allowedPentagonsContourPosition[0]];
+
+
+
+				/*
+				*	Starting detection process
+				*/
+
+				for (size_t i = 0; i < contours.size(); i++)
+				{
+					// Approximate contour with accuracy proportional
+					// to the contour perimeter
+					// original elipse value 0.02
+					cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
+
+					// Skip small or non-convex objects
+					if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+						continue;
+
+
+					if (approx.size() == 3)
+					{
+						triangles.push_back(approx);
+						trianglePositions.push_back(i);
+					}
+
+
+				}
+
+				/*	cout << "Size: " << triangles.size() << std::endl;
+					cout << "Size Circle: " << circles.size() << std::endl;*/
+
+
+				Point circleCenter;
+
+				/// Draw the circles detected
+				for (size_t i = 0; i < circles.size(); i++)
+				{
+					Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+					Point circleCenter = center;
+
+					int radius = cvRound(circles[i][2]);
+					circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
+					// circle outline
+					circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
+				}
+
+				int triangleindex = 0;
+
+				int diffx = 10000;
+				int diffy = 10000;
+				Point centerTri;
+
+				if (triangles.size() > 0)
+				{
+
+
+					for (size_t i = 0; i < triangles.size(); i++)
+					{
+
+						int x_centroid = (triangles[i][0].x + triangles[i][1].x + triangles[i][2].x) / 3;
+						int y_centroid = (triangles[i][0].y + triangles[i][1].y + triangles[i][2].y) / 3;
+
+						Point center(cvRound(x_centroid), cvRound(y_centroid));
+						centerTri = center;
+
+						int tmpdiffx = abs(x_centroid - circleCenter.x);
+						int tmpdiffy = abs(y_centroid - circleCenter.y);
+
+						if (tmpdiffx < diffx || tmpdiffy < diffy)
+						{
+							triangleindex = i;
+
+						}
+					}
+				}
+
+				vector<Point> pointsTriRect;
+
+
+				Point x(centerTri.x - 50, centerTri.y - 50);
+				Point y(centerTri.x + 50, centerTri.y + 50);
+
+				contoursPent.push_back(x);
+				contoursPent.push_back(y);
+
+				rest.stop();
+				printf("rest %f ms\n", rest.elapsed() * 0.001);
+
+				sw.stop();
+				printf("Circle detection: %f ms\n", sw.elapsed() * 0.001);
+
+				if (triangles.size() > 0 && triangleindex >= 0)
+					pointsTriRect = GetFrontOfTriangle(triangles[triangleindex]);
+				else
+					return Robot(Point(), Point(), contoursPent);
+
+				if (pointsTriRect.size() == 2)
+					return Robot(pointsTriRect[1], pointsTriRect[0], contoursPent);
+				else
+					return Robot(Point(), Point(), contoursPent);
 			}
-			if (pointsTriRect.size() == 2)
-				return Robot(pointsTriRect[1], pointsTriRect[0], contoursPent);
 			else
+			{
+				sw.stop();
+				printf("Error Circle: %f ms\n", sw.elapsed() * 0.001);
+
 				return Robot(Point(), Point(), contoursPent);
+			}
 		}
 
 		Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player, Player hitPlayer) {
 
+			Stopwatch sw;
+			sw.start();
 
 			Logger& logger = Logger::get("ObjectDetectionService");
 
@@ -391,7 +505,11 @@ namespace services {
 			Robot robotShootPlayer = DetectRobot(player, frame);
 
 			if (robotShootPlayer.robotForm.size() <= 0)
-				return Shot(player,hitPlayer, Point2i(0,0), Point2i(0, 0));
+			{
+				sw.stop();
+				printf("Error shot route: %f ms\n", sw.elapsed() * 0.001);
+				return Shot(player, hitPlayer, Point2i(0, 0), Point2i(0, 0));
+			}
 
 			double length = sqrt(pow(robotShootPlayer.shotDirection.x, 2) + pow(robotShootPlayer.shotDirection.y, 2));
 
@@ -407,7 +525,7 @@ namespace services {
 			{
 				if (!rect.contains(currentPoint))
 				{
-					endPoint = currentPoint - 2*normDirection;
+					endPoint = currentPoint - 2 * normDirection;
 					found = true;
 				}
 
@@ -422,6 +540,9 @@ namespace services {
 			logger.information("X: " + std::to_string(endPoint.x));
 			logger.information("y: " + std::to_string(endPoint.y));
 
+			sw.stop();
+			printf("Shot route detected: %f ms\n", sw.elapsed() * 0.001);
+
 			return Shot(player, hitPlayer, Point2i(robotShootPlayer.shotStartingPoint.x, robotShootPlayer.shotStartingPoint.y), Point2i(endPoint.x, endPoint.y));
 
 			// //TODO always calculate beginning at the robot til a wall is hit because we do not know if finally a robot or a wall will be hitten
@@ -435,29 +556,44 @@ namespace services {
 		}
 
 		bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, SimulationShot &shot) {
-			// TODO analyse frame and detect if a player is at shot endposition
-			//1. find opposite player
+
+
+			Stopwatch sw;
+			sw.start();
+
 
 			Robot robotHitPlayer = DetectRobot(shot.hitPlayer, frame);
 
 			if (robotHitPlayer.robotForm.size() <= 0)
+			{
+				sw.stop();
+				printf("error hitting player: %f ms\n", sw.elapsed() * 0.001);
 				return false;
+			}
 
 			Point2i tmp = shot.GetCurrentShotPoint();
 			Point2f currentShotingPoint = Point2f(tmp.x, tmp.y);
 
 			Logger& logger = Logger::get("ObjectDetectionService");
 
-			logger.information("Found Rect");
+			/*	logger.information("Found Rect");
 
-			logger.information("Point: ");
-			logger.information("X: " + std::to_string(tmp.x));
-			logger.information("y: " + std::to_string(tmp.y));
-
+				logger.information("Point: ");
+				logger.information("X: " + std::to_string(tmp.x));
+				logger.information("y: " + std::to_string(tmp.y));
+				*/
 			if (pointPolygonTest(Mat(robotHitPlayer.robotForm), currentShotingPoint, true) > 0)
+			{
+				sw.stop();
+				printf("Has hit player: %f ms\n", sw.elapsed() * 0.001);
 				return true;
+			}
 			else
+			{
+				sw.stop();
+				printf("Has not hit player: %f ms\n", sw.elapsed() * 0.001);
 				return false;
+			}
 		}
 	}
 }

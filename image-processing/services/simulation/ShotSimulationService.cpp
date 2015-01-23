@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <vector>
 
+//#include <Poco\Stopwatch.h>
+//using Poco::Stopwatch;
+
 using std::max;
 using std::vector;
 using cv::imread;
@@ -32,6 +35,8 @@ namespace services {
 			startExplostionHalfXSize = gunShotImg.cols / 2;
 			startExplostionHalfYSize = gunShotImg.rows / 2;
 
+			//namedWindow("Test", WINDOW_AUTOSIZE);
+
 			webcamService->AddObserver(this);
 		}
 
@@ -48,6 +53,10 @@ namespace services {
 		}
 
 		void ShotSimulationService::Update(WebcamService* observable) {
+
+			//Stopwatch hole;
+			//hole.start();
+
 			if (shots.empty()) {
 				return;
 			}
@@ -81,6 +90,9 @@ namespace services {
 					}
 
 					if (iter->SimulateEndExplosion()) {
+						//Stopwatch endExplo;
+						//endExplo.start();
+
 						if (status == SimulationShot::HIT_PLAYER) {
 							int explosionx = iter->endPoint.x - robotExplosionHalfXSize > 0 ? iter->endPoint.x - robotExplosionHalfXSize : 0;
 							int explosionY = iter->endPoint.y - robotExplosionHalfYSize > 0 ? iter->endPoint.y - robotExplosionHalfYSize : 0;
@@ -100,16 +112,28 @@ namespace services {
 						if (iter->IsSimulationFinished()) {
 							deleteShots.push_back(*iter);
 						}
+
+						//endExplo.stop();
+						//printf("endExplo overlay: %f ms\n", endExplo.elapsed() * 0.001);
 					}
 					else {
+						//Stopwatch bullet;
+						//bullet.start();
+
 						//simulate bullet
 						OverlayImage(frame, cheeseImg, iter->GetNextShotPoint());
+						
+						//bullet.stop();
+						//printf("Bullet overlay: %f ms\n", bullet.elapsed() * 0.001);
 					}
 
 					++iter;
 				}
 
-				webcamService->SetModifiedImage(frame);
+				//hole.stop();
+				//printf("hole overlay: %f ms\n", hole.elapsed() * 0.001);
+
+				//imshow("Test", frame);
 
 				//delete finished simulations
 				for each (Shot shot in deleteShots)

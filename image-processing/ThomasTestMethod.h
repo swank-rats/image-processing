@@ -477,10 +477,10 @@ static void thresh_callbackdetect3(int, void*)
 	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTrianglesPoly);
 
 
-	if (allowedTriangles.size() > 0){
+	if (allowedTrianglesPoly.size() > 0){
 		Point dir;
 		Point PosTop;
-		vector<Point> pointsTriRect = GetFrontOfTriangle(triangles[allowedTriangles[0]]);
+		vector<Point> pointsTriRect = GetFrontOfTriangle(triangles[allowedTrianglesPoly[0]]);
 		dir = pointsTriRect[0];
 		PosTop = pointsTriRect[1];
 
@@ -1485,7 +1485,163 @@ public:
 		return 0;
 	}
 
+	void DetectCircle(){
 
+
+		/// Show your results
+		namedWindow("Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE);
+
+		VideoCapture capture = VideoCapture();
+
+		capture.open(0);
+
+		////camera settings
+		capture.set(CV_CAP_PROP_FPS, 30);
+		////Possible resolutions : 640x480; 440x330
+		/*	capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+		capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);*/
+
+		cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
+		cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+
+
+
+		while (true)
+		{
+			capture >> srcdetect2;
+
+
+
+			/// Convert it to gray
+			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
+
+			/// Reduce the noise so we avoid false circle detection
+			GaussianBlur(src_graydetect2, src_graydetect2, Size(9, 9), 2, 2);
+
+			vector<Vec3f> circles;
+
+			/// Apply the Hough Transform to find the circles
+			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 0, 0);
+
+
+
+			//Drawing and contours
+			Mat canny_output;
+			vector<vector<Point> > contours;
+			vector<Vec4i> hierarchy;
+
+			// Finding rects,tris and pentagons
+			std::vector<cv::Point> approx;
+
+
+			vector<vector<cv::Point>> triangles;
+			vector<int> trianglePositions;
+
+
+			Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+
+			//thresholding the grayscale image to get better results
+			threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
+
+			/// Find contours
+			findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+
+
+
+
+			/*
+			*	Starting detection process
+			*/
+
+			for (size_t i = 0; i < contours.size(); i++)
+			{
+				// Approximate contour with accuracy proportional
+				// to the contour perimeter
+				// original elipse value 0.02
+				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
+
+				// Skip small or non-convex objects
+				if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+					continue;
+
+
+				if (approx.size() == 3)
+				{
+					triangles.push_back(approx);
+					trianglePositions.push_back(i);
+				}
+
+
+			}
+
+			cout << "Size: " << triangles.size() << std::endl;
+			cout << "Size Circle: " << circles.size() << std::endl;
+
+
+			Point circleCenter;
+
+			/// Draw the circles detected
+			for (size_t i = 0; i < circles.size(); i++)
+			{
+				Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+				Point circleCenter = center;
+
+				int radius = cvRound(circles[i][2]);
+				// circle center
+				//circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
+				//// circle outline
+				//circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
+			}
+
+			int triangleindex = 0;
+			
+			int diffx = 10000;
+			int diffy = 10000;
+			Point centerTri;
+
+			if (triangles.size() > 0)
+			{
+
+
+				for (size_t i = 0; i < triangles.size(); i++)
+				{
+
+					int x_centroid = (triangles[i][0].x + triangles[i][1].x + triangles[i][2].x) / 3;
+					int y_centroid = (triangles[i][0].y + triangles[i][1].y + triangles[i][2].y) / 3;
+
+					Point center(cvRound(x_centroid), cvRound(y_centroid));
+					centerTri = center;
+
+					int tmpdiffx = abs(x_centroid - circleCenter.x);
+					int tmpdiffy = abs(y_centroid - circleCenter.y);
+
+					if (tmpdiffx < diffx || tmpdiffy < diffy)
+					{
+						triangleindex = i;
+
+					}
+				}
+			}
+
+			circle(srcdetect2, centerTri, 3, Scalar(0, 255, 0), -1, 8, 0);
+			Point x(centerTri.x - 50, centerTri.y - 50);
+			Point y(centerTri.x + 50, centerTri.y + 50);
+			rectangle(srcdetect2, x, y, Scalar(0, 255, 0), 1, 8, 0);
+
+			imshow("Hough Circle Transform Demo", srcdetect2);
+
+			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+			{
+				break;
+			}
+		}
+
+		//cleaning up
+		cvDestroyAllWindows();
+
+
+
+	}
 
 	void Test11(){
 
@@ -1607,10 +1763,10 @@ public:
 	}
 
 	void CalibartionTest(){
-	
+
 		int numBoards = 0;
-		int numCornersHor=5;
-		int numCornersVer=5;
+		int numCornersHor = 5;
+		int numCornersVer = 5;
 
 		int numSquares = numCornersHor * numCornersVer;
 		Size board_sz = Size(numCornersHor, numCornersVer);
@@ -1628,10 +1784,10 @@ public:
 		capture >> image;
 
 		vector<Point3f> obj;
-		for (int j = 0; j<numSquares; j++)
+		for (int j = 0; j < numSquares; j++)
 			obj.push_back(Point3f(j / numCornersHor, j%numCornersHor, 0.0f));
 
-		while (successes<numBoards)
+		while (successes < numBoards)
 		{
 			cvtColor(image, gray_image, CV_BGR2GRAY);
 			bool found = findChessboardCorners(image, board_sz, corners, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
@@ -1650,7 +1806,7 @@ public:
 
 			if (key == 27)
 
-				
+
 
 			if (key == ' ' && found != 0)
 			{
