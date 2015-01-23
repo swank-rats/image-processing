@@ -180,7 +180,7 @@ private:
 #if defined(THOMAS) || defined(STANDALONE)
 		vidStreamCtrl.StartStreamingServer();
 
-		//shotSimCtrl.StartTestingSimulation();
+		shotSimCtrl.StartTestingSimulation();
 #endif
 
 		char key;
@@ -223,7 +223,8 @@ private:
 
 		//th.DetectWihoutServices();
 		//th.DetectConture();
-		th.DetectConture2();
+		//th.DetectConture2();
+		th.DetectCircle();
 		//DetectConture3();
 		//th.Test5();
 		//th.Test6();

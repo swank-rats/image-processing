@@ -32,6 +32,8 @@ namespace services {
 			startExplostionHalfXSize = gunShotImg.cols / 2;
 			startExplostionHalfYSize = gunShotImg.rows / 2;
 
+			namedWindow("Test", WINDOW_AUTOSIZE);
+
 			webcamService->AddObserver(this);
 		}
 
@@ -55,7 +57,7 @@ namespace services {
 			Poco::Mutex::ScopedLock lock(mutexThreadLock); //will be released after leaving scop
 
 			try {
-				Mat frame = observable->GetLastImage();//.clone();
+				Mat frame = observable->GetLastImage().clone();
 				ShotsSetType::Iterator iter = shots.begin();
 				vector<Shot> deleteShots;
 
@@ -108,6 +110,9 @@ namespace services {
 
 					++iter;
 				}
+
+
+				imshow("Test", frame);
 
 				//delete finished simulations
 				for each (Shot shot in deleteShots)

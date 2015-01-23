@@ -200,8 +200,8 @@ namespace services {
 		Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			//int threshdetect2 = 50;
-			int threshdetect2 = 100;
+			int threshdetect2 = 50;
+			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
@@ -290,17 +290,28 @@ namespace services {
 		}
 
 		Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
+
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			//int threshdetect2 = 30;
-			int threshdetect2 = 100;
+			int threshdetect2 = 50;
+			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
 			srcdetect2 = frame;
 
+			/// Convert it to gray
 			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
-			blur(src_graydetect2, src_graydetect2, Size(3, 3));
+
+			/// Reduce the noise so we avoid false circle detection
+			GaussianBlur(src_graydetect2, src_graydetect2, Size(9, 9), 2, 2);
+
+			vector<Vec3f> circles;
+
+			/// Apply the Hough Transform to find the circles
+			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 70, 35, 0, 0);
+
+
 
 			//Drawing and contours
 			Mat canny_output;
@@ -310,18 +321,11 @@ namespace services {
 			// Finding rects,tris and pentagons
 			std::vector<cv::Point> approx;
 
-			vector<vector<cv::Point>> pentagons;
-			vector<int> pentagonsContourPositions;
+
 			vector<vector<cv::Point>> triangles;
 			vector<int> trianglePositions;
 
-			//Found correct elements
-			vector<int> allowedPentagonsContourPosition;
-			vector<int> allowedTrianglesPoly;
 
-			//dilate(src_graydetect2, src_graydetect2, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-
-			/// Detect edges using canny
 			Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
 
 			//thresholding the grayscale image to get better results
@@ -330,55 +334,109 @@ namespace services {
 			/// Find contours
 			findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
 
-			/// Draw contours
-			Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
-
-			/*
-			*	Starting detection process
-			*/
-
-			for (size_t i = 0; i < contours.size(); i++)
-			{
-				// Approximate contour with accuracy proportional
-				// to the contour perimeter
-				// original elipse value 0.02
-				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
-
-				// Skip small or non-convex objects
-				if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
-					continue;
-
-				// Rectangles
-
-				if (approx.size() == 3)
-				{
-					triangles.push_back(approx);
-					trianglePositions.push_back(i);
-				}
-
-				if (approx.size() == 5)
-				{
-					pentagons.push_back(contours[i]);
-					pentagonsContourPositions.push_back(i);
-				}
-			}
-
-			allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTrianglesPoly);
-
-			vector<Point> pointsTriRect;
 			vector<Point> contoursPent;
-			if (allowedTrianglesPoly.size() > 0){
-				pointsTriRect = GetFrontOfTriangle(triangles[allowedTrianglesPoly[0]]);
-			}
-
-			if (allowedPentagonsContourPosition.size() > 0)
+			if (circles.size() > 0)
 			{
-				contoursPent = contours[allowedPentagonsContourPosition[0]];
+
+
+
+				/*
+				*	Starting detection process
+				*/
+
+				for (size_t i = 0; i < contours.size(); i++)
+				{
+					// Approximate contour with accuracy proportional
+					// to the contour perimeter
+					// original elipse value 0.02
+					cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
+
+					// Skip small or non-convex objects
+					if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+						continue;
+
+
+					if (approx.size() == 3)
+					{
+						triangles.push_back(approx);
+						trianglePositions.push_back(i);
+					}
+
+
+				}
+
+				/*	cout << "Size: " << triangles.size() << std::endl;
+					cout << "Size Circle: " << circles.size() << std::endl;*/
+
+
+				Point circleCenter;
+
+				/// Draw the circles detected
+				for (size_t i = 0; i < circles.size(); i++)
+				{
+					Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+					Point circleCenter = center;
+
+					int radius = cvRound(circles[i][2]);
+					// circle center
+					//circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
+					//// circle outline
+					//circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
+				}
+
+				int triangleindex = 0;
+
+				int diffx = 10000;
+				int diffy = 10000;
+				Point centerTri;
+
+				if (triangles.size() > 0)
+				{
+
+
+					for (size_t i = 0; i < triangles.size(); i++)
+					{
+
+						int x_centroid = (triangles[i][0].x + triangles[i][1].x + triangles[i][2].x) / 3;
+						int y_centroid = (triangles[i][0].y + triangles[i][1].y + triangles[i][2].y) / 3;
+
+						Point center(cvRound(x_centroid), cvRound(y_centroid));
+						centerTri = center;
+
+						int tmpdiffx = abs(x_centroid - circleCenter.x);
+						int tmpdiffy = abs(y_centroid - circleCenter.y);
+
+						if (tmpdiffx < diffx || tmpdiffy < diffy)
+						{
+							triangleindex = i;
+
+						}
+					}
+				}
+
+				vector<Point> pointsTriRect;
+
+
+				Point x(centerTri.x - 50, centerTri.y - 50);
+				Point y(centerTri.x + 50, centerTri.y + 50);
+
+				contoursPent.push_back(x);
+				contoursPent.push_back(y);
+
+				if (triangles.size() > 0 && triangleindex >= 0)
+					pointsTriRect = GetFrontOfTriangle(triangles[triangleindex]);
+				else
+					return Robot(Point(), Point(), contoursPent);
+
+				if (pointsTriRect.size() == 2)
+					return Robot(pointsTriRect[1], pointsTriRect[0], contoursPent);
+				else
+					return Robot(Point(), Point(), contoursPent);
 			}
-			if (pointsTriRect.size() == 2)
-				return Robot(pointsTriRect[1], pointsTriRect[0], contoursPent);
 			else
+			{
 				return Robot(Point(), Point(), contoursPent);
+			}
 		}
 
 		Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player, Player hitPlayer) {
@@ -391,7 +449,7 @@ namespace services {
 			Robot robotShootPlayer = DetectRobot(player, frame);
 
 			if (robotShootPlayer.robotForm.size() <= 0)
-				return Shot(player,hitPlayer, Point2i(0,0), Point2i(0, 0));
+				return Shot(player, hitPlayer, Point2i(0, 0), Point2i(0, 0));
 
 			double length = sqrt(pow(robotShootPlayer.shotDirection.x, 2) + pow(robotShootPlayer.shotDirection.y, 2));
 
@@ -407,7 +465,7 @@ namespace services {
 			{
 				if (!rect.contains(currentPoint))
 				{
-					endPoint = currentPoint - 2*normDirection;
+					endPoint = currentPoint - 2 * normDirection;
 					found = true;
 				}
 
@@ -448,12 +506,12 @@ namespace services {
 
 			Logger& logger = Logger::get("ObjectDetectionService");
 
-			logger.information("Found Rect");
+			/*	logger.information("Found Rect");
 
-			logger.information("Point: ");
-			logger.information("X: " + std::to_string(tmp.x));
-			logger.information("y: " + std::to_string(tmp.y));
-
+				logger.information("Point: ");
+				logger.information("X: " + std::to_string(tmp.x));
+				logger.information("y: " + std::to_string(tmp.y));
+				*/
 			if (pointPolygonTest(Mat(robotHitPlayer.robotForm), currentShotingPoint, true) > 0)
 				return true;
 			else

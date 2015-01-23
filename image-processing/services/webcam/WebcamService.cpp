@@ -122,7 +122,7 @@ namespace services {
 				}
 
 				sw.stop();
-				cout << sw.elapsed() * 0.001 << " ms\n\r";
+				//cout << sw.elapsed() * 0.001 << " ms\n\r";
 			}
 		}
 
