@@ -82,18 +82,6 @@ protected:
 		loadConfiguration();
 
 		ServerApplication::initialize(self);
-
-		//NOT NEEDED since it is done in config file
-		////accept everything!
-		//SharedPtr<InvalidCertificateHandler> pInvalidCertHandler = new ConsoleCertificateHandler(false);
-		//SharedPtr<PrivateKeyPassphraseHandler> pConsoleHandler = new KeyConsoleHandler(false);
-
-		////context = new Context(Context::CLIENT_USE, "resources\\openssl\\privkey.pem", "resources\\openssl\\cert.pem", "", Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
-		//context = new Context(Context::CLIENT_USE, "", "", "", Context::VERIFY_STRICT, 9, true, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
-		//context = new Poco::Net::Context(Context::CLIENT_USE, "", "rootcert.pem", "", Poco::Net::Context::VERIFY_RELAXED, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
-
-		////SSLManager::instance().initializeClient(pConsoleHandler, pInvalidCertHandler, context);
-		//SSLManager::instance().initializeClient(NULL, pInvalidCertHandler, context);
 	}
 
 	void reinitialize(Application& self) {
@@ -180,7 +168,7 @@ private:
 #if defined(THOMAS) || defined(STANDALONE)
 		vidStreamCtrl.StartStreamingServer();
 
-		//shotSimCtrl.StartTestingSimulation();
+		shotSimCtrl.StartTestingSimulation();
 #endif
 
 		char key;

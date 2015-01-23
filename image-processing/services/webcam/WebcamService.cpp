@@ -7,22 +7,24 @@
 #include "WebcamService.h"
 
 #include <Poco\Thread.h>
-#include <Poco\Stopwatch.h>
 
 #include <iostream>
 #include <iomanip>
 
-using Poco::Thread;
-using Poco::Stopwatch;
+//#include <Poco\Stopwatch.h>
+//using Poco::Stopwatch;
 
+using Poco::Thread;
 using std::cout;
 
 namespace services {
 	namespace webcam {
-		static const char* windowName = "Webcam stream";
-
 		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
 			isRecording = false;
+			isModifiedAvailable = false;
+
+			fps = 15;
+			delay = 1000 / fps;
 		}
 
 		WebcamService::~WebcamService() {
@@ -33,6 +35,35 @@ namespace services {
 			if (capture.isOpened()) {
 				capture.release();
 			}
+		}
+
+		int WebcamService::GetDelay() {
+			return delay;
+		}
+
+		int WebcamService::GetFPS() {
+			return fps;
+		}
+
+		bool WebcamService::IsModifiedAvailable() {
+			Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
+			return isModifiedAvailable;
+		}
+
+		void WebcamService::SetModifiedImage(Mat image) {
+			Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
+			modifiedImage = image;
+			isModifiedAvailable = true;
+		}
+
+		Mat& WebcamService::GetModifiedImage() {
+			Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
+			return modifiedImage;
+		}
+
+		Mat& WebcamService::GetLastImage() {
+			Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
+			return lastImage;
 		}
 
 		bool WebcamService::StartRecording() {
@@ -46,10 +77,9 @@ namespace services {
 			}
 
 			logger.information("starting recording...");
-			//cvNamedWindow(windowName, CV_WINDOW_AUTOSIZE);
 
 			//camera settings
-			capture.set(CV_CAP_PROP_FPS, 15);
+			capture.set(CV_CAP_PROP_FPS, fps);
 			//Possible resolutions : 1280x720, 640x480; 440x330
 			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
 			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
@@ -89,13 +119,12 @@ namespace services {
 
 		bool WebcamService::IsRecording() {
 			return capture.isOpened() && recordingActivity.isRunning();
-			//return isRecording;
 		}
 
 		void WebcamService::RecordingCore() {
 			Logger& logger = Logger::get("WebcamService");
-			Stopwatch sw;
-			cv::Mat frame;
+			Mat frame;
+			//Stopwatch sw;
 
 			while (!recordingActivity.isStopped()) {
 				if (!capture.isOpened()) {
@@ -103,74 +132,33 @@ namespace services {
 					break;
 				}
 
-				sw.restart();
+				//sw.restart();
 
 				//Create image frames from capture
 				capture >> frame;
 
 				if (!frame.empty()) {
-					//Show image frames on created window
-					//cv::imshow(windowName, frame);
-					//Clone image
-					lastImage = frame;
-					//logger.warning("Captured webcam frame!" + std::to_string(frame.size().width) + "x" + std::to_string(frame.size().height));
+					{
+						Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
+						lastImage = frame; //Clone image
+						isModifiedAvailable = false;
+					}
+
+					//sw.stop();
+					//printf("Capture frame: %f ms\n", sw.elapsed() * 0.001);
+					//sw.restart();
 
 					Notify();
+
+					//sw.stop();
+					//printf("Notifiy: %f ms\n", sw.elapsed() * 0.001);
 				}
 				else {
 					logger.warning("Captured empty webcam frame!");
 				}
 
-				sw.stop();
-				cout << sw.elapsed() * 0.001 << " ms\n\r";
+				Thread::sleep(delay); //needed fulfill fps
 			}
-		}
-
-		cv::Mat WebcamService::GetLastImage() {
-			return lastImage;
-		}
-
-		void WebcamService::Record() {
-			isRecording = true;
-			Stopwatch sw;
-
-			cv::Mat frame;
-
-			capture.open(CV_CAP_ANY);
-
-			if (!capture.isOpened()){
-				return;
-			}
-
-			//camera settings
-			capture.set(CV_CAP_PROP_FPS, 15);
-			//Possible resolutions : 1280x720, 640x480; 440x330
-			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
-			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
-
-			while (1) {
-				sw.restart();
-
-				if (!capture.isOpened()) {
-					break;
-				}
-
-				//Create image frames from capture
-				capture >> frame;
-
-				if (!frame.empty()) {
-					//Clone image
-					lastImage = frame;
-
-					Notify();
-				}
-
-				//Thread::sleep(10);
-				sw.stop();
-				cout << sw.elapsed() * 0.001 << " ms\n\r";
-			}
-
-			isRecording = false;
 		}
 	}
 }

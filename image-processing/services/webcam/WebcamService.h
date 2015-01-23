@@ -14,6 +14,7 @@
 #include <Poco\Activity.h>
 #include <Poco\Logger.h>
 #include <Poco\RWLock.h>
+#include <Poco\Mutex.h>
 
 #include <memory>
 
@@ -21,6 +22,7 @@ using cv::VideoCapture;
 using cv::Mat;
 using Poco::Activity;
 using Poco::Logger;
+using Poco::Mutex;
 
 namespace services {
 	namespace webcam {
@@ -28,28 +30,28 @@ namespace services {
 		public:
 			WebcamService();
 			~WebcamService();
-			/*
-			 * This method will start the recording from the webcam
-			 * Returns true if starting was successful, false otherwise
-			 */
+
 			bool StartRecording();
-			/*
-			 * This method will stop the recodirng from the webcam
-			 */
 			bool StopRecording();
-
-			void Record();
-
-			Mat GetLastImage();
-
+			Mat& GetLastImage();
+			Mat& GetModifiedImage();
+			void SetModifiedImage(Mat image);
 			bool IsRecording();
+			bool IsModifiedAvailable();
+			int GetFPS();
+			int GetDelay();
 		private:
-			void RecordingCore();
 			bool isRecording;
-
+			bool isModifiedAvailable;
+			int fps;
+			int delay;
 			VideoCapture capture;
 			Mat lastImage;
+			Mat modifiedImage;
 			Activity<WebcamService> recordingActivity;
+			Poco::Mutex mutex;
+
+			void RecordingCore();
 		};
 	}
 }

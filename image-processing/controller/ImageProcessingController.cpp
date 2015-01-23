@@ -26,11 +26,6 @@ namespace controller {
 			if (!webcamService->IsRecording()) {
 				webcamService->StartRecording();
 			}
-
-			//RunnableAdapter<WebcamService> runnable(*webcamService, &WebcamService::Record);
-			//Thread webcam;
-			//webcam.setPriority(Thread::Priority::PRIO_HIGHEST);
-			//webcam.start(runnable);
 		}
 
 		void ImageProcessingController::StopImageProcessing() {
