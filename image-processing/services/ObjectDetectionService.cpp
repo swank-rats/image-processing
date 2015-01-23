@@ -310,6 +310,8 @@ namespace services {
 			Stopwatch sw;
 			sw.start();
 
+
+
 			Mat srcdetect2;
 			Mat src_graydetect2;
 			int threshdetect2 = 50;
@@ -320,16 +322,27 @@ namespace services {
 			srcdetect2 = frame;
 
 			/// Convert it to gray
+			Stopwatch cv;
+			cv.start();
 			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
+			cv.stop();
+			printf("CV: %f ms\n", cv.elapsed() * 0.001);
 
 			/// Reduce the noise so we avoid false circle detection
+			Stopwatch blur;
+			blur.start();
 			GaussianBlur(src_graydetect2, src_graydetect2, Size(9, 9), 2, 2);
+			blur.stop();
+			printf("blur: %f ms\n", blur.elapsed() * 0.001);
 
 			vector<Vec3f> circles;
 
 			/// Apply the Hough Transform to find the circles
-			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 70, 35, 0, 0);
-
+			Stopwatch hough;
+			hough.start();
+			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 60, 30, 0, 0);
+			hough.stop();
+			printf("hough: %f ms\n", hough.elapsed() * 0.001);
 
 
 			//Drawing and contours
@@ -344,14 +357,28 @@ namespace services {
 			vector<vector<cv::Point>> triangles;
 			vector<int> trianglePositions;
 
-
+			Stopwatch canny;
+			canny.start();
 			Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+			canny.stop();
+			printf("canny: %f ms\n", canny.elapsed() * 0.001);
 
 			//thresholding the grayscale image to get better results
+			Stopwatch thresh;
+			thresh.start();
 			threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
+			thresh.stop();
+			printf("threshold: %f ms\n", thresh.elapsed() * 0.001);
 
 			/// Find contours
+			Stopwatch contour;
+			contour.start();
 			findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+			contour.stop();
+			printf("contour: %f ms\n", contour.elapsed() * 0.001);
+
+			Stopwatch rest;
+			rest.start();
 
 			vector<Point> contoursPent;
 			if (circles.size() > 0)
@@ -397,10 +424,9 @@ namespace services {
 					Point circleCenter = center;
 
 					int radius = cvRound(circles[i][2]);
-					// circle center
-					//circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
-					//// circle outline
-					//circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
+					circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
+					// circle outline
+					circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
 				}
 
 				int triangleindex = 0;
@@ -441,6 +467,9 @@ namespace services {
 
 				contoursPent.push_back(x);
 				contoursPent.push_back(y);
+
+				rest.stop();
+				printf("rest %f ms\n", rest.elapsed() * 0.001);
 
 				sw.stop();
 				printf("Circle detection: %f ms\n", sw.elapsed() * 0.001);
