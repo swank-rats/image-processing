@@ -15,7 +15,6 @@
 
 using Poco::Clock;
 using Poco::Thread;
-using Poco::Notification;
 using std::cout;
 
 namespace services {
