@@ -155,6 +155,7 @@ namespace infrastructure {
 						catch (Exception& e)
 						{
 							logger.error("General exception: " + e.displayText());
+							FireLostConnection();
 						}
 					}
 				}
@@ -210,6 +211,7 @@ namespace infrastructure {
 				catch (Exception& e)
 				{
 					logger.error("General exception: " + e.displayText());
+					FireLostConnection();
 				}
 			}
 		}
