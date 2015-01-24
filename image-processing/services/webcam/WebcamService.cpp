@@ -23,7 +23,7 @@ namespace services {
 			isRecording = false;
 			isModifiedAvailable = false;
 
-			fps = 5;
+			fps = 20;
 			delay = 1000 / fps;
 		}
 

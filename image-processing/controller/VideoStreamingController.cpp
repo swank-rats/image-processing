@@ -47,6 +47,8 @@ namespace controller {
 				streamingServer->StopServer();
 			}
 
+			lostConnectionQueue.clear(); //clear possible lost connection notifications
+
 			return true;
 		}
 
