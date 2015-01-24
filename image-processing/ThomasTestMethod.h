@@ -125,6 +125,187 @@ static void MatchingMethod(int, void*)
 }
 
 
+static void DetectCircleTresh(int, void*){
+
+	Stopwatch sw;
+	/// Show your results
+	namedWindow("Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE);
+
+	//VideoCapture capture = VideoCapture();
+
+	//capture.open(0);
+
+	//////camera settings
+	//capture.set(CV_CAP_PROP_FPS, 30);
+	//////Possible resolutions : 640x480; 440x330
+	///*	capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+	//capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);*/
+
+	//cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
+	//cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+
+	//threshdetect2 = 100;
+	////int threshdetect2 = 100;
+	//max_threshdetect2 = 255;
+	//RNG rngdetect2;
+
+
+	///// Create Window
+	//const char* source_window = "Source";
+	//namedWindow(source_window, WINDOW_AUTOSIZE);
+
+
+	//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect3);
+
+	/*while (true)
+	{*/
+	sw.restart();
+	//capture >> srcdetect2;
+
+
+
+	/// Convert it to gray
+	cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
+
+	/// Reduce the noise so we avoid false circle detection
+	GaussianBlur(src_graydetect2, src_graydetect2, Size(9, 9), 2, 2);
+
+	vector<Vec3f> circles;
+
+	/// Apply the Hough Transform to find the circles
+	HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
+
+	/// Apply the Hough Transform to find the circles
+	//HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
+
+
+	//Drawing and contours
+	Mat canny_output;
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+
+	// Finding rects,tris and pentagons
+	std::vector<cv::Point> approx;
+
+
+	vector<vector<cv::Point>> triangles;
+	vector<int> trianglePositions;
+
+
+	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+
+	//thresholding the grayscale image to get better results
+	threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
+
+	/// Find contours
+	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+
+
+
+
+	/*
+	*	Starting detection process
+	*/
+
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		// Approximate contour with accuracy proportional
+		// to the contour perimeter
+		// original elipse value 0.02
+		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
+
+		// Skip small or non-convex objects
+		if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+			continue;
+
+
+		if (approx.size() == 3)
+		{
+			triangles.push_back(approx);
+			trianglePositions.push_back(i);
+		}
+
+
+	}
+
+	cout << "Size: " << triangles.size() << std::endl;
+	//cout << "Size Circle: " << circles.size() << std::endl;
+
+
+	Point circleCenter;
+
+	/// Draw the circles detected
+	for (size_t i = 0; i < circles.size(); i++)
+	{
+		Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+		Point circleCenter = center;
+
+		int radius = cvRound(circles[i][2]);
+		// circle center
+		circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
+		// circle outline
+		circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
+	}
+
+	int triangleindex = 0;
+
+	int diffx = 10000;
+	int diffy = 10000;
+	Point centerTri;
+
+	if (triangles.size() > 0)
+	{
+
+
+		for (size_t i = 0; i < triangles.size(); i++)
+		{
+
+			int x_centroid = (triangles[i][0].x + triangles[i][1].x + triangles[i][2].x) / 3;
+			int y_centroid = (triangles[i][0].y + triangles[i][1].y + triangles[i][2].y) / 3;
+
+			Point center(cvRound(x_centroid), cvRound(y_centroid));
+			centerTri = center;
+
+			int tmpdiffx = abs(x_centroid - circleCenter.x);
+			int tmpdiffy = abs(y_centroid - circleCenter.y);
+
+			if (tmpdiffx < diffx || tmpdiffy < diffy)
+			{
+				triangleindex = i;
+
+			}
+		}
+	}
+
+	//circle(srcdetect2, centerTri, 3, Scalar(0, 255, 0), -1, 8, 0);
+	Point x(centerTri.x - 40, centerTri.y - 40);
+	Point y(centerTri.x + 40, centerTri.y + 40);
+	rectangle(srcdetect2, x, y, Scalar(0, 255, 0), 1, 8, 0);
+
+
+
+
+
+
+	imshow("Hough Circle Transform Demo", srcdetect2);
+
+	sw.stop();
+	printf("%f\r", sw.elapsed()*0.001);
+
+	//	if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+	//	{
+	//		break;
+	//	}
+	//}
+
+	////cleaning up
+	//cvDestroyAllWindows();
+
+
+
+}
+
+
 
 
 //int to string helper function
@@ -458,8 +639,13 @@ static void thresh_callbackdetect3(int, void*)
 		// Rectangles
 		if (approx.size() == 4)
 		{
-			rectangles.push_back(contours[i]);
-			rectanglesContourPositions.push_back(i);
+			if (abs(approx[0].x - approx[3].x) < 100)
+			{
+
+				rectangles.push_back(contours[i]);
+				rectanglesContourPositions.push_back(i);
+			}
+
 		}
 
 		if (approx.size() == 3)
@@ -1496,12 +1682,8 @@ public:
 		return 0;
 	}
 
-	void DetectCircle(){
 
-		Stopwatch sw;
-		/// Show your results
-		namedWindow("Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE);
-
+	void DetectCircle4() {
 		VideoCapture capture = VideoCapture();
 
 		capture.open(0);
@@ -1515,16 +1697,73 @@ public:
 		cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
 		cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
 
-		threshdetect2 = 50;
-		//int threshdetect2 = 100;
-		max_threshdetect2 = 255;
-		RNG rngdetect2;
+		/// Create Window
+		const char* source_window = "Source";
+		namedWindow(source_window, WINDOW_AUTOSIZE);
 
+		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, DetectCircleTresh);
+
+		Stopwatch sw;
 
 		while (true)
 		{
 			sw.restart();
+
 			capture >> srcdetect2;
+
+			imshow(source_window, srcdetect2);
+
+			DetectCircleTresh(0,0);
+
+			sw.stop();
+			printf("%f\r", sw.elapsed()*0.001);
+
+			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+			{
+				break;
+			}
+		}
+
+		//cleaning up
+		cvDestroyAllWindows();
+	}
+
+	void DetectCircle(){
+
+		Stopwatch sw;
+		/// Show your results
+		namedWindow("Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE);
+
+		//VideoCapture capture = VideoCapture();
+
+		//capture.open(0);
+
+		//////camera settings
+		//capture.set(CV_CAP_PROP_FPS, 30);
+		//////Possible resolutions : 640x480; 440x330
+		///*	capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+		//capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);*/
+
+		//cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
+		//cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+
+		//threshdetect2 = 100;
+		////int threshdetect2 = 100;
+		//max_threshdetect2 = 255;
+		//RNG rngdetect2;
+
+
+		///// Create Window
+		//const char* source_window = "Source";
+		//namedWindow(source_window, WINDOW_AUTOSIZE);
+
+
+		//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect3);
+
+		/*while (true)
+		{*/
+			sw.restart();
+			//capture >> srcdetect2;
 
 
 
@@ -1646,19 +1885,24 @@ public:
 			Point y(centerTri.x + 40, centerTri.y + 40);
 			rectangle(srcdetect2, x, y, Scalar(0, 255, 0), 1, 8, 0);
 
+
+
+
+
+
 			imshow("Hough Circle Transform Demo", srcdetect2);
 
 			sw.stop();
 			printf("%f\r", sw.elapsed()*0.001);
 
-			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-			{
-				break;
-			}
-		}
+		//	if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+		//	{
+		//		break;
+		//	}
+		//}
 
-		//cleaning up
-		cvDestroyAllWindows();
+		////cleaning up
+		//cvDestroyAllWindows();
 
 
 
@@ -1866,6 +2110,176 @@ public:
 			waitKey(1);
 		}
 
+	}
+
+
+	void DetectAll()
+	{
+		Stopwatch sw;
+		/// Show your results
+		namedWindow("Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE);
+
+		VideoCapture capture = VideoCapture();
+
+		capture.open(0);
+
+		////camera settings
+		capture.set(CV_CAP_PROP_FPS, 30);
+		////Possible resolutions : 640x480; 440x330
+		/*	capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+		capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);*/
+
+		cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
+		cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+
+		//threshdetect2 = 50;
+		threshdetect2 = 100;
+		max_threshdetect2 = 255;
+		RNG rngdetect2;
+
+
+		while (true)
+		{
+			sw.restart();
+			capture >> srcdetect2;
+
+
+
+			/// Convert it to gray
+			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
+
+			/// Reduce the noise so we avoid false circle detection
+			GaussianBlur(src_graydetect2, src_graydetect2, Size(9, 9), 2, 2);
+
+			vector<Vec3f> circles;
+
+			/// Apply the Hough Transform to find the circles
+			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
+
+			/// Apply the Hough Transform to find the circles
+			//HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
+
+
+			//Drawing and contours
+			Mat canny_output;
+			vector<vector<Point> > contours;
+			vector<Vec4i> hierarchy;
+
+			// Finding rects,tris and pentagons
+			std::vector<cv::Point> approx;
+
+
+			vector<vector<cv::Point>> triangles;
+			vector<int> trianglePositions;
+
+
+			Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+
+			//thresholding the grayscale image to get better results
+			threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
+
+			/// Find contours
+			findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+
+
+
+
+			/*
+			*	Starting detection process
+			*/
+
+			for (size_t i = 0; i < contours.size(); i++)
+			{
+				// Approximate contour with accuracy proportional
+				// to the contour perimeter
+				// original elipse value 0.02
+				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
+
+				// Skip small or non-convex objects
+				if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+					continue;
+
+
+				if (approx.size() == 3)
+				{
+					triangles.push_back(approx);
+					trianglePositions.push_back(i);
+				}
+
+
+			}
+
+			cout << "Size: " << triangles.size() << std::endl;
+			//cout << "Size Circle: " << circles.size() << std::endl;
+
+
+			Point circleCenter;
+
+			/// Draw the circles detected
+			for (size_t i = 0; i < circles.size(); i++)
+			{
+				Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+				Point circleCenter = center;
+
+				int radius = cvRound(circles[i][2]);
+				// circle center
+				circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
+				// circle outline
+				circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
+			}
+
+			int triangleindex = 0;
+
+			int diffx = 10000;
+			int diffy = 10000;
+			Point centerTri;
+
+			if (triangles.size() > 0)
+			{
+
+
+				for (size_t i = 0; i < triangles.size(); i++)
+				{
+
+					int x_centroid = (triangles[i][0].x + triangles[i][1].x + triangles[i][2].x) / 3;
+					int y_centroid = (triangles[i][0].y + triangles[i][1].y + triangles[i][2].y) / 3;
+
+					Point center(cvRound(x_centroid), cvRound(y_centroid));
+					centerTri = center;
+
+					int tmpdiffx = abs(x_centroid - circleCenter.x);
+					int tmpdiffy = abs(y_centroid - circleCenter.y);
+
+					if (tmpdiffx < diffx || tmpdiffy < diffy)
+					{
+						triangleindex = i;
+
+					}
+				}
+			}
+
+			//circle(srcdetect2, centerTri, 3, Scalar(0, 255, 0), -1, 8, 0);
+			Point x(centerTri.x - 40, centerTri.y - 40);
+			Point y(centerTri.x + 40, centerTri.y + 40);
+			rectangle(srcdetect2, x, y, Scalar(0, 255, 0), 1, 8, 0);
+
+			thresh_callbackdetect3(0, 0);
+
+			imshow("Hough Circle Transform Demo", srcdetect2);
+
+			sw.stop();
+			printf("%f\r", sw.elapsed()*0.001);
+
+			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+			{
+				break;
+			}
+		}
+
+		//cleaning up
+		cvDestroyAllWindows();
+
+	
 	}
 
 };

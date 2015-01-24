@@ -212,7 +212,7 @@ namespace services {
 
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			int threshdetect2 = 50;
+			int threshdetect2 = 160;
 			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
@@ -270,10 +270,16 @@ namespace services {
 
 				// Rectangles
 
+				
+
 				if (approx.size() == 4)
 				{
-					rectangles.push_back(contours[i]);
-					rectanglesContourPositions.push_back(i);
+					if (abs(approx[0].x - approx[3].x) < 100)
+					{
+
+						rectangles.push_back(contours[i]);
+						rectanglesContourPositions.push_back(i);
+					}
 				}
 
 				if (approx.size() == 3)
