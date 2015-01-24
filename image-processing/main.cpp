@@ -211,8 +211,10 @@ private:
 
 		//th.DetectWihoutServices();
 		//th.DetectConture();
-		//th.DetectConture2();
-		th.DetectCircle();
+		th.DetectConture2();
+		//th.DetectCircle();
+		//th.DetectCircle4();
+		//th.DetectAll();
 		//DetectConture3();
 		//th.Test5();
 		//th.Test6();
