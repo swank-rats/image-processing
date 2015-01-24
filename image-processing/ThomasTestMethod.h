@@ -630,10 +630,10 @@ static void thresh_callbackdetect3(int, void*)
 		// Approximate contour with accuracy proportional
 		// to the contour perimeter
 		// original elipse value 0.02
-		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
+		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.15, true);
 
 		// Skip small or non-convex objects
-		if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+		if (std::fabs(cv::contourArea(contours[i])) < 300 || !cv::isContourConvex(approx))
 			continue;
 
 		// Rectangles
