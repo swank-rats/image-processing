@@ -12,6 +12,7 @@
 
 #include <opencv2\core\core.hpp>
 
+#include <Poco\ThreadPool.h>
 #include <Poco\HashSet.h>
 #include <Poco\SharedPtr.h>
 #include <Poco\NotificationQueue.h>
@@ -19,6 +20,7 @@
 #include <Poco\RunnableAdapter.h>
 
 #include <queue>
+#include <vector>
 #include <memory>
 
 using cv::Mat;
@@ -31,7 +33,7 @@ using Poco::HashSet;
 using Poco::SharedPtr;
 using Poco::NotificationQueue;
 using Poco::Mutex;
-using Poco::Thread;
+using Poco::ThreadPool;
 using Poco::RunnableAdapter;
 
 namespace services {
@@ -60,9 +62,11 @@ namespace services {
 			int startExplostionHalfYSize;
 			Poco::Mutex shotsSetLock;
 			Poco::Mutex framesQueueLock;
-			Thread simulationThread;
 			RunnableAdapter<ShotSimulationService> runnable;
 			bool shallSimulate;
+			int maxNeededThreads;
+			int threadSleepTime;
+			ThreadPool threadPool;
 			queue<Mat> framesQueue;
 			SharedPtr<WebcamService> webcamService;
 			ObjectDetectionService detectionService;

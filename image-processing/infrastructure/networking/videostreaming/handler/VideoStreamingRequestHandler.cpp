@@ -35,7 +35,6 @@ namespace infrastructure {
 	namespace video_streaming {
 		VideoStreamingRequestHandler::VideoStreamingRequestHandler(SharedPtr<WebcamService> webcamService, NotificationQueue& lostConnectionQueue)
 			: lostConnectionQueue(lostConnectionQueue), webcamService(webcamService) {
-			params = { CV_IMWRITE_JPEG_QUALITY, 30 };
 			boundary = "VIDEOSTREAM";
 		}
 
@@ -70,38 +69,34 @@ namespace infrastructure {
 			//Stopwatch sw;
 
 			while (out.good() && webcamService->IsRecording()) {
+				//sw.restart(); //measuring writing
+
 				MultipartWriter writer(out, boundary);
 
-				Mat& image = webcamService->IsModifiedAvailable() ? webcamService->GetModifiedImage() : webcamService->GetLastImage();
+				vector<uchar>* buf = webcamService->GetModifiedImage(); //take ownership
 
-				if (image.empty()) {
+				if (buf->size() == 0) {
 					logger.warning("Read empty stream image");
+					delete buf;
 					continue;
 				}
 
-				//sw.restart(); //measuring encoding
-
-				// encode mat to jpg and copy it to content
-				std::vector<uchar> buf;
-				cv::imencode(".jpg", image, buf, params);
-
-				//sw.stop();
-				//avgenc(sw.elapsed() * 0.001);
-
 				MessageHeader header = MessageHeader();
-				header.set("Content-Length", std::to_string(buf.size()));
+				header.set("Content-Length", std::to_string(buf->size()));
 				header.set("Content-Type", "image/jpeg");
 				writer.nextPart(header);
 
-				//sw.restart(); //measuring writing
 
-				out.write(reinterpret_cast<const char*>(buf.data()), buf.size());
+				out.write(reinterpret_cast<const char*>(buf->data()), buf->size());
 
 				//sw.stop();
 				//avgstr(sw.elapsed() * 0.001);
 				//printf("Encoding: %f ms; ToOut: %f ms\r", _avgenc, _avgstr);
 
 				out << "\r\n\r\n";
+
+				delete buf;
+				buf = nullptr;
 			}
 
 			logger.information("Video streaming stopped for client " + request.clientAddress().toString());

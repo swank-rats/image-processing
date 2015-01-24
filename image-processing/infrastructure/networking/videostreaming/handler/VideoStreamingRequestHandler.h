@@ -40,7 +40,6 @@ namespace infrastructure {
 			void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
 		private:
 			SharedPtr<WebcamService> webcamService;
-			vector<int> params;
 			string boundary;
 			NotificationQueue& lostConnectionQueue;
 
