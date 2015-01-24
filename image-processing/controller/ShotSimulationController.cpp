@@ -85,7 +85,7 @@ namespace controller {
 					if (playerHitNotification)
 					{
 						Message* msg = new Message(MessageCommandEnum::hit, "server");
-						msg->AddParam("player", playerHitNotification->GetHitPlayer().form);
+						msg->AddParam("form", playerHitNotification->GetHitPlayer().form);
 						msg->AddParam("precision", std::to_string(playerHitNotification->GetPrecision()));
 
 						websocketController->Send(msg);
