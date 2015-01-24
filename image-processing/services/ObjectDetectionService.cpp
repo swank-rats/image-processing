@@ -340,7 +340,7 @@ namespace services {
 			/// Apply the Hough Transform to find the circles
 	/*		Stopwatch hough;
 			hough.start();*/
-			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 60, 30, 0, 0);
+			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
 			//hough.stop();
 			//printf("hough: %f ms\n", hough.elapsed() * 0.001);
 
