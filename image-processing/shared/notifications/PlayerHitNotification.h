@@ -21,13 +21,13 @@ namespace shared {
 		public:
 			typedef AutoPtr<PlayerHitNotification> Ptr;
 
-			PlayerHitNotification(Player hitPlayer, unsigned char precision = 100);
+			PlayerHitNotification(Player hitPlayer, unsigned short precision = 1);
 			~PlayerHitNotification();
 			Player GetHitPlayer();
-			unsigned char GetPrecision();
+			unsigned short GetPrecision();
 		private:
 			Player hitPlayer;
-			unsigned char precision;
+			unsigned short precision;
 		};
 	}
 }

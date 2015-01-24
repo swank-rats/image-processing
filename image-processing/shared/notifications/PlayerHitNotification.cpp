@@ -8,7 +8,7 @@
 
 namespace shared {
 	namespace notifications {
-		PlayerHitNotification::PlayerHitNotification(Player hitPlayer, unsigned char precision)
+		PlayerHitNotification::PlayerHitNotification(Player hitPlayer, unsigned short precision)
 			: hitPlayer(hitPlayer), precision(precision) {}
 
 		PlayerHitNotification::~PlayerHitNotification() { }
@@ -17,7 +17,7 @@ namespace shared {
 			return hitPlayer;
 		}
 
-		unsigned char PlayerHitNotification::GetPrecision() {
+		unsigned short PlayerHitNotification::GetPrecision() {
 			return precision;
 		}
 	}
