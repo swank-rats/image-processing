@@ -12,11 +12,13 @@
 #include "..\services\ObjectDetectionService.h"
 #include "..\shared\model\Player.h"
 
+#include <Poco\Activity.h>
 #include <Poco\AutoPtr.h>
 #include <Poco\SharedPtr.h>
 #include <Poco\NotificationQueue.h>
 #include <Poco\Timer.h>
 
+using Poco::Activity;
 using Poco::Timer;
 using Poco::AutoPtr;
 using Poco::SharedPtr;
@@ -46,6 +48,7 @@ namespace controller {
 			ObjectDetectionService *detectionService;
 			Player playerRect; //rectangle
 			Player playerPent; //pentagon
+			Activity<ShotSimulationController> playerHitActiviity;
 
 			Timer timer; //only for testing
 

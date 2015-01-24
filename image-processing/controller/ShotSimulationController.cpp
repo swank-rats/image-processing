@@ -17,7 +17,8 @@ using Poco::FastMutex;
 namespace controller {
 	namespace shot_simulation {
 		ShotSimulationController::ShotSimulationController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> websocketController) :
-			webCamSrv(webcamService), playerHitQueue(), shotSimulation(webcamService, playerHitQueue), websocketController(websocketController) {
+			webCamSrv(webcamService), shotSimulation(webcamService, playerHitQueue), websocketController(websocketController),
+			playerHitActiviity(this, &ShotSimulationController::HandlePlayerHitNotification) {
 			//TODO THOMAS Init players
 			playerRect.form = "square";
 			playerRect.playerId = 0;
@@ -43,10 +44,20 @@ namespace controller {
 
 		void ShotSimulationController::StartSimulationService() {
 			shotSimulation.Start();
+
+			if (!playerHitActiviity.isRunning()) {
+				playerHitActiviity.start();
+			}
 		}
 
 		void ShotSimulationController::StopSimulationService() {
 			shotSimulation.Stop();
+
+			if (playerHitActiviity.isRunning()) {
+				playerHitActiviity.stop();
+				playerHitQueue.wakeUpAll();
+				playerHitActiviity.wait();
+			}
 		}
 
 		void ShotSimulationController::HandleMessageNotification(MessageNotification* notification) {
@@ -65,7 +76,7 @@ namespace controller {
 		}
 
 		void ShotSimulationController::HandlePlayerHitNotification() {
-			for (;;)
+			while(!playerHitActiviity.isStopped())
 			{
 				Notification::Ptr notification(playerHitQueue.waitDequeueNotification());
 				if (notification)
@@ -80,7 +91,11 @@ namespace controller {
 						websocketController->Send(msg);
 					}
 				}
-				else break; //null signals that worker should stop polling queue
+				else {
+					//null signals that worker should stop polling queue
+					playerHitActiviity.stop();
+					break;
+				} 
 			}
 		}
 

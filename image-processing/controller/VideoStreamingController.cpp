@@ -39,6 +39,7 @@ namespace controller {
 		bool VideoStreamingController::StopStreamingServer() {
 			if (lostConnectionHandlerActivity.isRunning()) {
 				lostConnectionHandlerActivity.stop();
+				lostConnectionQueue.wakeUpAll();
 				lostConnectionHandlerActivity.wait();
 			}
 
