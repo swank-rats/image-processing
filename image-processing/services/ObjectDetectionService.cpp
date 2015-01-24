@@ -209,11 +209,8 @@ namespace services {
 
 			Mat srcdetect2;
 			Mat src_graydetect2;
-<<<<<<< HEAD
-			int threshdetect2 = 160;
-=======
+
 			int threshdetect2 = 100;
->>>>>>> ae881196206a6418463880bd184c8b0688ca13b9
 			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
