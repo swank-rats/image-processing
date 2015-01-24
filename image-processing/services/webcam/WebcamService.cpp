@@ -22,7 +22,7 @@ namespace services {
 		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
 			isRecording = false;
 			params = { CV_IMWRITE_JPEG_QUALITY, 30 };
-			fps = 20;
+			fps = 15;
 			delay = 1000 / fps;
 		}
 
