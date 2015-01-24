@@ -103,7 +103,7 @@ namespace controller {
 			//TODO THOMAS
 			Player shootingPlayer;
 			Player hitPlayer;
-			if (playerType == "rectangle") {
+			if (playerType == "square") {
 				shootingPlayer = playerRect;
 				hitPlayer = playerPent;
 			}
@@ -120,8 +120,8 @@ namespace controller {
 
 		// ONLY FOR TESTING PURPOSE
 		void ShotSimulationController::OnTimer(Timer& timer) {
-			//StartShotSimulation("pentagon");
-			StartShotSimulation("rectangle");
+			//StartShotSimulation("circle");
+			StartShotSimulation("square");
 		}
 
 		void ShotSimulationController::StartTestingSimulation() {

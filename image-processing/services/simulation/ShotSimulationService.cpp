@@ -41,6 +41,7 @@ namespace services {
 			startExplostionHalfYSize = gunShotImg.rows / 2;
 			
 			//namedWindow("Test", WINDOW_AUTOSIZE);
+
 			webcamService->AddObserver(this);
 		}
 
@@ -115,8 +116,10 @@ namespace services {
 								iter->status = SimulationShot::HIT_PLAYER;
 								iter->SetCurrentPointAsEndoint();
 
+								int id = iter->hitPlayer.playerId;
+
 								//Notify that player was hit
-								playerHitQueue.enqueueNotification(new PlayerHitNotification(iter->hitPlayer));
+								playerHitQueue.enqueueNotification(new PlayerHitNotification(iter->hitPlayer,1));
 							}
 						}
 
