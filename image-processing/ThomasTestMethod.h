@@ -29,6 +29,8 @@
 
 #include <opencv\cv.h>
 #include <opencv2\flann\lsh_table.h>
+
+#include <Poco\Stopwatch.h>
 //#include <limits>
 
 #include "opencv2/imgproc/imgproc.hpp"
@@ -71,6 +73,8 @@ static int max_Trackbar = 5;
 
 /// Function Headers
 void MatchingMethod(int, void*);
+
+using Poco::Stopwatch;
 
 /**
 * @function MatchingMethod
@@ -477,10 +481,10 @@ static void thresh_callbackdetect3(int, void*)
 	allowedPentagonsContourPosition = CheckForAllowedPentagons(pentagons, triangles, pentagonsContourPositions, trianglePositions, &allowedTrianglesPoly);
 
 
-	if (allowedTrianglesPoly.size() > 0){
+	if (allowedTriangles.size() > 0){
 		Point dir;
 		Point PosTop;
-		vector<Point> pointsTriRect = GetFrontOfTriangle(triangles[allowedTrianglesPoly[0]]);
+		vector<Point> pointsTriRect = GetFrontOfTriangle(triangles[allowedTriangles[0]]);
 		dir = pointsTriRect[0];
 		PosTop = pointsTriRect[1];
 
@@ -801,8 +805,12 @@ public:
 
 		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect3);
 
+		Stopwatch sw;
+
 		while (true)
 		{
+			sw.restart();
+
 			capture >> srcdetect2;
 
 			////Grayscale matrix
@@ -831,6 +839,9 @@ public:
 			//thresh_callbackdetect2(0, 0);
 
 			thresh_callbackdetect3(0, 0);
+
+			sw.stop();
+			printf("%f\r", sw.elapsed()*0.001);
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
@@ -1487,7 +1498,7 @@ public:
 
 	void DetectCircle(){
 
-
+		Stopwatch sw;
 		/// Show your results
 		namedWindow("Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE);
 
@@ -1504,10 +1515,15 @@ public:
 		cout << "FPS: " << capture.get(CV_CAP_PROP_FPS) << std::endl;
 		cout << "Resolution: " << capture.get(CV_CAP_PROP_FRAME_WIDTH) << "x" << capture.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
 
+		threshdetect2 = 50;
+		//int threshdetect2 = 100;
+		max_threshdetect2 = 255;
+		RNG rngdetect2;
 
 
 		while (true)
 		{
+			sw.restart();
 			capture >> srcdetect2;
 
 
@@ -1521,8 +1537,10 @@ public:
 			vector<Vec3f> circles;
 
 			/// Apply the Hough Transform to find the circles
-			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 0, 0);
+			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
 
+			/// Apply the Hough Transform to find the circles
+			//HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
 
 
 			//Drawing and contours
@@ -1624,11 +1642,14 @@ public:
 			}
 
 			//circle(srcdetect2, centerTri, 3, Scalar(0, 255, 0), -1, 8, 0);
-			Point x(centerTri.x - 50, centerTri.y - 50);
-			Point y(centerTri.x + 50, centerTri.y + 50);
+			Point x(centerTri.x - 40, centerTri.y - 40);
+			Point y(centerTri.x + 40, centerTri.y + 40);
 			rectangle(srcdetect2, x, y, Scalar(0, 255, 0), 1, 8, 0);
 
 			imshow("Hough Circle Transform Demo", srcdetect2);
+
+			sw.stop();
+			printf("%f\r", sw.elapsed()*0.001);
 
 			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
 			{
