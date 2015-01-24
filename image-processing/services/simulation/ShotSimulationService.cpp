@@ -72,6 +72,7 @@ namespace services {
 			//Frames are only interesting if shots must be simulated
 			if (!shots.empty()) {
 				Poco::Mutex::ScopedLock lock(framesQueueLock); //will be released after leaving scop
+				if (!framesQueue.empty()) framesQueue.pop();
 				framesQueue.push(observable->GetLastImage().clone());
 			}
 		}

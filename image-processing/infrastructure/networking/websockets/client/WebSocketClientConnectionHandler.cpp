@@ -224,14 +224,14 @@ namespace infrastructure {
 
 			for (size_t i = 1; i <= 5; i++)
 			{
-				logger.warning("Try reconnect " + i);
+				logger.warning("Try reconnect");
 
 				if (EstablishConnection()) {
 					isConnected = true;
 					break; //reconnected
 				}
 				else {
-					logger.warning("Reconnect failed - retry in 200ms");
+					logger.warning("Reconnect failed; retry in 200ms");
 					Thread::sleep(200);
 				}
 			}
