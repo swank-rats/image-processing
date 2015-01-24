@@ -22,7 +22,7 @@ namespace controller {
 			//TODO THOMAS Init players
 			playerRect.form = "square";
 			playerRect.playerId = 0;
-			playerPent.form = "pentagon";
+			playerPent.form = "circle";
 			playerPent.playerId = 1;
 			detectionService = new ObjectDetectionService();
 		}
@@ -85,7 +85,7 @@ namespace controller {
 					if (playerHitNotification)
 					{
 						Message* msg = new Message(MessageCommandEnum::hit, "server");
-						msg->AddParam("player", std::to_string(playerHitNotification->GetHitPlayer().playerId));
+						msg->AddParam("player", playerHitNotification->GetHitPlayer().form);
 						msg->AddParam("precision", std::to_string(playerHitNotification->GetPrecision()));
 
 						websocketController->Send(msg);
