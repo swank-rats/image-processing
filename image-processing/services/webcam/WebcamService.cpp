@@ -21,8 +21,7 @@ namespace services {
 	namespace webcam {
 		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
 			isRecording = false;
-			isModifiedAvailable = false;
-
+			params = { CV_IMWRITE_JPEG_QUALITY, 30 };
 			fps = 20;
 			delay = 1000 / fps;
 		}
@@ -45,24 +44,20 @@ namespace services {
 			return fps;
 		}
 
-		bool WebcamService::IsModifiedAvailable() {
-			Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
-			return isModifiedAvailable;
+		void WebcamService::SetModifiedImage(Mat& image) {
+			Poco::Mutex::ScopedLock lock(modifiedImgMutex); //will be released after leaving scop
+			// encode mat to jpg and copy it to content
+			cv::imencode(".jpg", image, modifiedImage, params);
 		}
 
-		void WebcamService::SetModifiedImage(Mat image) {
-			Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
-			modifiedImage = image;
-			isModifiedAvailable = true;
-		}
-
-		Mat& WebcamService::GetModifiedImage() {
-			Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
-			return modifiedImage;
+		vector<uchar>* WebcamService::GetModifiedImage() {
+			Poco::Mutex::ScopedLock lock(modifiedImgMutex); //will be released after leaving scop
+			vector<uchar> *tempImg = new vector<uchar>(modifiedImage.begin(), modifiedImage.end());
+			return tempImg;
 		}
 
 		Mat& WebcamService::GetLastImage() {
-			Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
+			Poco::Mutex::ScopedLock lock(lastImgMutex); //will be released after leaving scop
 			return lastImage;
 		}
 
@@ -143,9 +138,8 @@ namespace services {
 				clock.update();
 				if (!frame.empty()) {
 					{
-						Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
+						Poco::Mutex::ScopedLock lock(lastImgMutex); //will be released after leaving scop
 						lastImage = frame; //Clone image
-						isModifiedAvailable = false;
 					}
 
 					//sw.stop();

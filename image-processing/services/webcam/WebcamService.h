@@ -16,9 +16,11 @@
 #include <Poco\Mutex.h>
 
 #include <memory>
+#include <vector>
 
 using cv::VideoCapture;
 using cv::Mat;
+using std::vector;
 using Poco::Activity;
 using Poco::Logger;
 using Poco::Mutex;
@@ -33,10 +35,9 @@ namespace services {
 			bool StartRecording();
 			bool StopRecording();
 			Mat& GetLastImage();
-			Mat& GetModifiedImage();
-			void SetModifiedImage(Mat image);
+			vector<uchar>* GetModifiedImage();
+			void SetModifiedImage(Mat& image);
 			bool IsRecording();
-			bool IsModifiedAvailable();
 			int GetFPS();
 			int GetDelay();
 		private:
@@ -46,9 +47,11 @@ namespace services {
 			int delay;
 			VideoCapture capture;
 			Mat lastImage;
-			Mat modifiedImage;
+			vector<uchar> modifiedImage;
 			Activity<WebcamService> recordingActivity;
-			Poco::Mutex mutex;
+			Poco::Mutex lastImgMutex;
+			Poco::Mutex modifiedImgMutex;
+			vector<int> params;
 
 			void RecordingCore();
 		};

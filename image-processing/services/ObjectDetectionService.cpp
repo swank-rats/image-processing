@@ -186,19 +186,16 @@ namespace services {
 
 		Robot ObjectDetectionService::DetectRobot(Player player, const Mat &frame)
 		{
-
 			if (frame.empty()) {
 				return Robot();
 			}
 
 			if (player.playerId == 0)
 			{
-
 				return DetectRobotRect(frame);
 			}
 			if (player.playerId == 1)
 			{
-
 				return DetectRobotPent(frame);
 			}
 
@@ -207,21 +204,31 @@ namespace services {
 
 		Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
 
-		/*	Stopwatch sw;
-			sw.start();*/
+			Stopwatch swTotal;
+			swTotal.start();
 
 			Mat srcdetect2;
 			Mat src_graydetect2;
+<<<<<<< HEAD
 			int threshdetect2 = 160;
+=======
+			int threshdetect2 = 100;
+>>>>>>> ae881196206a6418463880bd184c8b0688ca13b9
 			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
 			srcdetect2 = frame;
 
+			Stopwatch sw;
+			sw.start();
 			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
+			sw.stop();
+			printf("cvtColor: %f ms\n", sw.elapsed() * 0.001);
+			sw.restart();
 			blur(src_graydetect2, src_graydetect2, Size(3, 3));
-
+			sw.stop();
+			printf("blur: %f ms\n", sw.elapsed() * 0.001);
 			//Drawing and contours
 			Mat canny_output;
 			vector<vector<Point> > contours;
@@ -242,21 +249,31 @@ namespace services {
 			//dilate(src_graydetect2, src_graydetect2, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
 			/// Detect edges using canny
+			sw.restart();
 			Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+			sw.stop();
+			printf("Canny: %f ms\n", sw.elapsed() * 0.001);
 
+			sw.restart();
 			//thresholding the grayscale image to get better results
 			threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
+			sw.stop();
+			printf("threshold: %f ms\n", sw.elapsed() * 0.001);
 
+			sw.restart();
 			/// Find contours
 			findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
 
-			/// Draw contours
+
+				sw.stop();
+			printf("findContours: %f ms\n", sw.elapsed() * 0.001);		/// Draw contours
 			Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
 
 			/*
 			*	Starting detection process
 			*/
 
+			sw.restart();
 			for (size_t i = 0; i < contours.size(); i++)
 			{
 				// Approximate contour with accuracy proportional
@@ -289,7 +306,16 @@ namespace services {
 				}
 			}
 
+
+			sw.stop();
+			printf("findContProcess: %f ms\n", sw.elapsed() * 0.001);
+
+				sw.restart();
 			allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions, trianglePositions, &allowedTriangles);
+			sw.stop();
+			printf("allowedRect: %f ms\n", sw.elapsed() * 0.001);
+
+			sw.restart();
 			vector<Point> pointsTriRect;
 			vector<Point> contoursRect;
 			if (allowedTriangles.size() > 0){
@@ -301,8 +327,14 @@ namespace services {
 				contoursRect = contours[allowedRectanglesContourPositions[0]];
 			}
 
-			//sw.stop();
-			//printf("Rect detection: %f ms\n", sw.elapsed() * 0.001);
+			sw.stop();
+			printf("GetFrontOFTrie: %f ms\n", sw.elapsed() * 0.001);
+
+			swTotal.stop();
+			printf("Rect detection: %f ms\n", swTotal.elapsed() * 0.001);
+			if (swTotal.elapsed() > 100000) {
+				printf("");
+			}
 
 			if (pointsTriRect.size() == 2)
 				return Robot(pointsTriRect[1], pointsTriRect[0], contoursRect);
@@ -320,7 +352,7 @@ namespace services {
 
 			Mat srcdetect2;
 			Mat src_graydetect2;
-			int threshdetect2 = 50;
+			int threshdetect2 = 100;
 			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
@@ -346,7 +378,7 @@ namespace services {
 			/// Apply the Hough Transform to find the circles
 	/*		Stopwatch hough;
 			hough.start();*/
-			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 60, 30, 0, 0);
+			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
 			//hough.stop();
 			//printf("hough: %f ms\n", hough.elapsed() * 0.001);
 
@@ -568,22 +600,26 @@ namespace services {
 		}
 
 		bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, SimulationShot &shot) {
-
-
 			//Stopwatch sw;
 			//sw.start();
 
-
 			Robot robotHitPlayer = DetectRobot(shot.hitPlayer, frame);
+			
+			//sw.stop();
+			//printf("DetectRobot: %f ms\n", sw.elapsed() * 0.001);
 
 			if (robotHitPlayer.robotForm.size() <= 0)
 			{
-				//sw.stop();
-				//printf("error hitting player: %f ms\n", sw.elapsed() * 0.001);
 				return false;
 			}
 
+			//sw.restart();
+
 			Point2i tmp = shot.GetCurrentShotPoint();
+
+			//sw.stop();
+			//printf("GetCurrentShotPoint: %f ms\n", sw.elapsed() * 0.001);
+
 			Point2f currentShotingPoint = Point2f(tmp.x, tmp.y);
 
 			//Logger& logger = Logger::get("ObjectDetectionService");
@@ -594,10 +630,13 @@ namespace services {
 				logger.information("X: " + std::to_string(tmp.x));
 				logger.information("y: " + std::to_string(tmp.y));
 				*/
+
+			//sw.restart();
+
 			if (pointPolygonTest(Mat(robotHitPlayer.robotForm), currentShotingPoint, true) > 0)
 			{
-		/*		sw.stop();
-				printf("Has hit player: %f ms\n", sw.elapsed() * 0.001);*/
+				//sw.stop();
+				//printf("Has hit player: %f ms\n", sw.elapsed() * 0.001);
 				return true;
 			}
 			else
