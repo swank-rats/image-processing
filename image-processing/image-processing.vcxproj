@@ -189,6 +189,7 @@
     <ClCompile Include="controller\ImageProcessingController.cpp" />
     <ClCompile Include="controller\VideoStreamingController.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.cpp" />
+    <ClCompile Include="shared\notifications\NewFrameNotification.cpp" />
     <ClCompile Include="shared\model\message\Message.cpp" />
     <ClCompile Include="shared\model\message\MessageCommands.cpp" />
     <ClCompile Include="shared\model\message\MessageHeaders.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="controller\ImageProcessingController.h" />
     <ClInclude Include="controller\VideoStreamingController.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h" />
+    <ClInclude Include="shared\notifications\NewFrameNotification.h" />
     <ClInclude Include="shared\model\message\Message.h" />
     <ClInclude Include="shared\model\message\MessageCommands.h" />
     <ClInclude Include="shared\model\message\MessageHeaders.h" />

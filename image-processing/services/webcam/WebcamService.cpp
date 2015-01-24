@@ -5,16 +5,17 @@
 // Description :
 //============================================================================
 #include "WebcamService.h"
-
-#include <Poco\Thread.h>
-
 #include <iostream>
 #include <iomanip>
+
+#include <Poco\Clock.h>
 
 //#include <Poco\Stopwatch.h>
 //using Poco::Stopwatch;
 
+using Poco::Clock;
 using Poco::Thread;
+using Poco::Notification;
 using std::cout;
 
 namespace services {
@@ -23,7 +24,7 @@ namespace services {
 			isRecording = false;
 			isModifiedAvailable = false;
 
-			fps = 15;
+			fps = 5;
 			delay = 1000 / fps;
 		}
 
@@ -124,7 +125,10 @@ namespace services {
 		void WebcamService::RecordingCore() {
 			Logger& logger = Logger::get("WebcamService");
 			Mat frame;
+
 			//Stopwatch sw;
+			Clock clock;
+			int newDelay = 0;
 
 			while (!recordingActivity.isStopped()) {
 				if (!capture.isOpened()) {
@@ -137,6 +141,7 @@ namespace services {
 				//Create image frames from capture
 				capture >> frame;
 
+				clock.update();
 				if (!frame.empty()) {
 					{
 						Poco::Mutex::ScopedLock lock(mutex); //will be released after leaving scop
@@ -157,7 +162,13 @@ namespace services {
 					logger.warning("Captured empty webcam frame!");
 				}
 
-				Thread::sleep(delay); //needed fulfill fps
+				newDelay = delay - clock.elapsed() * 0.001;
+
+				if (newDelay > 0) {
+					//webcam can only be queried after some time again 
+					//according to the FPS rate
+					Thread::sleep(newDelay);
+				}
 			}
 		}
 	}

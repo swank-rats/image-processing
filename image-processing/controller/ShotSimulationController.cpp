@@ -41,6 +41,14 @@ namespace controller {
 #endif
 		}
 
+		void ShotSimulationController::StartSimulationService() {
+			shotSimulation.Start();
+		}
+
+		void ShotSimulationController::StopSimulationService() {
+			shotSimulation.Stop();
+		}
+
 		void ShotSimulationController::HandleMessageNotification(MessageNotification* notification) {
 			Message *message = notification->GetData();
 

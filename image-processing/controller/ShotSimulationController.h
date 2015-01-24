@@ -35,7 +35,8 @@ namespace controller {
 			ShotSimulationController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> websocketController);
 			~ShotSimulationController();
 			void HandleMessageNotification(MessageNotification* notification);
-
+			void StartSimulationService();
+			void StopSimulationService();
 			void StartTestingSimulation(); //only for testing
 		private:
 			SharedPtr<WebSocketController> websocketController;

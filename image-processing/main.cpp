@@ -148,7 +148,7 @@ private:
 		webSocketCtrl->GetNotificationCenter().addObserver(Observer<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
 
 		imgProcCtrl.StartImageProcessing();
-
+		shotSimCtrl.StartSimulationService();
 		webSocketCtrl->StartWebSocketClient();
 
 #if defined(CONNTEST)
@@ -179,7 +179,7 @@ private:
 				break; //If you hit ESC key loop will break.
 			}
 		}
-
+		shotSimCtrl.StopSimulationService();
 		imgProcCtrl.StopImageProcessing();
 		vidStreamCtrl.StopStreamingServer();
 		webSocketCtrl->StopWebSocketClient();

@@ -78,6 +78,9 @@
     <ClCompile Include="services\simulation\ShotSimulationService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="shared\notifications\NewFrameNotification.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controller\ImageProcessingController.h">
@@ -150,6 +153,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="services\simulation\ShotSimulationService.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\notifications\NewFrameNotification.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

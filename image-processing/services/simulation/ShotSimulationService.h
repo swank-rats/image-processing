@@ -7,8 +7,8 @@
 #pragma once
 #include "..\webcam\WebcamService.h"
 #include "..\ObjectDetectionService.h"
-#include "..\..\shared\observer\IObserver.h"
 #include "..\..\shared\model\Shot.h"
+#include "..\..\shared\observer\IObserver.h"
 
 #include <opencv2\core\core.hpp>
 
@@ -16,7 +16,9 @@
 #include <Poco\SharedPtr.h>
 #include <Poco\NotificationQueue.h>
 #include <Poco\Mutex.h>
+#include <Poco\RunnableAdapter.h>
 
+#include <queue>
 #include <memory>
 
 using cv::Mat;
@@ -29,6 +31,8 @@ using Poco::HashSet;
 using Poco::SharedPtr;
 using Poco::NotificationQueue;
 using Poco::Mutex;
+using Poco::Thread;
+using Poco::RunnableAdapter;
 
 namespace services {
 	namespace simulation {
@@ -38,8 +42,12 @@ namespace services {
 			ShotSimulationService(SharedPtr<WebcamService> webcamService, NotificationQueue& playerHitQueue);
 			~ShotSimulationService();
 			void SimulateShot(Shot shot);
+			void Start();
+			void Stop();
 			void Update(WebcamService* observable);
 		private:
+			typedef HashSet<SimulationShot, SimulationShot> ShotsSetType;
+
 			Mat gunShotImg;
 			Mat cheeseImg;
 			Mat wallExplosionImg;
@@ -50,14 +58,18 @@ namespace services {
 			int wallExplosionHalfYSize;
 			int startExplostionHalfXSize;
 			int startExplostionHalfYSize;
-			Poco::Mutex mutexThreadLock;
+			Poco::Mutex shotsSetLock;
+			Poco::Mutex framesQueueLock;
+			Thread simulationThread;
+			RunnableAdapter<ShotSimulationService> runnable;
+			bool shallSimulate;
+			queue<Mat> framesQueue;
 			SharedPtr<WebcamService> webcamService;
 			ObjectDetectionService detectionService;
 			NotificationQueue& playerHitQueue;
-
-			typedef HashSet<SimulationShot, SimulationShot> ShotsSetType;
 			ShotsSetType shots;
 
+			void UpdateSimulation();
 			void OverlayImage(Mat &background, const Mat &foreground, Point2i &location);
 		};
 	}
