@@ -20,38 +20,6 @@ using shared::notifications::ClientConnectionLostNotification;
 
 namespace infrastructure {
 	namespace video_streaming {
-		bool _qpcInited = false;
-		double PCFreq = 0.0;
-		__int64 CounterStart = 0;
-		void InitCounter()
-		{
-			LARGE_INTEGER li;
-			if (!QueryPerformanceFrequency(&li))
-			{
-				std::cout << "QueryPerformanceFrequency failed!\n";
-			}
-			PCFreq = double(li.QuadPart) / 1000.0f;
-			_qpcInited = true;
-		}
-		double CLOCK()
-		{
-			if (!_qpcInited) InitCounter();
-			LARGE_INTEGER li;
-			QueryPerformanceCounter(&li);
-			return double(li.QuadPart) / PCFreq;
-		}
-
-		double _avgdur = 0;
-		double _fpsstart = 0;
-		double _avgfps = 0;
-		double _fps1sec = 0;
-
-		double avgdur(double newdur)
-		{
-			_avgdur = 0.98*_avgdur + 0.02*newdur;
-			return _avgdur;
-		}
-
 		VideoStreamingRequestHandler::VideoStreamingRequestHandler(SharedPtr<WebcamService> webcamService, NotificationQueue& lostConnectionQueue)
 			: lostConnectionQueue(lostConnectionQueue), webcamService(webcamService) {
 			boundary = "VIDEOSTREAM";
@@ -86,12 +54,9 @@ namespace infrastructure {
 			std::ostream& out = response.send();
 
 			//Stopwatch sw;
-			double start = 0.0;
-			double dif = 0.0;
 			
 			while (out.good() && webcamService->IsRecording()) {
 				//sw.restart(); //measuring writing
-				start = CLOCK();
 
 				MultipartWriter writer(out, boundary);
 
@@ -113,12 +78,8 @@ namespace infrastructure {
 				delete buf;
 				buf = nullptr;
 
-				/*sw.stop();*/
+				//sw.stop();
 				//printf("Sending: %f ms\n\r", sw.elapsed() * 0.001);
-
-				dif = CLOCK() - start;
-				printf("Sending: %f ms; avg: %f ms\r", dif, avgdur(dif));
-
 			}
 
 			logger.information("Video streaming stopped for client " + request.clientAddress().toString());
