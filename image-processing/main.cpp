@@ -6,7 +6,7 @@
 //============================================================================
 #include "services\webcam\WebcamService.h"
 #include "services\ObjectDetectionService.h"
-#include "controller\ImageProcessingController.h"
+#include "controller\WebCamController.h"
 #include "controller\VideoStreamingController.h"
 #include "controller\WebSocketController.h"
 #include "controller\ShotSimulationController.h"
@@ -59,7 +59,7 @@ using Poco::Util::LayeredConfiguration;
 using Poco::Util::ServerApplication;
 
 using shared::model::message::MessageCommandEnum;
-using controller::image_processing::ImageProcessingController;
+using controller::webcam::WebCamController;
 using controller::video_streaming::VideoStreamingController;
 using controller::shot_simulation::ShotSimulationController;
 using controller::websocket::WebSocketController;
@@ -140,14 +140,14 @@ private:
 		SharedPtr<WebcamService> webcamService(new WebcamService());
 		SharedPtr<WebSocketController> webSocketCtrl(new WebSocketController(uri));
 
-		ImageProcessingController imgProcCtrl(webcamService);
+		WebCamController webCamCtrl(webcamService);
 		VideoStreamingController vidStreamCtrl(webcamService, webSocketCtrl);
 		ShotSimulationController shotSimCtrl(webcamService, webSocketCtrl);
 
 		webSocketCtrl->GetNotificationCenter().addObserver(Observer<ShotSimulationController, MessageNotification>(shotSimCtrl, &ShotSimulationController::HandleMessageNotification));
 		webSocketCtrl->GetNotificationCenter().addObserver(Observer<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
 
-		imgProcCtrl.StartImageProcessing();
+		webCamCtrl.StartWebCam();
 		shotSimCtrl.StartSimulationService();
 		webSocketCtrl->StartWebSocketClient();
 
@@ -168,7 +168,7 @@ private:
 #if defined(THOMAS) || defined(STANDALONE)
 		vidStreamCtrl.StartStreamingServer();
 
-		shotSimCtrl.StartTestingSimulation();
+		//shotSimCtrl.StartTestingSimulation();
 #endif
 
 		char key;
@@ -180,7 +180,7 @@ private:
 			}
 		}
 		shotSimCtrl.StopSimulationService();
-		imgProcCtrl.StopImageProcessing();
+		webCamCtrl.StopWebCam();
 		vidStreamCtrl.StopStreamingServer();
 		webSocketCtrl->StopWebSocketClient();
 		webSocketCtrl = nullptr;

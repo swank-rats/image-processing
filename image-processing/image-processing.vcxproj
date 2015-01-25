@@ -186,7 +186,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="controller\ImageProcessingController.cpp" />
+    <ClCompile Include="controller\WebCamController.cpp" />
     <ClCompile Include="controller\VideoStreamingController.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.cpp" />
     <ClCompile Include="shared\notifications\NewFrameNotification.cpp" />
@@ -210,7 +210,7 @@
     <ClCompile Include="ThomasTestMethod.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="controller\ImageProcessingController.h" />
+    <ClInclude Include="controller\WebCamController.h" />
     <ClInclude Include="controller\VideoStreamingController.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h" />
     <ClInclude Include="shared\notifications\NewFrameNotification.h" />

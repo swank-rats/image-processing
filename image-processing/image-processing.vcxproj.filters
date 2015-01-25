@@ -18,9 +18,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="controller\ImageProcessingController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="services\ObjectDetectionService.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -81,11 +78,11 @@
     <ClCompile Include="shared\notifications\NewFrameNotification.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="controller\WebCamController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="controller\ImageProcessingController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="shared\observer\IObserver.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -156,6 +153,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="shared\notifications\NewFrameNotification.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\WebCamController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
