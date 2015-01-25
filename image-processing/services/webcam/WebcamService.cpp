@@ -10,8 +10,8 @@
 
 #include <Poco\Clock.h>
 
-//#include <Poco\Stopwatch.h>
-//using Poco::Stopwatch;
+#include <Poco\Stopwatch.h>
+using Poco::Stopwatch;
 
 using Poco::Clock;
 using Poco::Thread;
@@ -45,9 +45,13 @@ namespace services {
 		}
 
 		void WebcamService::SetModifiedImage(Mat& image) {
+			Stopwatch sw;
+			sw.start();
 			Poco::Mutex::ScopedLock lock(modifiedImgMutex); //will be released after leaving scop
 			// encode mat to jpg and copy it to content
 			cv::imencode(".jpg", image, modifiedImage, params);
+			sw.stop();
+			printf("Encoding: %f ms\n\r", sw.elapsed() * 0, 001);
 		}
 
 		vector<uchar>* WebcamService::GetModifiedImage() {
@@ -137,10 +141,10 @@ namespace services {
 
 				clock.update();
 				if (!frame.empty()) {
-					{
-						Poco::Mutex::ScopedLock lock(lastImgMutex); //will be released after leaving scop
-						lastImage = frame; //Clone image
-					}
+						{
+							Poco::Mutex::ScopedLock lock(lastImgMutex); //will be released after leaving scop
+							lastImage = frame; //Clone image
+						}
 
 					//sw.stop();
 					//printf("Capture frame: %f ms\n", sw.elapsed() * 0.001);
@@ -158,7 +162,7 @@ namespace services {
 				newDelay = delay - clock.elapsed() * 0.001;
 
 				if (newDelay > 0) {
-					//webcam can only be queried after some time again 
+					//webcam can only be queried after some time again
 					//according to the FPS rate
 					Thread::sleep(newDelay);
 				}

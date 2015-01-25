@@ -26,13 +26,11 @@ using std::vector;
 using cv::imread;
 using shared::notifications::PlayerHitNotification;
 
-
 namespace services {
 	namespace simulation {
 		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService, NotificationQueue& playerHitQueue)
 			: webcamService(webcamService), detectionService(), playerHitQueue(playerHitQueue), maxNeededThreads(200 / webcamService->GetDelay()),
 			runnable(*this, &ShotSimulationService::UpdateSimulation), threadPool(2, maxNeededThreads, 2 * webcamService->GetDelay()) {
-
 			gunShotImg = imread("resources/images/gunfire2_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			wallExplosionImg = imread("resources/images/explosion_wall.png", CV_LOAD_IMAGE_UNCHANGED);
@@ -80,30 +78,30 @@ namespace services {
 			//	}
 			//}
 
-			{
-				Poco::Mutex::ScopedLock lock(framesQueueLock); //will be released after leaving scop
-				framesQueue.push(observable->GetLastImage().clone());
-			}
+				{
+					Poco::Mutex::ScopedLock lock(framesQueueLock); //will be released after leaving scop
+					framesQueue.push(observable->GetLastImage().clone());
+				}
 
 			if (threadPool.used() < maxNeededThreads) {
-				threadPool.startWithPriority(Thread::Priority::PRIO_HIGHEST, runnable);			}
+				threadPool.startWithPriority(Thread::Priority::PRIO_HIGHEST, runnable);
+			}
 		}
 
 		void ShotSimulationService::UpdateSimulation() {
 			//Stopwatch total;
 
 			while (shallSimulate) {
-
 				if (shots.empty()) {
-					{
-						Poco::Mutex::ScopedLock lock(framesQueueLock); //will be released after leaving scop
-						if (!framesQueue.empty()) {
-							//pass unmodified image as modified
-							webcamService->SetModifiedImage(framesQueue.front());
-							framesQueue.pop();
+						{
+							Poco::Mutex::ScopedLock lock(framesQueueLock); //will be released after leaving scop
+							if (!framesQueue.empty()) {
+								//pass unmodified image as modified
+								webcamService->SetModifiedImage(framesQueue.front());
+								framesQueue.pop();
+							}
 						}
-					}
-					
+
 					Thread::sleep(threadSleepTime);
 					continue;
 				}
@@ -129,7 +127,6 @@ namespace services {
 						ShotsSetType::Iterator iter = shots.begin();
 
 						while (iter != shots.end()) {
-
 							//if (iter->SimulateStartExplosion()) {
 							//	//simulate gun explosion
 							//	int explosionx = iter->startPoint.x - startExplostionHalfXSize > 0 ? iter->startPoint.x - startExplostionHalfXSize : 0;
@@ -156,8 +153,8 @@ namespace services {
 							//printf("swStatus: %f ms\n", swStatus.elapsed() * 0.001);
 
 							if (iter->SimulateEndExplosion()) {
-							//	Stopwatch endExplo;
-							//	endExplo.start();
+								//	Stopwatch endExplo;
+								//	endExplo.start();
 
 								if (status == SimulationShot::HIT_PLAYER) {
 									int explosionx = iter->endPoint.x - robotExplosionHalfXSize > 0 ? iter->endPoint.x - robotExplosionHalfXSize : 0;

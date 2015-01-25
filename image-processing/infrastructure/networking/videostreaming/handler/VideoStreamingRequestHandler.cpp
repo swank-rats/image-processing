@@ -15,21 +15,8 @@ using Poco::Net::HTTPResponse;
 using Poco::Net::MultipartWriter;
 using shared::notifications::ClientConnectionLostNotification;
 
-//only for measuring 
-//#include <Poco\Stopwatch.h>
-//using Poco::Stopwatch;
-//static double _avgenc = 0;
-//static double _avgstr = 0;
-//double avgenc(double newdur)
-//{
-//	_avgenc = 0.98*_avgenc + 0.02*newdur;
-//	return _avgenc;
-//}
-//double avgstr(double newdur)
-//{
-//	_avgstr = 0.98*_avgstr + 0.02*newdur;
-//	return _avgstr;
-//}
+#include <Poco\Stopwatch.h>
+using Poco::Stopwatch;
 
 namespace infrastructure {
 	namespace video_streaming {
@@ -66,10 +53,10 @@ namespace infrastructure {
 
 			std::ostream& out = response.send();
 
-			//Stopwatch sw;
+			Stopwatch sw;
 
 			while (out.good() && webcamService->IsRecording()) {
-				//sw.restart(); //measuring writing
+				sw.restart(); //measuring writing
 
 				MultipartWriter writer(out, boundary);
 
@@ -85,18 +72,14 @@ namespace infrastructure {
 				header.set("Content-Length", std::to_string(buf->size()));
 				header.set("Content-Type", "image/jpeg");
 				writer.nextPart(header);
-
-
 				out.write(reinterpret_cast<const char*>(buf->data()), buf->size());
-
-				//sw.stop();
-				//avgstr(sw.elapsed() * 0.001);
-				//printf("Encoding: %f ms; ToOut: %f ms\r", _avgenc, _avgstr);
-
 				out << "\r\n\r\n";
 
 				delete buf;
 				buf = nullptr;
+
+				sw.stop();
+				printf("Sending: %f ms\n\r", sw.elapsed() * 0, 001);
 			}
 
 			logger.information("Video streaming stopped for client " + request.clientAddress().toString());
