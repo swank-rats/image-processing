@@ -19,6 +19,7 @@
 #include <Poco\Mutex.h>
 #include <Poco\RunnableAdapter.h>
 
+#include <stack>
 #include <queue>
 #include <vector>
 #include <memory>
@@ -48,8 +49,6 @@ namespace services {
 			void Stop();
 			void Update(WebcamService* observable);
 		private:
-			typedef HashSet<SimulationShot, SimulationShot> ShotsSetType;
-
 			Mat gunShotImg;
 			Mat cheeseImg;
 			Mat wallExplosionImg;
@@ -60,18 +59,18 @@ namespace services {
 			int wallExplosionHalfYSize;
 			int startExplostionHalfXSize;
 			int startExplostionHalfYSize;
-			Poco::Mutex shotsSetLock;
-			Poco::Mutex framesQueueLock;
+			Poco::Mutex shotsLock;
+			Poco::Mutex framesLock;
 			RunnableAdapter<ShotSimulationService> runnable;
 			bool shallSimulate;
 			int maxNeededThreads;
 			int threadSleepTime;
 			ThreadPool threadPool;
-			queue<Mat> framesQueue;
+			stack<Mat> frames;
+			queue<SimulationShot*> shots;
 			SharedPtr<WebcamService> webcamService;
 			ObjectDetectionService detectionService;
 			NotificationQueue& playerHitQueue;
-			ShotsSetType shots;
 
 			void UpdateSimulation();
 			void OverlayImage(Mat &background, const Mat &foreground, Point2i &location);
