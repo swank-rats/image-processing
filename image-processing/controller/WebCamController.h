@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : ImageProcessingController.h
+// Name        : WebCamController.h
 // Author      : ITM13
 // Version     : 1.0
 // Description :
@@ -14,14 +14,14 @@ using Poco::SharedPtr;
 using services::webcam::WebcamService;
 
 namespace controller {
-	namespace image_processing {
-		class ImageProcessingController
+	namespace webcam {
+		class WebCamController
 		{
 		public:
-			ImageProcessingController(SharedPtr<WebcamService> webcamService);
-			~ImageProcessingController();
-			void StartImageProcessing();
-			void StopImageProcessing();
+			WebCamController(SharedPtr<WebcamService> webcamService);
+			~WebCamController();
+			void StartWebCam();
+			void StopWebCam();
 		private:
 			SharedPtr<WebcamService> webcamService;
 		};

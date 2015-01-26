@@ -1,10 +1,10 @@
 //============================================================================
-// Name        : ImageProcessingController.cpp
+// Name        : WebCamController.cpp
 // Author      : ITM13
 // Version     : 1.0
 // Description :
 //============================================================================
-#include "ImageProcessingController.h"
+#include "WebCamController.h"
 
 #include <Poco\Thread.h>
 #include <Poco\RunnableAdapter.h>
@@ -13,22 +13,22 @@ using Poco::Thread;
 using Poco::RunnableAdapter;
 
 namespace controller {
-	namespace image_processing {
-		ImageProcessingController::ImageProcessingController(SharedPtr<WebcamService> webcamService) : webcamService(webcamService) {
+	namespace webcam {
+		WebCamController::WebCamController(SharedPtr<WebcamService> webcamService) : webcamService(webcamService) {
 		}
 
-		ImageProcessingController::~ImageProcessingController()	{
+		WebCamController::~WebCamController()	{
 			//do not delete, since it is a shared pointer
 			webcamService = nullptr;
 		}
 
-		void ImageProcessingController::StartImageProcessing() {
+		void WebCamController::StartWebCam() {
 			if (!webcamService->IsRecording()) {
 				webcamService->StartRecording();
 			}
 		}
 
-		void ImageProcessingController::StopImageProcessing() {
+		void WebCamController::StopWebCam() {
 			if (webcamService->IsRecording()) {
 				webcamService->StopRecording();
 			}

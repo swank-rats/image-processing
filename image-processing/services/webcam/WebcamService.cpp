@@ -45,13 +45,9 @@ namespace services {
 		}
 
 		void WebcamService::SetModifiedImage(Mat& image) {
-			Stopwatch sw;
-			sw.start();
 			Poco::Mutex::ScopedLock lock(modifiedImgMutex); //will be released after leaving scop
 			// encode mat to jpg and copy it to content
 			cv::imencode(".jpg", image, modifiedImage, params);
-			sw.stop();
-			printf("Encoding: %f ms\n\r", sw.elapsed() * 0, 001);
 		}
 
 		vector<uchar>* WebcamService::GetModifiedImage() {

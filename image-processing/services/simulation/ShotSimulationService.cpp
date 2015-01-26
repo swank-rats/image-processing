@@ -29,7 +29,7 @@ using shared::notifications::PlayerHitNotification;
 namespace services {
 	namespace simulation {
 		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService, NotificationQueue& playerHitQueue)
-			: webcamService(webcamService), detectionService(), playerHitQueue(playerHitQueue), maxNeededThreads(200 / webcamService->GetDelay()),
+			: webcamService(webcamService), detectionService(), playerHitQueue(playerHitQueue), maxNeededThreads(2),
 			runnable(*this, &ShotSimulationService::UpdateSimulation), threadPool(2, maxNeededThreads, 2 * webcamService->GetDelay()) {
 			gunShotImg = imread("resources/images/gunfire2_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);

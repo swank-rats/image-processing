@@ -15,8 +15,8 @@ using Poco::Net::HTTPResponse;
 using Poco::Net::MultipartWriter;
 using shared::notifications::ClientConnectionLostNotification;
 
-#include <Poco\Stopwatch.h>
-using Poco::Stopwatch;
+//#include <Poco\Stopwatch.h>
+//using Poco::Stopwatch;
 
 namespace infrastructure {
 	namespace video_streaming {
@@ -53,10 +53,10 @@ namespace infrastructure {
 
 			std::ostream& out = response.send();
 
-			Stopwatch sw;
-
+			//Stopwatch sw;
+			
 			while (out.good() && webcamService->IsRecording()) {
-				sw.restart(); //measuring writing
+				//sw.restart(); //measuring writing
 
 				MultipartWriter writer(out, boundary);
 
@@ -78,8 +78,8 @@ namespace infrastructure {
 				delete buf;
 				buf = nullptr;
 
-				sw.stop();
-				printf("Sending: %f ms\n\r", sw.elapsed() * 0, 001);
+				//sw.stop();
+				//printf("Sending: %f ms\n\r", sw.elapsed() * 0.001);
 			}
 
 			logger.information("Video streaming stopped for client " + request.clientAddress().toString());
