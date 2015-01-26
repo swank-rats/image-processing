@@ -123,8 +123,15 @@ namespace services {
 					vector<Shot> deleteShots;
 
 					{
-						Poco::Mutex::ScopedLock lock(shotsSetLock); //will be released after leaving scop
-						ShotsSetType::Iterator iter = shots.begin();
+						ShotsSetType* tempShots = nullptr;
+
+						//clone existing shots
+						{
+							Poco::Mutex::ScopedLock lock(shotsSetLock); //will be released after leaving scop
+							tempShots = new ShotsSetType(shots);
+						}
+
+						ShotsSetType::Iterator iter = tempShots->begin();
 
 						while (iter != shots.end()) {
 							//if (iter->SimulateStartExplosion()) {
