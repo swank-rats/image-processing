@@ -82,7 +82,7 @@ namespace infrastructure {
 			response.setChunkedTransferEncoding(false);
 
 			std::ostream& out = response.send();
-
+			int frames = 0;
 			//double start = 0.0;
 			//double dif = 0.0;
 
@@ -111,7 +111,10 @@ namespace infrastructure {
 
 				//dif = CLOCK() - start;
 				//printf("Sending: %.2f ms; avg: %.2f ms\r", dif, avgdur(dif));
+				++frames;
 			}
+
+			printf("Frames: %u", frames);
 
 			logger.information("Video streaming stopped for client " + request.clientAddress().toString());
 			lostConnectionQueue.enqueueNotification(new ClientConnectionLostNotification(request.clientAddress()));
