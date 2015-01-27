@@ -66,14 +66,13 @@ namespace services {
 		}
 
 		void ShotSimulationService::SimulateShot(Shot shot) {
-			Poco::Mutex::ScopedLock lock(shotsLock);
-			shots.push(new SimulationShot(shot));
+			Poco::Mutex::ScopedLock lock(shotsSetLock); //will be released after leaving scop
+			shots.insert(ShotsSetType::ValueType(SimulationShot(shot)));
 		}
 		void ShotSimulationService::Update(WebcamService* observable) {
-			{
-				Poco::Mutex::ScopedLock lock(framesLock); //will be released after leaving scop
-				frames.push(observable->GetLastImage().clone());
-			}
+			framesQueueLock.lock();
+			framesQueue.push(observable->GetLastImage().clone());
+			framesQueueLock.unlock();
 
 			if (threadPool.used() < maxNeededThreads) {
 				threadPool.startWithPriority(Thread::Priority::PRIO_HIGHEST, runnable);
@@ -83,120 +82,122 @@ namespace services {
 		void ShotSimulationService::UpdateSimulation() {
 			//Stopwatch total;
 
-			while (shallSimulate)
-			{
-				//total.restart();
+			while (shallSimulate) {
 				Mat frame;
 
-				framesLock.lock();
-				if (!frames.empty()) {
-					frame = frames.top();
+				framesQueueLock.lock();
+				if (!framesQueue.empty()) {
+					frame = framesQueue.front();
+					framesQueue.pop();
 
-					if (frames.size() > 10) {
-						frames = stack<Mat>();
+					if (framesQueue.size() > 10) {
+						framesQueue = queue<Mat>();
 					}
-					framesLock.unlock();
+					framesQueueLock.unlock();
 				}
 				else {
-					framesLock.unlock();
+					framesQueueLock.unlock();
 					Thread::sleep(threadSleepTime);
 					continue; //retry - no frames
 				}
 
-				SimulationShot* shot = nullptr;
-
-				shotsLock.lock();
-				if (shots.empty())
-				{
-					shotsLock.unlock();
-
-					//set unmodified image as modified
-					webcamService->SetModifiedImage(frame);
-
-					Thread::sleep(threadSleepTime);
-					continue; //set try again
-				}
-				else {
-					shot = shots.front();
-					shots.pop();
-				}
-				shotsLock.unlock();
-
 				try {
-					//if (shot->SimulateStartExplosion()) {
-					//	//simulate gun explosion
-					//	int explosionx = shot->startPoint.x - startExplostionHalfXSize > 0 ? shot->startPoint.x - startExplostionHalfXSize : 0;
-					//	int explosionY = shot->startPoint.y - startExplostionHalfYSize > 0 ? shot->startPoint.y - startExplostionHalfYSize : 0;
-					//	OverlayImage(frame, gunShotImg, Point2i(explosionx, explosionY));
-					//}
+					shotsSetLock.lock();
+					if (shots.empty())
+					{
+						shotsSetLock.unlock();
 
-					//simulate explosion
-					//Stopwatch swStatus;
-					//swStatus.start();
-					SimulationShot::SimulationHitStatus status = shot->status;
-					if (status == SimulationShot::SimulationHitStatus::UNKNOWN) {
-						if (detectionService.HasShotHitPlayer(frame, *shot)) {
-							shot->status = SimulationShot::HIT_PLAYER;
-							shot->SetCurrentPointAsEndoint();
+						//set unmodified image as modified
+						webcamService->SetModifiedImage(frame);
 
-							int id = shot->hitPlayer.playerId;
-
-							//Notify that player was hit
-							playerHitQueue.enqueueNotification(new PlayerHitNotification(shot->hitPlayer, 1));
-						}
+						continue; //set try again
 					}
-					//swStatus.stop();
-					//printf("swStatus: %f ms\n", swStatus.elapsed() * 0.001);
 
-					if (shot->SimulateEndExplosion()) {
-						//	Stopwatch endExplo;
-						//	endExplo.start();
+					vector<Shot> deleteShots;
+					ShotsSetType::Iterator iter = shots.begin();
 
-						if (status == SimulationShot::HIT_PLAYER) {
-							int explosionx = shot->endPoint.x - robotExplosionHalfXSize > 0 ? shot->endPoint.x - robotExplosionHalfXSize : 0;
-							int explosionY = shot->endPoint.y - robotExplosionHalfYSize > 0 ? shot->endPoint.y - robotExplosionHalfYSize : 0;
-							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
-						}
-						else {
-							// status == SimulationShot::HIT_WALL or UNKNOWN
-							int explosionx = shot->endPoint.x - wallExplosionHalfXSize > 0 ? shot->endPoint.x - wallExplosionHalfXSize : 0;
-							int explosionY = shot->endPoint.y - wallExplosionHalfYSize > 0 ? shot->endPoint.y - wallExplosionHalfYSize : 0;
-							OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
+					while (iter != shots.end()) {
+						//if (iter->SimulateStartExplosion()) {
+						//	//simulate gun explosion
+						//	int explosionx = iter->startPoint.x - startExplostionHalfXSize > 0 ? iter->startPoint.x - startExplostionHalfXSize : 0;
+						//	int explosionY = iter->startPoint.y - startExplostionHalfYSize > 0 ? iter->startPoint.y - startExplostionHalfYSize : 0;
+						//	OverlayImage(frame, gunShotImg, Point2i(explosionx, explosionY));
+						//}
 
-							if (status != SimulationShot::HIT_WALL) {
-								shot->status = SimulationShot::HIT_WALL;
+						//simulate explosion
+						//Stopwatch swStatus;
+						//swStatus.start();
+						SimulationShot::SimulationHitStatus status = iter->status;
+						if (status == SimulationShot::SimulationHitStatus::UNKNOWN) {
+							if (detectionService.HasShotHitPlayer(frame, *iter)) {
+								iter->status = SimulationShot::HIT_PLAYER;
+								iter->SetCurrentPointAsEndoint();
+
+								int id = iter->hitPlayer.playerId;
+
+								//Notify that player was hit
+								playerHitQueue.enqueueNotification(new PlayerHitNotification(iter->hitPlayer, 1));
 							}
 						}
+						//swStatus.stop();
+						//printf("swStatus: %f ms\n", swStatus.elapsed() * 0.001);
 
-						if (shot->IsSimulationFinished()) {
-							delete shot;
-							shot = nullptr;
+						if (iter->SimulateEndExplosion()) {
+							//	Stopwatch endExplo;
+							//	endExplo.start();
+
+							if (status == SimulationShot::HIT_PLAYER) {
+								int explosionx = iter->endPoint.x - robotExplosionHalfXSize > 0 ? iter->endPoint.x - robotExplosionHalfXSize : 0;
+								int explosionY = iter->endPoint.y - robotExplosionHalfYSize > 0 ? iter->endPoint.y - robotExplosionHalfYSize : 0;
+								OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
+							}
+							else {
+								// status == SimulationShot::HIT_WALL or UNKNOWN
+								int explosionx = iter->endPoint.x - wallExplosionHalfXSize > 0 ? iter->endPoint.x - wallExplosionHalfXSize : 0;
+								int explosionY = iter->endPoint.y - wallExplosionHalfYSize > 0 ? iter->endPoint.y - wallExplosionHalfYSize : 0;
+								OverlayImage(frame, robotExplosionImg, Point2i(explosionx, explosionY));
+
+								if (status != SimulationShot::HIT_WALL) {
+									iter->status = SimulationShot::HIT_WALL;
+								}
+							}
+
+							if (iter->IsSimulationFinished()) {
+								deleteShots.push_back(*iter);
+							}
+
+							//endExplo.stop();
+							//printf("endExplo overlay: %f ms\n", endExplo.elapsed() * 0.001);
+						}
+						else {
+							//Stopwatch bullet;
+							//bullet.start();
+
+							//simulate bullet
+							OverlayImage(frame, cheeseImg, iter->GetNextShotPoint());
+
+							//bullet.stop();
+							//printf("Bullet overlay: %f ms\n", bullet.elapsed() * 0.001);
 						}
 
-						//endExplo.stop();
-						//printf("endExplo overlay: %f ms\n", endExplo.elapsed() * 0.001);
+						++iter;
 					}
-					else {
-						//Stopwatch bullet;
-						//bullet.start();
-
-						//simulate bullet
-						OverlayImage(frame, cheeseImg, shot->GetNextShotPoint());
-
-						//bullet.stop();
-						//printf("Bullet overlay: %f ms\n", bullet.elapsed() * 0.001);
-					}
-
-					if (shot != nullptr) {
-						Poco::Mutex::ScopedLock lock(shotsLock); //will be released after leaving scop
-						shots.push(shot);
-					}
+					shotsSetLock.unlock();
 
 					//total.stop();
-					//printf("total overlay: %f ms\n", total.elapsed() * 0.001);
+					//printf("hole overlay: %f ms\n", total.elapsed() * 0.001);
 
 					//imshow("Test", frame);
+
 					webcamService->SetModifiedImage(frame);
+
+					//delete finished simulations
+					shotsSetLock.lock();
+					for each (Shot shot in deleteShots)
+					{
+						shots.erase(shot);
+					}
+					shotsSetLock.unlock();
 				}
 				catch (cv::Exception& e) {
 					Logger& logger = Logger::get("Test");
@@ -207,8 +208,8 @@ namespace services {
 
 		void ShotSimulationService::OverlayImage(cv::Mat &background, const cv::Mat &foreground, cv::Point2i &location) {
 			/*
-			 * http://jepsonsblog.blogspot.co.at/2012/10/overlay-transparent-image-in-opencv.html
-			 */
+			* http://jepsonsblog.blogspot.co.at/2012/10/overlay-transparent-image-in-opencv.html
+			*/
 
 			// start at the row indicated by location, or at row 0 if location.y is negative.
 			for (int y = max(location.y, 0); y < background.rows; ++y)
