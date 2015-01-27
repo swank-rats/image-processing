@@ -15,8 +15,8 @@
 #include <Poco\Observer.h>
 #include <Poco\RunnableAdapter.h>
 
-#include <Poco\Stopwatch.h>
-using Poco::Stopwatch;
+//#include <Poco\Stopwatch.h>
+//using Poco::Stopwatch;
 
 using Poco::Thread;
 using Poco::ThreadPool;
@@ -81,11 +81,11 @@ namespace services {
 		}
 
 		void ShotSimulationService::UpdateSimulation() {
-			Stopwatch total;
+			//Stopwatch total;
 
 			while (shallSimulate)
 			{
-				total.restart();
+				//total.restart();
 				Mat frame;
 
 				framesLock.lock();
@@ -192,8 +192,8 @@ namespace services {
 						shots.push(shot);
 					}
 
-					total.stop();
-					printf("total overlay: %f ms\n", total.elapsed() * 0.001);
+					//total.stop();
+					//printf("total overlay: %f ms\n", total.elapsed() * 0.001);
 
 					//imshow("Test", frame);
 					webcamService->SetModifiedImage(frame);
