@@ -53,3 +53,22 @@ Troubleshooting
 Project documentation
 -------------------
 The whole project documentation can be found [here](http://swank-rats.github.io/docs): http://swank-rats.github.io/docs/
+
+Build & Start application
+-------------------
+1. Open the solution with VS 2013
+2. Right click on the solution image-processing -> Properties
+3. Now navigate to Configuration properties -> Debugging -> Command line arguments
+4. Enter /uri=wss://IP:3001/ (replace the IP with the IP of your game server)
+5. Build it
+6. Run it
+
+When you run the .exe manually do not forget to pass the /uri parameter. 
+
+```
+//to get help:
+image-processing.exe /help
+
+//to start the image processing server (important use wss and add a "/" at the end!)
+image-processing.exe /uri=wss://127.0.0.1:3001/
+```
