@@ -50,10 +50,6 @@ Troubleshooting
   * [OpenCV: Installing & Configuring OpenCV with Visual Studio](http://opencv-srf.blogspot.co.at/2013/05/installing-configuring-opencv-with-vs.html)
   * [Poco: Building On Windows](http://pocoproject.org/docs/00200-GettingStarted.html#7)
 
-Project documentation
--------------------
-The whole project documentation can be found [here](http://swank-rats.github.io/docs): http://swank-rats.github.io/docs/
-
 Build & Start application
 -------------------
 1. Open the solution with VS 2013
@@ -72,3 +68,7 @@ image-processing.exe /help
 //to start the image processing server (important use wss and add a "/" at the end!)
 image-processing.exe /uri=wss://127.0.0.1:3001/
 ```
+
+Project documentation
+-------------------
+The whole project documentation can be found [here](http://swank-rats.github.io/docs): http://swank-rats.github.io/docs/
