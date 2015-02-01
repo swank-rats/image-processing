@@ -12,28 +12,25 @@
 #undef max 
 #undef min
 
-#include <opencv2\core\core.hpp>
-#include <opencv2\highgui\highgui.hpp>
-#include <opencv2\opencv.hpp>
-#include <opencv2\video\background_segm.hpp>
+#include "diego/opencv/opencv2/core/core.hpp"
+#include "diego/opencv/opencv2/highgui/highgui.hpp"
+#include "diego/opencv/opencv2/opencv.hpp"
+#include "diego/opencv/opencv2/video/background_segm.hpp"
 
 #include "services\webcam\WebcamService.h"
 #include "services\ObjectDetectionService.h"
 #include "controller\ImageProcessingController.h"
-#include "Poco/HashMap.h"
-#
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/video/background_segm.hpp"
+#include "fenix/poco/Foundation/include/Poco/HashMap.h"
+
+#include "diego/opencv/opencv2/imgproc/imgproc.hpp"
 #include <stdio.h>
 #include <string>
 
-#include <opencv\cv.h>
-#include <opencv2\flann\lsh_table.h>
+#include "diego/opencv/opencv/cv.h"
+#include "diego/opencv/opencv2/flann/lsh_table.hpp"
 
-#include <Poco\Stopwatch.h>
-//#include <limits>
+#include "fenix/poco/Foundation/include/Poco/Stopwatch.h"
 
-#include "opencv2/imgproc/imgproc.hpp"
 using namespace cv;
 using namespace std;
 
