@@ -5,9 +5,10 @@
 // Description :
 //============================================================================
 #pragma once
-#include <Poco\AutoPtr.h>
-#include <Poco\Notification.h>
-#include <opencv2\core\core.hpp>
+
+#include "fenix/poco/Foundation/include/Poco/Notification.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
+#include "diego/opencv/opencv2/core/core.hpp"
 
 using Poco::AutoPtr;
 using Poco::Notification;

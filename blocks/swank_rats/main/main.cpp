@@ -19,24 +19,23 @@
 
 #include <zmq.h>
 
-#include <opencv2\core\core.hpp>
-#include <opencv2\highgui\highgui.hpp>
+#include "diego/opencv/opencv2/core/core.hpp"
+#include "diego/opencv/opencv2/highgui/highgui.hpp"
 
-#include <Poco\Logger.h>
-#include <Poco\AutoPtr.h>
-#include <Poco\Observer.h>
-#include <Poco\WindowsConsoleChannel.h>
-#include <Poco\FormattingChannel.h>
-#include <Poco\PatternFormatter.h>
-#include <Poco\Util\Application.h>
-#include <Poco\Util\ServerApplication.h>
-#include <Poco\Net\HTTPSStreamFactory.h>
-#include <Poco\URI.h>
-#include <Poco\Util\OptionSet.h>
-#include <Poco\Util\OptionCallback.h>
-#include <Poco\Util\HelpFormatter.h>
-#include <Poco\SharedPtr.h>
-#include <Poco\Thread.h>
+#include "fenix/poco/Foundation/include/Poco/Foundation.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
+#include "fenix/poco/Foundation/include/Poco/WindowsConsoleChannel.h"
+#include "fenix/poco/Foundation/include/Poco/FormattingChannel.h"
+#include "fenix/poco/Foundation/include/Poco/PatternFormatter.h"
+#include "fenix/poco/Util/include/Poco/Util/Application.h"
+#include "fenix/poco/Util/include/Poco/Util/ServerApplication.h"
+#include "fenix/poco/Util/include/Poco/Util/HTTPSStreamFactory.h"
+#include "fenix/poco/Foundation/include/Poco/URI.h"
+#include "fenix/poco/Util/include/Poco/Util/OptionSet.h"
+#include "fenix/poco/Util/include/Poco/Util/OptionCallback.h"
+#include "fenix/poco/Util/include/Poco/Util/HelpFormatter.h"
+#include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
+#include "fenix/poco/Foundation/include/Poco/Thread.h"
 
 using namespace cv;
 using namespace std;

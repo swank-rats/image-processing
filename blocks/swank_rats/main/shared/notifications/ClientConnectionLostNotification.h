@@ -5,9 +5,9 @@
 // Description :
 //============================================================================
 #pragma once
-#include <Poco\Notification.h>
-#include <Poco\AutoPtr.h>
-#include <Poco\Net\SocketAddress.h>
+#include "fenix/poco/Foundation/include/Poco/Notification.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
+#include "fenix/poco/Net/include/Poco/Net/SocketAddress.h"
 
 using Poco::AutoPtr;
 using Poco::Notification;

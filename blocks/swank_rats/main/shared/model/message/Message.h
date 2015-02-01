@@ -8,7 +8,7 @@
 #include "MessageHeaders.h"
 #include "MessageCommands.h"
 
-#include "fenix/poco/Foundation/POCO/include/HashMap.h"
+#include "fenix/poco/Foundation/include/Poco/HashMap.h"
 
 #include <string>
 

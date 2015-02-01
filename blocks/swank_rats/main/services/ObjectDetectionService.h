@@ -8,7 +8,7 @@
 #include "..\shared\model\Shot.h"
 #include "..\shared\model\Robot.h"
 
-#include <Poco\Logger.h>
+#include "fenix/poco/Foundation/include/Poco/Logger.h"
 
 
 using namespace std;

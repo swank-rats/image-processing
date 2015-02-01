@@ -7,8 +7,8 @@
 #pragma once
 #include "..\model\message\Message.h"
 
-#include <Poco\Notification.h>
-#include <Poco\AutoPtr.h>
+#include "fenix/poco/Foundation/include/Poco/Notification.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
 
 using Poco::Notification;
 using Poco::AutoPtr;

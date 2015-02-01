@@ -12,12 +12,12 @@
 
 #include <opencv2\core\core.hpp>
 
-#include <Poco\ThreadPool.h>
-#include <Poco\HashSet.h>
-#include <Poco\SharedPtr.h>
-#include <Poco\NotificationQueue.h>
-#include <Poco\Mutex.h>
-#include <Poco\RunnableAdapter.h>
+#include "fenix/poco/Foundation/include/Poco/HashSet.h"
+#include "fenix/poco/Foundation/include/Poco/ThreadPool.h"
+#include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
+#include "fenix/poco/Foundation/include/Poco/NotificationQueue.h"
+#include "fenix/poco/Foundation/include/Poco/Mutex.h"
+#include "fenix/poco/Foundation/include/Poco/RunnableAdapter.h"
 
 #include <queue>
 #include <vector>

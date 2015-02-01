@@ -6,14 +6,14 @@
 //============================================================================
 #include "ObjectDetectionService.h"
 
-#include <opencv2\core\core.hpp>
-#include <opencv2\highgui\highgui.hpp>
-#include <opencv2\opencv.hpp>
+#include "diego/opencv/opencv2/core/core.hpp"
+#include "diego/opencv/opencv2/opencv.hpp"
+#include "diego/opencv/opencv2/highgui/highgui.hpp"
 
 #include <iostream>
 #include <string>
 
-#include <Poco\Stopwatch.h>
+#include "fenix/poco/Foundation/include/Poco/Stopwatch.h"
 
 using namespace cv;
 using namespace std;
