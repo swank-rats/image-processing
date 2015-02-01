@@ -17,7 +17,7 @@
 #include <iostream>
 #include <list>
 
-#include <zmq.h>
+#include "diego/zmqcpp/zmq.hpp"
 
 #include "diego/opencv/opencv2/core/core.hpp"
 #include "diego/opencv/opencv2/highgui/highgui.hpp"
