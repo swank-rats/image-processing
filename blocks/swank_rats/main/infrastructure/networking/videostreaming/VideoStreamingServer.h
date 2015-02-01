@@ -6,7 +6,7 @@
 //				 specific port and provides a video stream via MJPEG.
 //============================================================================
 #pragma once
-#include "..\..\..\services\webcam\WebcamService.h"
+#include "swank_rats/main/services/webcam/WebcamService.h"
 
 #include "fenix/poco/Net/include/Poco/Net/HTTPServer.h"
 #include "fenix/poco/Net/include/Poco/Net/ServerSocket.h"

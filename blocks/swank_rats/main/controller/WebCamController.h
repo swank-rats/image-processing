@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\services\webcam\WebcamService.h"
+#include "swank_rats/main/services/webcam/WebcamService.h"
 #include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
 
 #include <memory>

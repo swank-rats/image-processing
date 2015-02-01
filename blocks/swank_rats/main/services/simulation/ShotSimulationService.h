@@ -5,10 +5,10 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\webcam\WebcamService.h"
-#include "..\ObjectDetectionService.h"
-#include "..\..\shared\model\Shot.h"
-#include "..\..\shared\observer\IObserver.h"
+#include "swank_rats/main/services/webcam\WebcamService.h"
+#include "swank_rats/main/services/ObjectDetectionService.h"
+#include "swank_rats/main/shared/model/Shot.h"
+#include "swank_rats/main/shared/observer/IObserver.h"
 
 #include <opencv2\core\core.hpp>
 

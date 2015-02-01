@@ -7,10 +7,10 @@
 #pragma once
 #include "WebSocketController.h"
 
-#include "..\shared\notifications\MessageNotification.h"
-#include "..\services\simulation\ShotSimulationService.h"
-#include "..\services\ObjectDetectionService.h"
-#include "..\shared\model\Player.h"
+#include "swank_rats/main/shared/notifications/MessageNotification.h"
+#include "swank_rats/main/services/simulation/ShotSimulationService.h"
+#include "swank_rats/main/services/ObjectDetectionService.h"
+#include "swank_rats/main/shared/model/Player.h"
 
 #include "fenix/poco/Foundation/include/Poco/Activity.h"
 #include "fenix/poco/Foundation/include/Poco/AutoPtr.h"

@@ -5,8 +5,8 @@
 // Description :
 //============================================================================
 #include "VideoStreamingController.h"
-#include "..\shared\model\message\MessageCommands.h"
-#include "..\shared\notifications\ClientConnectionLostNotification.h"
+#include "swank_rats/main/shared/model/message/MessageCommands.h"
+#include "swank_rats/main/shared/notifications/ClientConnectionLostNotification.h"
 
 using shared::model::message::MessageCommandEnum;
 using shared::notifications::ClientConnectionLostNotification;

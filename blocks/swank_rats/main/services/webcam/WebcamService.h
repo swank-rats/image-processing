@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\..\shared\observer\Observable.h"
+#include "swank_rats/main/shared/observer/Observable.h"
 
 #include "diego/opencv/opencv2/core/core.hpp"
 #include "diego/opencv/opencv2/opencv.hpp"

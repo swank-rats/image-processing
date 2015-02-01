@@ -6,8 +6,8 @@
 //============================================================================
 #include "ShotSimulationController.h"
 
-#include "..\shared\model\message\MessageCommands.h"
-#include "..\shared\notifications\PlayerHitNotification.h"
+#include "swank_rats/main/shared/model/message/MessageCommands.h"
+#include "swank_rats/main/shared/notifications/PlayerHitNotification.h"
 
 using shared::notifications::PlayerHitNotification;
 using shared::model::message::MessageCommandEnum;

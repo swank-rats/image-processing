@@ -6,8 +6,8 @@
 //============================================================================
 #pragma once
 #include "swank_rats/main/infrastructure/networking/websockets/client/WebSocketClient.h"
-#include "..\shared\notifications\MessageNotification.h"
-#include "..\shared\model\message\Message.h"
+#include "swank_rats/main/shared/notifications/MessageNotification.h"
+#include "swank_rats/main/shared/model\message/Message.h"
 
 #include "fenix/poco/Foundation/include/Poco/URI.h"
 #include "fenix/poco/Foundation/include/Poco/NotificationQueue.h"

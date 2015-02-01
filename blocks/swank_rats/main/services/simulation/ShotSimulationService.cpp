@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #include "ShotSimulationService.h"
-#include "..\..\shared\notifications\PlayerHitNotification.h"
+#include "swank_rats/main/shared/notifications/PlayerHitNotification.h"
 
 #include <algorithm>
 #include <vector>

@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\model\Player.h"
+#include "swank_rats/main/shared/model/Player.h"
 
 #include "fenix/poco/Foundation/include/Poco/Notification.h"
 #include "fenix/poco/Foundation/include/Poco/AutoPtr.h"

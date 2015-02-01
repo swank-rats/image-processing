@@ -5,9 +5,9 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\infrastructure\networking\videostreaming\VideoStreamingServer.h"
-#include "..\services\webcam\WebcamService.h"
-#include "..\shared\notifications\MessageNotification.h"
+#include "swank_rats/main/infrastructure/networking/videostreaming/VideoStreamingServer.h"
+#include "swank_rats/main/services/webcam/WebcamService.h"
+#include "swank_rats/main/shared/notifications/MessageNotification.h"
 #include "WebSocketController.h"
 
 #include "fenix/poco/Foundation/include/Poco/SharedPtr.h"

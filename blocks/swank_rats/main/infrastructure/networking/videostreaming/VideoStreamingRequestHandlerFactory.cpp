@@ -5,8 +5,8 @@
 // Description :
 //============================================================================
 #include "VideoStreamingRequestHandlerFactory.h"
-#include "handler\VideoStreamingRequestHandler.h"
-#include "handler\InvalidUriRequestHandler.h"
+#include "handler/VideoStreamingRequestHandler.h"
+#include "handler/InvalidUriRequestHandler.h"
 
 namespace infrastructure {
 	namespace video_streaming {

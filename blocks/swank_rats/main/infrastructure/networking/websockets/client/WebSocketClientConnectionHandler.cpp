@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #include "WebSocketClientConnectionHandler.h"
-#include "..\..\..\..\shared\\notifications\MessageNotification.h"
+#include "swank_rats/main/shared/notifications/MessageNotification.h"
 
 #include "fenix/poco/Foundation/include/Poco/Logger.h"
 #include "fenix/poco/Foundation/include/Poco/Exception.h"

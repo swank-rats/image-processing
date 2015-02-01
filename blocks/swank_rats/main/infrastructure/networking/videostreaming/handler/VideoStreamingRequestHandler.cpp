@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #include "VideoStreamingRequestHandler.h"
-#include "..\..\..\..\shared\notifications\ClientConnectionLostNotification.h"
+#include "swank_rats/main/shared/notifications/ClientConnectionLostNotification.h"
 
 #include "fenix/poco/Net/include/Poco/Net/MultipartWriter.h"
 #include "fenix/poco/Net/include/Poco/Net/MessageHeader.h"

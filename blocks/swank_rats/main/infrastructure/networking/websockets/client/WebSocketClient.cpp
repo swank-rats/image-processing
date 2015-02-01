@@ -6,8 +6,8 @@
 //============================================================================
 #include "WebSocketClient.h"
 
-#include "..\..\..\..\shared\notifications\MessageNotification.h"
-#include "..\..\..\..\shared\model\message\MessageCommands.h"
+#include "swank_rats/main/shared/notifications/MessageNotification.h"
+#include "swank_rats/main/shared/model/message/MessageCommands.h"
 
 #include "fenix/poco/Foundation/Poco/include/Exception.h"
 #include "fenix/poco/Net/Poco/include/Net/HTTPMessage.h"

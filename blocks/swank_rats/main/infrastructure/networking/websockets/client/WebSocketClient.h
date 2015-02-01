@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\..\..\..\shared\model\message\Message.h"
+#include "swank_rats/main/shared/model/message/Message.h"
 #include "WebSocketClientConnectionHandler.h"
 
 #include "fenix/poco/Foundation/Poco/include/URI.h"

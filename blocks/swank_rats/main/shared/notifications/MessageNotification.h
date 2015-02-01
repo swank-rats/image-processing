@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\model\message\Message.h"
+#include "swank_rats/main/shared/model/message/Message.h"
 
 #include "fenix/poco/Foundation/include/Poco/Notification.h"
 #include "fenix/poco/Foundation/include/Poco/AutoPtr.h"

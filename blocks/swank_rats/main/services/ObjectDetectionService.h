@@ -5,8 +5,8 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\shared\model\Shot.h"
-#include "..\shared\model\Robot.h"
+#include "swank_rats/main/shared/model\Shot.h"
+#include "swank_rats/main/shared/model\Robot.h"
 
 #include "fenix/poco/Foundation/include/Poco/Logger.h"
 
