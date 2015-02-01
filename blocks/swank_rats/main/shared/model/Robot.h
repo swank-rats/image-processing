@@ -1,9 +1,9 @@
 #pragma once
 
-#include <opencv2\core\core.hpp>
 #include <math.h>
-#include <opencv2\highgui\highgui.hpp>
-#include <opencv2\opencv.hpp>
+#include "diego/opencv/opencv2/core/core.hpp"
+#include "diego/opencv/opencv2/opencv.hpp"
+#include "diego/opencv/opencv2/highgui/highgui.hpp"
 
 #include <iostream>
 #include <string>

@@ -7,8 +7,8 @@
 #pragma once
 #include "..\model\Player.h"
 
-#include <Poco\Notification.h>
-#include <Poco\AutoPtr.h>
+#include "fenix/poco/Foundation/include/Poco/Notification.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
 
 using Poco::AutoPtr;
 using shared::model::Player;

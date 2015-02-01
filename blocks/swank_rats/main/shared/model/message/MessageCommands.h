@@ -7,7 +7,7 @@
 #pragma once
 
 #include <string>
-#include <Poco\HashMap.h>
+#include "fenix/poco/Foundation/include/Poco/HashMap.h"
 
 using std::string;
 using Poco::HashMap;

@@ -8,7 +8,7 @@
 #pragma once
 #include "Player.h"
 
-#include <opencv2\core\core.hpp>
+#include "diego/opencv/opencv2/core/core.hpp"
 #include <math.h>
 
 using cv::Point2i;
