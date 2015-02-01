@@ -8,9 +8,9 @@
 #include <iostream>
 #include <iomanip>
 
-#include <Poco\Clock.h>
+#include "fenix/poco/Foundation/include/Poco/Clock.h"
+#include "fenix/poco/Foundation/include/Poco/Stopwatch.h"
 
-#include <Poco\Stopwatch.h>
 using Poco::Stopwatch;
 
 using Poco::Clock;

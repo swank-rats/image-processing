@@ -10,10 +10,10 @@
 #include <algorithm>
 #include <vector>
 
-#include <Poco\Thread.h>
-#include <Poco\ThreadPool.h>
-#include <Poco\Observer.h>
-#include <Poco\RunnableAdapter.h>
+#include "fenix/poco/Foundation/include/Poco/Thread.h"
+#include "fenix/poco/Foundation/include/Poco/ThreadPool.h"
+#include "fenix/poco/Foundation/include/Poco/Observer.h"
+#include "fenix/poco/Foundation/include/Poco/RunnableAdapter.h"
 
 //#include <Poco\Stopwatch.h>
 //using Poco::Stopwatch;

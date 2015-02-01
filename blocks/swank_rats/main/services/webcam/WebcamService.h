@@ -7,13 +7,14 @@
 #pragma once
 #include "..\..\shared\observer\Observable.h"
 
-#include <opencv2\core\core.hpp>
-#include <opencv2\opencv.hpp>
-#include <Poco\Thread.h>
-#include <Poco\Activity.h>
-#include <Poco\Logger.h>
-#include <Poco\RWLock.h>
-#include <Poco\Mutex.h>
+#include "diego/opencv/opencv2/core/core.hpp"
+#include "diego/opencv/opencv2/opencv.hpp"
+
+#include "fenix/poco/Foundation/include/Poco/Thread.h"
+#include "fenix/poco/Foundation/include/Poco/Activity.h"
+#include "fenix/poco/Foundation/include/Poco/Logger.h"
+#include "fenix/poco/Foundation/include/Poco/RWLock.h"
+#include "fenix/poco/Foundation/include/Poco/Mutex.h"
 
 #include <memory>
 #include <vector>
