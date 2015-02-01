@@ -4,6 +4,7 @@ build/
 cmake/
 deps/
 bii/*
+!bii/policies.bii
 
 # idea
 .idea
