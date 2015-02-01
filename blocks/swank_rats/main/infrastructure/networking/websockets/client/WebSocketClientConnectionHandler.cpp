@@ -7,14 +7,14 @@
 #include "WebSocketClientConnectionHandler.h"
 #include "..\..\..\..\shared\\notifications\MessageNotification.h"
 
-#include <Poco\Logger.h>
-#include <Poco\Exception.h>
-#include <Poco\Net\NetException.h>
-#include <Poco\AutoPtr.h>
-#include <Poco\Net\HTTPRequest.h>
-#include <Poco\Net\HTTPMessage.h>
-#include <Poco\Net\HTTPResponse.h>
-#include <Poco\Thread.h>
+#include "fenix/poco/Foundation/include/Poco/Logger.h"
+#include "fenix/poco/Foundation/include/Poco/Exception.h"
+#include "fenix/poco/Net/include/Poco/Net/NetException.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPRequest.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPMessage.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPResponse.h"
+#include "fenix/poco/Foundation/include/Poco/Thread.h"
 
 #include <string>
 

@@ -7,13 +7,13 @@
 #pragma once
 #include "..\..\..\..\services\webcam\WebcamService.h"
 
-#include <Poco\Logger.h>
-#include <Poco\SharedPtr.h>
-#include <Poco\BasicEvent.h>
-#include <Poco\NotificationQueue.h>
-#include <Poco\Net\HTTPServerRequest.h>
-#include <Poco\Net\HTTPServerResponse.h>
-#include <Poco\Net\HTTPRequestHandler.h>
+#include "fenix/poco/Foundation/include/Poco/Logger.h"
+#include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
+#include "fenix/poco/Foundation/include/Poco/BasicEvent.h"
+#include "fenix/poco/Foundation/include/Poco/NotificationQueue.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPServerRequest.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPServerResponse.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPRequestHandler.h"
 
 #include <vector>
 #include <string>

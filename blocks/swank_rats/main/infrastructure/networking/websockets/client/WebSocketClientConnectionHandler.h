@@ -7,17 +7,17 @@
 #pragma once
 #include "..\..\..\..\shared\model\message\Message.h"
 
-#include <Poco\URI.h>
-#include <Poco\Logger.h>
-#include <Poco\Timespan.h>
-#include <Poco\Net\HTTPServer.h>
-#include <Poco\Net\HTTPClientSession.h>
-#include <Poco\Net\HTTPSClientSession.h>
-#include <Poco\Net\WebSocket.h>
-#include <Poco\Activity.h>
-#include <Poco\Mutex.h>
-#include <Poco\BasicEvent.h>
-#include <Poco\NotificationQueue.h>
+#include "fenix/poco/Foundation/include/Poco/URI.h"
+#include "fenix/poco/Foundation/include/Poco/Logger.h"
+#include "fenix/poco/Foundation/include/Poco/Timespan.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPServer.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPClientSession.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPSClientSession.h"
+#include "fenix/poco/Net/include/Poco/Net/WebSocket.h"
+#include "fenix/poco/Foundation/include/Poco/Activity.h"
+#include "fenix/poco/Foundation/include/Poco/Mutex.h"
+#include "fenix/poco/Foundation/include/Poco/BasicEvent.h"
+#include "fenix/poco/Foundation/include/Poco/NotificationQueue.h"
 
 using Poco::Logger;
 using Poco::URI;

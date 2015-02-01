@@ -7,8 +7,8 @@
 #include "VideoStreamingRequestHandler.h"
 #include "..\..\..\..\shared\notifications\ClientConnectionLostNotification.h"
 
-#include <Poco\Net\MultipartWriter.h>
-#include <Poco\Net\MessageHeader.h>
+#include "fenix/poco/Net/include/Poco/Net/MultipartWriter.h"
+#include "fenix/poco/Net/include/Poco/Net/MessageHeader.h"
 
 using Poco::Net::MessageHeader;
 using Poco::Net::HTTPResponse;

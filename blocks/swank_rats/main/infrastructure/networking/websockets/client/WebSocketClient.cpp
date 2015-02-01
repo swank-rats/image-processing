@@ -9,12 +9,12 @@
 #include "..\..\..\..\shared\notifications\MessageNotification.h"
 #include "..\..\..\..\shared\model\message\MessageCommands.h"
 
-#include <Poco\Exception.h>
-#include <Poco\Net\HTTPMessage.h>
-#include <Poco\Net\HTTPRequest.h>
-#include <Poco\Net\HTTPResponse.h>
-#include <Poco\AutoPtr.h>
-#include <Poco\Delegate.h>
+#include "fenix/poco/Foundation/Poco/include/Exception.h"
+#include "fenix/poco/Net/Poco/include/Net/HTTPMessage.h"
+#include "fenix/poco/Net/Poco/include/Net/HTTPRequest.h"
+#include "fenix/poco/Net/Poco/include/Net/HTTPResponse.h"
+#include "fenix/poco/Foundation/Poco/include/AutoPtr.h"
+#include "fenix/poco/Foundation/Poco/include/Delegate.h"
 
 #include <string>
 
@@ -30,7 +30,8 @@ namespace infrastructure {
 	namespace websocket {
 		WebSocketClient::WebSocketClient(URI uri, NotificationQueue &receivedQueue)
 			: connHandler(new WebSocketClientConnectionHandler(uri, receivedQueue, sendingQueue)) {
-			connHandler->LostConnection += Poco::delegate(this, &WebSocketClient::OnLostconnection);		}
+			connHandler->LostConnection += Poco::delegate(this, &WebSocketClient::OnLostconnection);
+		}
 
 		WebSocketClient::~WebSocketClient() {
 			if (connHandler->IsConnected()) {

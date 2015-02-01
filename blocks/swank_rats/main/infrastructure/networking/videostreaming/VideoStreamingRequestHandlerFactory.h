@@ -7,10 +7,10 @@
 #pragma once
 #include "..\..\..\services\webcam\WebcamService.h"
 
-#include <Poco\Net\HTTPRequestHandlerFactory.h>
-#include <Poco\Net\HTTPServerRequest.h>
-#include <Poco\SharedPtr.h>
-#include <Poco\NotificationQueue.h>
+#include "fenix/poco/Net/include/Poco/Net/HTTPRequestHandlerFactory.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPServerRequest.h"
+#include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
+#include "fenix/poco/Foundation/include/Poco/NotificationQueue.h"
 
 #include <string>
 

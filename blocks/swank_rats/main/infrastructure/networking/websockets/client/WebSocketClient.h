@@ -8,13 +8,13 @@
 #include "..\..\..\..\shared\model\message\Message.h"
 #include "WebSocketClientConnectionHandler.h"
 
-#include <Poco\URI.h>
-#include <Poco\Logger.h>
-#include <Poco\Net\HTTPServer.h>
-#include <Poco\Net\HTTPSClientSession.h>
-#include <Poco\Net\WebSocket.h>
-#include <Poco\NotificationQueue.h>
-#include <Poco\Activity.h>
+#include "fenix/poco/Foundation/Poco/include/URI.h"
+#include "fenix/poco/Foundation/Poco/include/Logger.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPServer.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPSClientSession.h"
+#include "fenix/poco/Net/include/Poco/Net/WebSocket.h"
+#include "fenix/poco/Foundation/Poco/include/NotificationQueue.h"
+#include "fenix/poco/Foundation/Poco/include/Activity.h"
 
 using Poco::Logger;
 using Poco::URI;

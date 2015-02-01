@@ -8,7 +8,7 @@
 #include "VideoStreamingServer.h"
 #include "VideoStreamingRequestHandlerFactory.h"
 
-#include <Poco\Net\HTTPServerParams.h>
+#include "fenix/poco/Net/include/Poco/Net/HTTPServerParams.h"
 
 using Poco::Net::HTTPServerParams;
 

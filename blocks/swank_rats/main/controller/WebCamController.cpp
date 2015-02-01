@@ -6,8 +6,8 @@
 //============================================================================
 #include "WebCamController.h"
 
-#include <Poco\Thread.h>
-#include <Poco\RunnableAdapter.h>
+#include "fenix/poco/Foundation/include/Poco/Thread.h"
+#include "fenix/poco/Foundation/include/Poco/RunnableAdapter.h"
 
 using Poco::Thread;
 using Poco::RunnableAdapter;

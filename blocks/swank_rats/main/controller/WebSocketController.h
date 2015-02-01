@@ -9,12 +9,12 @@
 #include "..\shared\notifications\MessageNotification.h"
 #include "..\shared\model\message\Message.h"
 
-#include <Poco\URI.h>
-#include <Poco\NotificationQueue.h>
-#include <Poco\Activity.h>
-#include <Poco\NObserver.h>
-#include <Poco\NotificationCenter.h>
-#include <Poco\AutoPtr.h>
+#include "fenix/poco/Foundation/include/Poco/URI.h"
+#include "fenix/poco/Foundation/include/Poco/NotificationQueue.h"
+#include "fenix/poco/Foundation/include/Poco/Activity.h"
+#include "fenix/poco/Foundation/include/Poco/NObserver.h"
+#include "fenix/poco/Foundation/include/Poco/NotificationCenter.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
 
 using Poco::URI;
 using Poco::AutoPtr;

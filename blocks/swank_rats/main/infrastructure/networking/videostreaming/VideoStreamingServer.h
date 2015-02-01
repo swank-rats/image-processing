@@ -8,12 +8,12 @@
 #pragma once
 #include "..\..\..\services\webcam\WebcamService.h"
 
-#include <Poco\Net\HTTPServer.h>
-#include <Poco\Net\ServerSocket.h>
-#include <Poco\ThreadPool.h>
-#include <Poco\Logger.h>
-#include <Poco\SharedPtr.h>
-#include <Poco\NotificationQueue.h>
+#include "fenix/poco/Net/include/Poco/Net/HTTPServer.h"
+#include "fenix/poco/Net/include/Poco/Net/ServerSocket.h"
+#include "fenix/poco/Foundation/include/Poco/ThreadPool.h"
+#include "fenix/poco/Foundation/include/Poco/Logger.h"
+#include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
+#include "fenix/poco/Foundation/include/Poco/NotificationQueue.h"
 
 #include <string>
 

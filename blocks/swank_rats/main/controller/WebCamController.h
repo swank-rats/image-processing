@@ -6,7 +6,7 @@
 //============================================================================
 #pragma once
 #include "..\services\webcam\WebcamService.h"
-#include <Poco\SharedPtr.h>
+#include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
 
 #include <memory>
 

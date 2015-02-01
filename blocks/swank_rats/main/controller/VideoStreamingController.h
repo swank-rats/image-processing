@@ -10,10 +10,10 @@
 #include "..\shared\notifications\MessageNotification.h"
 #include "WebSocketController.h"
 
-#include <Poco\SharedPtr.h>
-#include <Poco\AutoPtr.h>
-#include <Poco\Activity.h>
-#include <Poco\NotificationQueue.h>
+#include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
+#include "fenix/poco/Foundation/include/Poco/Activity.h"
+#include "fenix/poco/Foundation/include/Poco/NotificationQueue.h"
 
 using namespace services::webcam;
 using namespace infrastructure::video_streaming;

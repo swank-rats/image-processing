@@ -12,11 +12,11 @@
 #include "..\services\ObjectDetectionService.h"
 #include "..\shared\model\Player.h"
 
-#include <Poco\Activity.h>
-#include <Poco\AutoPtr.h>
-#include <Poco\SharedPtr.h>
-#include <Poco\NotificationQueue.h>
-#include <Poco\Timer.h>
+#include "fenix/poco/Foundation/include/Poco/Activity.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
+#include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
+#include "fenix/poco/Foundation/include/Poco/NotificationQueue.h"
+#include "fenix/poco/Foundation/include/Poco/Timer.h"
 
 using Poco::Activity;
 using Poco::Timer;
