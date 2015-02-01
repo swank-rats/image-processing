@@ -19,7 +19,7 @@
 
 #include "services\webcam\WebcamService.h"
 #include "services\ObjectDetectionService.h"
-#include "controller\ImageProcessingController.h"
+#include "controller\WebCamController.h"
 #include "Poco/HashMap.h"
 #
 #include "opencv2/imgproc/imgproc.hpp"
