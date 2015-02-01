@@ -5,7 +5,7 @@
 // Description :
 //============================================================================
 #pragma once
-#include "..\infrastructure\networking\websockets\client\WebSocketClient.h"
+#include "swank_rats/main/infrastructure/networking/websockets/client/WebSocketClient.h"
 #include "..\shared\notifications\MessageNotification.h"
 #include "..\shared\model\message\Message.h"
 
