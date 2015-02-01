@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Performance1.psess = Performance1.psess
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "robot-detection", "robot-detection\robot-detection.vcxproj", "{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Thomas|Win32 = Debug Thomas|Win32
@@ -29,6 +31,16 @@ Global
 		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.DebugStandalone|Win32.Build.0 = DebugStandalone|Win32
 		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.Release|Win32.ActiveCfg = Release|Win32
 		{82106581-9886-4878-ADCB-AC3E58BA2D7B}.Release|Win32.Build.0 = Release|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.Debug Thomas|Win32.ActiveCfg = Debug|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.Debug Thomas|Win32.Build.0 = Debug|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.Debug|Win32.Build.0 = Debug|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.DebugConnTest|Win32.ActiveCfg = Debug|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.DebugConnTest|Win32.Build.0 = Debug|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.DebugStandalone|Win32.ActiveCfg = Debug|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.DebugStandalone|Win32.Build.0 = Debug|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.Release|Win32.ActiveCfg = Release|Win32
+		{543F9ECA-5BC0-4115-BC58-19D703EBB3C7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
