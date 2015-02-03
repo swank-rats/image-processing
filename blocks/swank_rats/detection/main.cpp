@@ -2,7 +2,8 @@
 #include "diego/opencv/opencv2/highgui/highgui.hpp"
 #include "diego/opencv/opencv2/imgproc/imgproc.hpp"
 
-#include "swank_rats\shared\Pipe.h"
+#include "swank_rats\shared\ClientPipe.h"
+#include "swank_rats\shared\ServerPipe.h"
 #include "swank_rats\shared\Process.h"
 
 #include "diego/zmqcpp/zmq.hpp"
@@ -10,8 +11,18 @@
 #include <string>
 #include <iostream>
 
+using swank_rats_lib::process::Process;
+
 int main()
 {
+	Process *p = new Process("C:\\Windows\\System32\\notepad.exe");
+
+	p->ExecuteProcess();
+
+	Sleep(1000);
+
+	p->KillProcess();
+
 	//  Prepare our context and socket
 	zmq::context_t context(1);
 	zmq::socket_t socket(context, ZMQ_REQ);

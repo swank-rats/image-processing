@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : Process.h
+// Name        : ServerPipe.h
 // Author      : ITM13
 // Version     : 1.0
 // Description :
@@ -9,6 +9,9 @@
 #if __WINDOWS__ || __WIN32__ || _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h> 
+#include <tchar.h>
+#include <strsafe.h>
+#include <conio.h>
 #include <tchar.h>
 #elif __APPLE__ && __MACH__	
 //TODO hannes
@@ -21,21 +24,13 @@
 using std::string;
 
 namespace swank_rats_lib {
-	namespace process {
-		class Process {
+	namespace pipe {
+		class ServerPipe {
 		public:
-			Process(const string path);
-			bool ExecuteProcess();
-			bool KillProcess();
+			ServerPipe(const string name);
+			bool Create();
 		private:
-			string path;
-#if __WINDOWS__ || __WIN32__ || _WIN32
-			PROCESS_INFORMATION process;
-#elif __APPLE__ && __MACH__	
-			//TODO hannes
-#else
-#error "OS not supported!"
-#endif
+			string name;
 		};
 	}
 }

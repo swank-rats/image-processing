@@ -5,8 +5,10 @@ SET(BII_CREATE_LIB True)
 SET(BII_LIB_TYPE STATIC)
 
 SET(SHAREDLIB_SRC
-       Pipe.h
-       Pipe.cpp
+       ServerPipe.h
+       ServerPipe.cpp
+       ClientPipe.h
+       ClientPipe.cpp
 	   Process.h
        Process.cpp
        )
