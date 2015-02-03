@@ -36,6 +36,7 @@
 #include "fenix/poco/Util/include/Poco/Util/HelpFormatter.h"
 #include "fenix/poco/Foundation/include/Poco/SharedPtr.h"
 #include "fenix/poco/Foundation/include/Poco/Thread.h"
+#include "fenix/poco/Foundation/include/Poco/Observer.h"
 
 using namespace cv;
 using namespace std;
