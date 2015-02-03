@@ -2,6 +2,8 @@
 #include "diego/opencv/opencv2/highgui/highgui.hpp"
 #include "diego/opencv/opencv2/imgproc/imgproc.hpp"
 
+#include "swank_rats\shared\Pipe.h"
+#include "swank_rats\shared\Process.h"
 
 #include "diego/zmqcpp/zmq.hpp"
 

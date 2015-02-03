@@ -4,6 +4,14 @@ INIT_BIICODE_BLOCK()
 SET(BII_CREATE_LIB True)
 SET(BII_LIB_TYPE STATIC)
 
+SET(SHAREDLIB_SRC
+       Pipe.h
+       Pipe.cpp
+	   Process.h
+       Process.cpp
+       )
+SET(BII_LIB_SRC ${SHAREDLIB_SRC})
+
 # Actually create targets: EXEcutables and libraries.
 ADD_BIICODE_TARGETS()
 
