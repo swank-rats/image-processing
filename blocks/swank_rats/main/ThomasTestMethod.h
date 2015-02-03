@@ -27,7 +27,7 @@
 #include <string>
 
 #include "diego/opencv/opencv/cv.h"
-#include "diego/opencv/opencv2/flann/lsh_table.hpp"
+#include "diego/opencv/opencv2/flann/lsh_table.h"
 
 #include "fenix/poco/Foundation/include/Poco/Stopwatch.h"
 

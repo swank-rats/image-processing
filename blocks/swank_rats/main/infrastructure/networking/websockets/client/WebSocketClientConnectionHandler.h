@@ -12,7 +12,7 @@
 #include "fenix/poco/Foundation/include/Poco/Timespan.h"
 #include "fenix/poco/Net/include/Poco/Net/HTTPServer.h"
 #include "fenix/poco/Net/include/Poco/Net/HTTPClientSession.h"
-#include "fenix/poco/Net/include/Poco/Net/HTTPSClientSession.h"
+#include "fenix/poco/NetSSL_OpenSSL/include/Poco/Net/HTTPSClientSession.h"
 #include "fenix/poco/Net/include/Poco/Net/WebSocket.h"
 #include "fenix/poco/Foundation/include/Poco/Activity.h"
 #include "fenix/poco/Foundation/include/Poco/Mutex.h"

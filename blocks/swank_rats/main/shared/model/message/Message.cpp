@@ -12,7 +12,7 @@
 #include "fenix/poco/Foundation/include/Poco/Exception.h"
 #include "fenix/poco/JSON/include/Poco/JSON/Parser.h"
 #include "fenix/poco/JSON/include/Poco/JSON/Object.h"
-#include "fenix/poco/Dynamic/include/Poco/Dynamic/Var.h"
+#include "fenix/poco/Foundation/include/Poco/Dynamic/Var.h"
 
 #include <string>
 #include <vector>

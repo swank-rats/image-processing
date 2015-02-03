@@ -29,7 +29,7 @@
 #include "fenix/poco/Foundation/include/Poco/PatternFormatter.h"
 #include "fenix/poco/Util/include/Poco/Util/Application.h"
 #include "fenix/poco/Util/include/Poco/Util/ServerApplication.h"
-#include "fenix/poco/Util/include/Poco/Util/HTTPSStreamFactory.h"
+#include "fenix/poco/NetSSL_OpenSSL/include/Poco/Net/HTTPSStreamFactory.h"
 #include "fenix/poco/Foundation/include/Poco/URI.h"
 #include "fenix/poco/Util/include/Poco/Util/OptionSet.h"
 #include "fenix/poco/Util/include/Poco/Util/OptionCallback.h"

@@ -9,12 +9,12 @@
 #include "swank_rats/main/shared/notifications/MessageNotification.h"
 #include "swank_rats/main/shared/model/message/MessageCommands.h"
 
-#include "fenix/poco/Foundation/Poco/include/Exception.h"
-#include "fenix/poco/Net/Poco/include/Net/HTTPMessage.h"
-#include "fenix/poco/Net/Poco/include/Net/HTTPRequest.h"
-#include "fenix/poco/Net/Poco/include/Net/HTTPResponse.h"
-#include "fenix/poco/Foundation/Poco/include/AutoPtr.h"
-#include "fenix/poco/Foundation/Poco/include/Delegate.h"
+#include "fenix/poco/Foundation/include/Poco/Exception.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPMessage.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPRequest.h"
+#include "fenix/poco/Net/include/Poco/Net/HTTPResponse.h"
+#include "fenix/poco/Foundation/include/Poco/AutoPtr.h"
+#include "fenix/poco/Foundation/include/Poco/Delegate.h"
 
 #include <string>
 
