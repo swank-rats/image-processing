@@ -3,44 +3,50 @@
 #include "diego/opencv/opencv2/imgproc/imgproc.hpp"
 
 #include "swank_rats\shared\ClientPipe.h"
-#include "swank_rats\shared\ServerPipe.h"
-#include "swank_rats\shared\Process.h"
 
 #include "diego/zmqcpp/zmq.hpp"
 
 #include <string>
 #include <iostream>
 
-using swank_rats_lib::process::Process;
+using swank_rats_lib::pipe::ClientPipe;
 
 int main()
 {
-	Process *p = new Process("MJPEGPerformanceTest.exe");
+	ClientPipe clientPipe("\\\\.\\pipe\\swankratspipe");
 
-	p->ExecuteProcess();
-
-	Sleep(1000);
-
-	p->KillProcess();
-
-	//  Prepare our context and socket
-	zmq::context_t context(1);
+	zmq::context_t context(1); //number of threads used for IO
 	zmq::socket_t socket(context, ZMQ_REQ);
-
-	std::cout << "Connecting to hello world server..." << std::endl;
 	socket.connect("tcp://localhost:5555");
 
-	//  Do 10 requests, waiting each time for a response
-	for (int request_nbr = 0; request_nbr != 10; request_nbr++) {
-		zmq::message_t request(6);
-		memcpy((void *)request.data(), "Hello", 5);
-		std::cout << "Sending Hello " << request_nbr << "..." << std::endl;
-		socket.send(request);
+	zmq::message_t init(4);
+	memcpy((void *)init.data(), "INIT", 4);
+	printf("Sending INIT to server\n");
+	socket.send(init);
 
-		//  Get the reply.
+	while (1) {
 		zmq::message_t reply;
-		socket.recv(&reply);
-		std::cout << "Received World " << request_nbr << std::endl;
+		socket.recv(&reply); //is blocking? 
+
+		printf("Received: %s", reply.data());
+
+		if (reply.data() == "END") {
+			break;
+		}
+		else if (reply.data() == "OPENPIPE") {
+			clientPipe.Connect();
+		}
+		else if (reply.data() == "IMAGE") {
+			//clientPipe.Read()
+		}
+		else {
+			zmq::message_t response(6);
+			memcpy((void *)response.data(), "INVALID", 6);
+			printf("Invalid message received. Response with INVALID\n");
+			socket.send(response);
+		}
+
+		
 	}
 	return 0;
 }

@@ -65,7 +65,7 @@ namespace swank_rats_lib {
 #endif
 		}
 
-		bool ClientPipe::Read(int length, char *buffer) {
+		bool ClientPipe::Read(int buffSize, char *buffer) {
 #if __WINDOWS__ || __WIN32__ || _WIN32
 			// The pipe connected; change to message-read mode. 
 			DWORD dwMode = PIPE_READMODE_MESSAGE;
@@ -87,7 +87,7 @@ namespace swank_rats_lib {
 			fSuccess = ReadFile(
 				hPipe,					// pipe handle 
 				buffer,					// buffer to receive reply 
-				length*sizeof(TCHAR),	// size of buffer 
+				buffSize*sizeof(TCHAR),	// size of buffer 
 				&cbRead,				// number of bytes read 
 				NULL);					// not overlapped 
 

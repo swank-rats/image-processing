@@ -30,7 +30,7 @@ namespace swank_rats_lib {
 			ClientPipe(const string name);
 			bool Connect();
 			bool Disconnect();
-			bool Read(int length, char *buffer);
+			bool Read(int buffSize, char *buffer);
 			bool Send(const string msg);
 		private:
 #if __WINDOWS__ || __WIN32__ || _WIN32

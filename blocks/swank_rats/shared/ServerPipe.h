@@ -28,10 +28,8 @@ namespace swank_rats_lib {
 		class ServerPipe {
 		public:
 			ServerPipe(const string name);
-			bool Create(int outBufSize, int inBufSize);
-			bool Close();
-			bool Listen();
-
+			bool Read(int buffSize, char *buffer);
+			bool Send(int buffSize, string msg);
 		private:
 #if __WINDOWS__ || __WIN32__ || _WIN32
 			HANDLE hPipe;
