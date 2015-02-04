@@ -29,7 +29,18 @@ namespace swank_rats_lib {
 		public:
 			ClientPipe(const string name);
 			bool Connect();
+			bool Disconnect();
+			bool Read(int length, char *buffer);
+			bool Send(const string msg);
 		private:
+#if __WINDOWS__ || __WIN32__ || _WIN32
+			HANDLE hPipe;
+
+#elif __APPLE__ && __MACH__	
+			//TODO hannes
+#else
+#error "OS not supported!"
+#endif
 			string name;
 		};
 	}

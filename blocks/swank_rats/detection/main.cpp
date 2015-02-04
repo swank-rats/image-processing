@@ -15,7 +15,7 @@ using swank_rats_lib::process::Process;
 
 int main()
 {
-	Process *p = new Process("C:\\Windows\\System32\\notepad.exe");
+	Process *p = new Process("MJPEGPerformanceTest.exe");
 
 	p->ExecuteProcess();
 
