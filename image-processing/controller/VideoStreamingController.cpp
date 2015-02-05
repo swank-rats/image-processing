@@ -8,54 +8,47 @@
 #include "..\shared\model\message\MessageCommands.h"
 #include "..\shared\notifications\ClientConnectionLostNotification.h"
 
+#include <Poco\Delegate.h>
+
 using shared::model::message::MessageCommandEnum;
 using shared::notifications::ClientConnectionLostNotification;
+
+using Poco::Delegate;
 
 namespace controller {
 	namespace video_streaming {
 		VideoStreamingController::VideoStreamingController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> webSocketController)
-			:lostConnectionQueue(), lostConnectionHandlerActivity(this, &VideoStreamingController::HandleLostConnections), webSocketController(webSocketController) {
-			streamingServer = new VideoStreamingServer(4711, "/videostream", webcamService, lostConnectionQueue);
-
+			: webSocketController(webSocketController) {
+			streamingServer = new VideoStreamingServer(4711, "/videostream", webcamService);
+			streamingServer->ClientLostConnection += Poco::delegate(this, &VideoStreamingController::HandleLostConnections);
+			webSocketController->MessageReceived += Poco::delegate(this, &VideoStreamingController::HandleMessage);
 		}
 
 		VideoStreamingController::~VideoStreamingController() {
+			streamingServer->ClientLostConnection -= Poco::delegate(this, &VideoStreamingController::HandleLostConnections);
 			delete streamingServer;
 			streamingServer = nullptr;
 
+			webSocketController->MessageReceived -= Poco::delegate(this, &VideoStreamingController::HandleMessage);
 			webSocketController = nullptr; //do not delete - is shared pointer
 		}
 
 		void VideoStreamingController::StartStreamingServer() {
-			if (!lostConnectionHandlerActivity.isRunning()) {
-				lostConnectionHandlerActivity.start();
-			}
-
 			if (!streamingServer->IsRunning()) {
 				streamingServer->StartServer();
 			}
 		}
 
 		bool VideoStreamingController::StopStreamingServer() {
-			if (lostConnectionHandlerActivity.isRunning()) {
-				lostConnectionHandlerActivity.stop();
-				lostConnectionQueue.wakeUpAll();
-				lostConnectionHandlerActivity.wait();
-			}
-
 			if (streamingServer->IsRunning()) {
 				streamingServer->StopServer();
 			}
 
-			lostConnectionQueue.clear(); //clear possible lost connection notifications
-
 			return true;
 		}
 
-		void VideoStreamingController::HandleMessageNotification(MessageNotification* notification) {
-			Message *message = notification->GetData();
-
-			switch (message->GetCmd()) {
+		void VideoStreamingController::HandleMessage(const void* pSender, Message& message) {
+			switch (message.GetCmd()) {
 			case MessageCommandEnum::start:
 				StartStreamingServer();
 				break;
@@ -63,29 +56,12 @@ namespace controller {
 				StopStreamingServer();
 				break;
 			}
-
-			notification->release();
 		}
 
-		void VideoStreamingController::HandleLostConnections() {
-			while (!lostConnectionHandlerActivity.isStopped()) {
-				Notification::Ptr notification(lostConnectionQueue.waitDequeueNotification());
-
-				if (notification) {
-					ClientConnectionLostNotification::Ptr connLostNotification = notification.cast<ClientConnectionLostNotification>();
-					if (connLostNotification)
-					{
-						Message* message = new Message(MessageCommandEnum::connectionlost);
-						message->AddParam("ip", connLostNotification->GetSocketAddress().toString());
-						webSocketController->Send(message);
-					}
-				}
-				else {
-					//null signals that worker should stop polling queue
-					lostConnectionHandlerActivity.stop();
-					break;
-				}
-			}
+		void VideoStreamingController::HandleLostConnections(const void* pSender, const SocketAddress& arg) {
+			Message* message = new Message(MessageCommandEnum::connectionlost);
+			message->AddParam("ip", arg.toString());
+			webSocketController->Send(message);
 		}
 	}
 }

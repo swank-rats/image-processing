@@ -35,10 +35,9 @@ using shared::notifications::MessageNotification;
 
 namespace infrastructure {
 	namespace websocket {
-		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue)
+		WebSocketClientConnectionHandler::WebSocketClientConnectionHandler(URI uri, NotificationQueue &receivedQueue)
 			: uri(uri), sendTimeout(100), receiveTimeout(5000), pollTimeout(100),
-			receiveActity(this, &WebSocketClientConnectionHandler::Listen), sendActity(this, &WebSocketClientConnectionHandler::Send),
-			receivedQueue(receivedQueue), sendingQueue(sendingQueue) {
+			receiveActity(this, &WebSocketClientConnectionHandler::Listen), receivedQueue(receivedQueue){
 			session = nullptr;
 			webSocket = nullptr;
 			isConnected = false;
@@ -61,7 +60,6 @@ namespace infrastructure {
 		bool WebSocketClientConnectionHandler::OpenConnection() {
 			if (EstablishConnection()) {
 				receiveActity.start();
-				sendActity.start();
 				return true;
 			}
 
@@ -75,11 +73,6 @@ namespace infrastructure {
 				if (receiveActity.isRunning()) {
 					receiveActity.stop();
 					receiveActity.wait();
-				}
-
-				if (sendActity.isRunning()) {
-					sendActity.stop();
-					sendActity.wait();
 				}
 
 				if (isConnected) {
@@ -100,70 +93,57 @@ namespace infrastructure {
 			return isReconnecting;
 		}
 
-		void WebSocketClientConnectionHandler::Send() {
+		bool WebSocketClientConnectionHandler::Send(Message& message) {
 			Logger& logger = Logger::get("WebSocketClient");
 			int flags = WebSocket::FRAME_TEXT;
 			int length;
 			const char* buffer;
 
-			while (!sendActity.isStopped()) {
-				if (isReconnecting) continue;
+			while (isReconnecting) {
+				//wait for reconnecting to be finished to avoid loosing message
+				logger.warning("Cannot send message while reconnecting ... waiting for new connection...");
 
-				Notification::Ptr notification(sendingQueue.waitDequeueNotification());
+				Thread::sleep(200);
+			}
 
-				if (notification) {
-					MessageNotification::Ptr messageNotification = notification.cast<MessageNotification>();
+			try {
+				string temp = message.ToString();
 
-					if (messageNotification)
-					{
-						try {
-							const Message &message = messageNotification->GetData();
-							string temp = message.ToString();
+				buffer = temp.c_str();
 
-							while (isReconnecting) {
-								//wait for reconnecting to be finished to avoid loosing message
-								logger.warning("Cannot send message while reconnecting ... waiting for new connection...");
+				logger.information("try sending " + temp);
 
-								Thread::sleep(200);
-							}
+				if (!isConnected || isReconnecting) {
+					logger.warning("Message was not sent cause of missing connection: " + temp);
+					return false;
+				}
 
-							if (!isConnected) {
-								logger.warning("Message was not sent cause of missing connection: " + temp);
-								continue;
-							}
+				length = webSocket->sendFrame(buffer, temp.length(), flags);
 
-							buffer = temp.c_str();
-
-							logger.information("sending " + temp);
-
-							length = webSocket->sendFrame(buffer, temp.length(), flags);
-
-							logger.information((length > 0) ? "message send!" : "message send failed");
-							messageNotification = nullptr;
-						}
-						catch (TimeoutException& e) {
-							logger.warning("Sending timeout: " + e.displayText());
-						}
-						catch (ConnectionAbortedException& e) {
-							logger.error("Connection aborted: " + e.displayText());
-							FireLostConnection();
-						}
-						catch (ConnectionResetException& e) {
-							logger.error("Connection reset: " + e.displayText());
-							FireLostConnection();
-						}
-						catch (Exception& e)
-						{
-							logger.error("General exception: " + e.displayText());
-							FireLostConnection();
-						}
-					}
+				if (length > 0) {
+					logger.information("message send!");
+					return true;
 				}
 				else {
-					//null signals that worker should stop polling queue
-					sendActity.stop();
-					break;
+					logger.error("message send failed!");
+					return false;
 				}
+			}
+			catch (TimeoutException& e) {
+				logger.warning("Sending timeout: " + e.displayText());
+			}
+			catch (ConnectionAbortedException& e) {
+				logger.error("Connection aborted: " + e.displayText());
+				FireLostConnection();
+			}
+			catch (ConnectionResetException& e) {
+				logger.error("Connection reset: " + e.displayText());
+				FireLostConnection();
+			}
+			catch (Exception& e)
+			{
+				logger.error("General exception: " + e.displayText());
+				FireLostConnection();
 			}
 		}
 

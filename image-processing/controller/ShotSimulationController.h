@@ -34,14 +34,13 @@ namespace controller {
 		class ShotSimulationController
 		{
 		public:
-			ShotSimulationController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> websocketController);
+			ShotSimulationController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> webSocketController);
 			~ShotSimulationController();
-			void HandleMessageNotification(MessageNotification* notification);
 			void StartSimulationService();
 			void StopSimulationService();
 			void StartTestingSimulation(); //only for testing
 		private:
-			SharedPtr<WebSocketController> websocketController;
+			SharedPtr<WebSocketController> webSocketController;
 			SharedPtr<WebcamService> webCamSrv;
 			ShotSimulationService shotSimulation;
 			NotificationQueue playerHitQueue;
@@ -52,6 +51,7 @@ namespace controller {
 
 			Timer timer; //only for testing
 
+			void HandleMessage(const void* pSender, Message& message);
 			void HandlePlayerHitNotification();
 			void StartShotSimulation(string playerType);
 			void OnTimer(Timer& timer);

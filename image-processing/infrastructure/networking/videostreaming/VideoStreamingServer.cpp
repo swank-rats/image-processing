@@ -14,17 +14,13 @@ using Poco::Net::HTTPServerParams;
 
 namespace infrastructure {
 	namespace video_streaming {
-		VideoStreamingServer::VideoStreamingServer(unsigned short port, const std::string& uri,
-			SharedPtr<WebcamService> webcamService, NotificationQueue& lostConnectionQueue) : socket(port) {
-			Logger& logger = Logger::get("VideoStreamingServer");
-
+		VideoStreamingServer::VideoStreamingServer(unsigned short port, const std::string& uri, SharedPtr<WebcamService> webcamService) : socket(port) {
 			HTTPServerParams* pParams = new HTTPServerParams;
 			pParams->setMaxQueued(100);
 			pParams->setMaxThreads(16);
 			pParams->setKeepAlive(true);
 
-			server = new HTTPServer(new VideoStreamingRequestHandlerFactory(webcamService, uri, lostConnectionQueue), threadPool, socket, pParams);
-			logger.information("init videostreaming server at port " + std::to_string(port));
+			server = new HTTPServer(new VideoStreamingRequestHandlerFactory(webcamService, *this, uri), threadPool, socket, pParams);
 
 			isRunning = false;
 		}
@@ -59,6 +55,10 @@ namespace infrastructure {
 			threadPool.stopAll();
 			logger.information("stopped video streaming server");
 			isRunning = false;
+		}
+
+		void VideoStreamingServer::HandleClientLostConnection(const SocketAddress& clientAddr) {
+			ClientLostConnection(this, clientAddr);
 		}
 	}
 }

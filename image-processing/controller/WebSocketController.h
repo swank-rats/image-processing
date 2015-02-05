@@ -9,6 +9,7 @@
 #include "..\shared\notifications\MessageNotification.h"
 #include "..\shared\model\message\Message.h"
 
+#include <Poco\BasicEvent.h>
 #include <Poco\URI.h>
 #include <Poco\NotificationQueue.h>
 #include <Poco\Activity.h>
@@ -16,6 +17,7 @@
 #include <Poco\NotificationCenter.h>
 #include <Poco\AutoPtr.h>
 
+using Poco::BasicEvent;
 using Poco::URI;
 using Poco::AutoPtr;
 using Poco::NotificationQueue;
@@ -31,17 +33,17 @@ namespace controller {
 		class WebSocketController
 		{
 		public:
+			BasicEvent<Message> MessageReceived;
+
 			WebSocketController(URI uri);
 			~WebSocketController();
 			void StartWebSocketClient();
 			void StopWebSocketClient();
-			NotificationCenter& GetNotificationCenter();
 			void Send(Message* message);
 		private:
 			WebSocketClient* webSocketClient;
 			NotificationQueue receivedMessagesQueue;
 			Activity<WebSocketController> messageHandlerActivity;
-			NotificationCenter notificationCenter;
 
 			void HandleReceivedMessages();
 		};
