@@ -70,6 +70,9 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugStandalone|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)share\vs\2010\libs\glib-2.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)share\vs\2010\libs\gobject-2.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)share\vs\2010\libs\gstreamer-app-1.0.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Thomas|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
