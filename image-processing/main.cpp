@@ -17,6 +17,8 @@
 #include <iostream>
 #include <list>
 
+#include <gst\gst.h>
+
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 
@@ -79,7 +81,13 @@ public:
 protected:
 	void initialize(Application& self) {
 		InitLoggers();
+
 		loadConfiguration();
+
+		gst_init(nullptr, nullptr);
+		guint major, minor, micro, nano;
+		gst_version(&major, &minor, &micro, &nano);
+		printf("This program is linked against GStreamer %d.%d.%d\n", major, minor, micro);
 
 		ServerApplication::initialize(self);
 	}
@@ -224,7 +232,7 @@ private:
 		//th.Test11();
 		//th.WallDetectionTestOne();
 #endif
-	}
+}
 };
 
 POCO_SERVER_MAIN(ImageProcessingServerApplication);

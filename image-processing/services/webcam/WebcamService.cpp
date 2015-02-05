@@ -8,6 +8,12 @@
 #include <iostream>
 #include <iomanip>
 
+#include <gst\gst.h>
+#include <gst\gstelement.h>
+#include <gst\gstpipeline.h>
+#include <gst\gstutils.h>
+#include <gst\app\gstappsrc.h>
+
 #include <Poco\Clock.h>
 
 #include <Poco\Stopwatch.h>
@@ -118,6 +124,26 @@ namespace services {
 
 		void WebcamService::RecordingCore() {
 			Logger& logger = Logger::get("WebcamService");
+			GstElement *pipeline;
+			GstElement *source, *filter, *sink;
+			guint64 imagecounter;
+
+			/* create pipeline */
+			pipeline = gst_pipeline_new("my-pipeline");
+
+			/* create elements */
+			source = gst_element_factory_make("fakesrc", "source");
+			filter = gst_element_factory_make("identity", "filter");
+			sink = gst_element_factory_make("fakesink", "sink");
+
+			/* must add elements to pipeline before linking them */
+			gst_bin_add_many(GST_BIN(pipeline), source, filter, sink, NULL);
+
+			/* link */
+			if (!gst_element_link_many(source, filter, sink, NULL)) {
+				g_warning("Failed to link elements!");
+			}
+
 			Mat frame;
 
 			//Stopwatch sw;
@@ -146,7 +172,75 @@ namespace services {
 					//printf("Capture frame: %f ms\n", sw.elapsed() * 0.001);
 					//sw.restart();
 
-					Notify();
+					//Notify();
+
+					/// OpenCV handles image in BGR, so to get RGB, Channels R and B needs to be swapped.
+					//cv::cvtColor(image, image, CV_CVTIMG_SWAP_RB);
+
+					{
+						/// How do i get the actual bpp and depth out of the cv::Mat?
+						GstCaps *caps = gst_caps_new_simple("video/x-raw-rgb", "width", G_TYPE_INT, frame.cols, "height", G_TYPE_INT,
+							frame.rows, "framerate", GST_TYPE_FRACTION, 0, 1, NULL);
+
+						g_object_set(G_OBJECT(source), "caps", caps, NULL);
+						gst_caps_unref(caps);
+
+						IplImage* img = new IplImage(frame);
+
+						GstBuffer *buffer;
+						GstMapInfo map;
+						map.data = (uchar*)img->imageData;
+
+						/// Copy Data from OpenCV to GStreamer
+						if (gst_buffer_map(buffer, &map, GST_MAP_READ)) {
+							gst_util_dump_mem(map.data, map.size);
+							gst_buffer_unmap(buffer, &map);
+						}
+						//{
+						//	int bufferlength = frame.cols * frame.rows * frame.channels();
+						//	buffer = gst_buffer_new_and_alloc(bufferlength);
+
+						//	memcpy(GST_BUFFER_DATA(buffer), IMG_data, GST_BUFFER_SIZE(buffer));
+
+						//	GST_BUFFER_DURATION(buffer) = gst_util_uint64_scale(bufferlength, GST_SECOND, 1);
+						//}
+
+						/// Setting the Metadata for the image to be pushed.
+						{
+							GstCaps *caps_Source = NULL;
+
+							std::stringstream video_caps_text;
+							video_caps_text << "video/x-raw-rgb,width=(int)" << frame.cols << ",height=(int)" << frame.rows << ",framerate=(fraction)0/1";
+							caps_Source = gst_caps_from_string(video_caps_text.str().c_str());
+
+							if (!GST_IS_CAPS(caps_Source)) {
+								std::cout << "Error creating Caps for OpenCV-Source, exiting...";
+								exit(1);
+							}
+
+							gst_app_src_set_caps(GST_APP_SRC(source), caps_Source);
+							//gst_buffer_set_caps(buffer, caps_Source);
+							//gst_app_src_push_buffer(caps_Source->, buffer);
+							gst_caps_unref(caps_Source);
+						}
+
+						/// Setting a continues timestamp
+						GST_BUFFER_TIMESTAMP(buffer) = gst_util_uint64_scale(imagecounter * 20, GST_MSECOND, 1);
+						imagecounter += 1;
+
+						/// Push Buffer into GStreamer-Pipeline
+						GstFlowReturn rw;
+						rw = gst_app_src_push_buffer(GST_APP_SRC(source), buffer);
+
+						if (rw != GST_FLOW_OK) {
+							std::cout << "Error push buffer to GStreamer-Pipeline, exiting...";
+
+							exit(1);
+						}
+						else {
+							std::cout << "GST_FLOW_OK " << "imagecounter: " << imagecounter << std::endl;
+						}
+					}
 
 					//sw.stop();
 					//printf("Notifiy: %f ms\n", sw.elapsed() * 0.001);
