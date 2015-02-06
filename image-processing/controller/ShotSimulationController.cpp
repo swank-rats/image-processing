@@ -120,8 +120,8 @@ namespace controller {
 
 		// ONLY FOR TESTING PURPOSE
 		void ShotSimulationController::OnTimer(Timer& timer) {
-			StartShotSimulation("circle");
-			//StartShotSimulation("square");
+			//StartShotSimulation("circle");
+			StartShotSimulation("square");
 		}
 
 		void ShotSimulationController::StartTestingSimulation() {

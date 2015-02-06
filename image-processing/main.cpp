@@ -213,7 +213,7 @@ private:
 		//th.DetectConture();
 		//th.DetectConture2();
 		//th.DetectCircle();
-		th.DetectCircle4();
+		//th.DetectCircle4();
 		//th.DetectAll();
 		//DetectConture3();
 		//th.Test5();
@@ -223,6 +223,9 @@ private:
 		//th.startMotionTracking();
 		//th.Test11();
 		//th.WallDetectionTestOne();
+		//th.CalibartionTest();
+		th.DetectionRGBContour();
+		
 #endif
 	}
 };

@@ -202,310 +202,606 @@ namespace services {
 		}
 
 		Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
-			//Stopwatch swTotal;
-			//swTotal.start();
+
 
 			Mat srcdetect2;
 			Mat src_graydetect2;
-
+			//int threshdetect2 = 78;
 			int threshdetect2 = 100;
-			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
-			srcdetect2 = frame;
 
-			//Stopwatch sw;
-			//sw.start();
-			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
-			//sw.stop();
-			//printf("cvtColor: %f ms\n", sw.elapsed() * 0.001);
-			//sw.restart();
-			blur(src_graydetect2, src_graydetect2, Size(3, 3));
-			//sw.stop();
-			//printf("blur: %f ms\n", sw.elapsed() * 0.001);
 			//Drawing and contours
-			Mat canny_output;
-			vector<vector<Point> > contours;
-			vector<Vec4i> hierarchy;
+			Mat canny_output2;
 
-			// Finding rects,tris and pentagons
-			std::vector<cv::Point> approx;
+			vector<vector<Point> > contours2;
+			vector<Vec4i> hierarchy2;
 
-			vector<vector<cv::Point>> rectangles;
-			vector<int> rectanglesContourPositions;
+
+			std::vector<cv::Point> approx2;
+
 			vector<vector<cv::Point>> triangles;
 			vector<int> trianglePositions;
+			vector<vector<cv::Point>> rectangles;
 
-			//Found correct elements
-			vector<int> allowedRectanglesContourPositions;
-			vector<int> allowedTriangles;
+			//int iLowH = 0;
+			//int iHighH = 179;
 
-			//dilate(src_graydetect2, src_graydetect2, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+			//int iLowS = 0;
+			//int iHighS = 129;
 
-			// Detect edges using canny
-			//sw.restart();
-			Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
-			//sw.stop();
-			//printf("Canny: %f ms\n", sw.elapsed() * 0.001);
+			//int iLowV = 0;
+			//int iHighV = 255;
 
-			//sw.restart();
-			//thresholding the grayscale image to get better results
-			threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
-			//sw.stop();
-			//printf("threshold: %f ms\n", sw.elapsed() * 0.001);
+			int iLowH = 0;
+			int iHighH = 179;
 
-			//sw.restart();
-			// Find contours
-			findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+			int iLowS = 0;
+			int iHighS = 244;
 
-			//sw.stop();
-			//printf("findContours: %f ms\n", sw.elapsed() * 0.001);		/// Draw contours
-			Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
+			int iLowV = 0;
+			int iHighV = 245;
 
-			/*
-			*	Starting detection process
-			*/
 
-			//sw.restart();
-			for (size_t i = 0; i < contours.size(); i++)
+			srcdetect2 = frame;
+			Mat imgHSV;
+
+			cvtColor(srcdetect2, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+
+			Mat imgThresholded;
+
+			inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+
+			//morphological opening (removes small objects from the foreground)
+			erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+			dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+
+			//morphological closing (removes small holes from the foreground)
+			dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+			erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+
+
+
+			/// Detect edges using canny
+			Canny(imgThresholded, canny_output2, threshdetect2, threshdetect2 * 2, 3);
+
+			//thresholding the grayscale canny_output2 to get better results
+			threshold(canny_output2, canny_output2, 128, 255, CV_THRESH_BINARY);
+
+			/// Find contours
+			findContours(canny_output2, contours2, hierarchy2, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+
+			for (size_t i = 0; i < contours2.size(); i++)
 			{
 				// Approximate contour with accuracy proportional
 				// to the contour perimeter
 				// original elipse value 0.02
-				cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.15, true);
+				cv::approxPolyDP(cv::Mat(contours2[i]), approx2, cv::arcLength(cv::Mat(contours2[i]), true)*0.1, true);
 
 				// Skip small or non-convex objects
-				if (std::fabs(cv::contourArea(contours[i])) < 300 || !cv::isContourConvex(approx))
+				if (std::fabs(cv::contourArea(contours2[i])) < 300 || !cv::isContourConvex(approx2))
 					continue;
 
-				// Rectangles
-
-				if (approx.size() == 4)
+				if (approx2.size() == 3)
 				{
-					if (abs(approx[0].x - approx[3].x) < 100)
-					{
-						rectangles.push_back(contours[i]);
-						rectanglesContourPositions.push_back(i);
-					}
-				}
-
-				if (approx.size() == 3)
-				{
-					triangles.push_back(approx);
+					triangles.push_back(approx2);
 					trianglePositions.push_back(i);
 				}
+				if (approx2.size() == 4)
+				{
+					rectangles.push_back(approx2);
+				}
 			}
 
-			//sw.stop();
-			//printf("findContProcess: %f ms\n", sw.elapsed() * 0.001);
-
-			//sw.restart();
-			allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions, trianglePositions, &allowedTriangles);
-			//sw.stop();
-			//printf("allowedRect: %f ms\n", sw.elapsed() * 0.001);
-
-			//sw.restart();
 			vector<Point> pointsTriRect;
 			vector<Point> contoursRect;
-			if (allowedTriangles.size() > 0){
-				pointsTriRect = GetFrontOfTriangle(triangles[allowedTriangles[0]]);
-			}
+			bool found = false;
 
-			if (allowedRectanglesContourPositions.size() > 0)
+			if (rectangles.size() > 0)
 			{
-				contoursRect = contours[allowedRectanglesContourPositions[0]];
+
+				if (triangles.size() > 0){
+
+					Point dir;
+					Point PosTop;
+
+
+					for (size_t i = 0; i < triangles.size(); i++)
+					{
+						pointsTriRect = GetFrontOfTriangle(triangles[i]);
+						dir = pointsTriRect[0];
+						PosTop = pointsTriRect[1];
+						if (pointPolygonTest(Mat(rectangles[0]), PosTop, true) >0)
+						{
+							found = true;
+							break;
+						}
+					}
+
+					if (found)
+					{
+
+						Point centerTri(PosTop.x - dir.x / 2, PosTop.y - dir.y / 2);
+
+						Point x(centerTri.x - 40, centerTri.y - 40);
+						Point y(centerTri.x + 40, centerTri.y + 40);
+						Point z(centerTri.x - 40, centerTri.y + 40);
+						Point v(centerTri.x - 40, centerTri.y + 40);
+
+						contoursRect.push_back(x);
+						contoursRect.push_back(y);
+						contoursRect.push_back(z);
+						contoursRect.push_back(v);
+					}
+
+
+				}
 			}
 
-			//sw.stop();
-			//printf("GetFrontOFTrie: %f ms\n", sw.elapsed() * 0.001);
 
-			//swTotal.stop();
-			//printf("Rect detection: %f ms\n", swTotal.elapsed() * 0.001);
-			//if (swTotal.elapsed() > 200000) {
-			//	printf("");
-			//}
-
-			if (pointsTriRect.size() == 2)
+			if (pointsTriRect.size() == 2 && found)
 				return Robot(pointsTriRect[1], pointsTriRect[0], contoursRect);
 			else
 				return Robot(Point(), Point(), contoursRect);
+
+
 		}
 
+
+		//Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
+		//	//Stopwatch swTotal;
+		//	//swTotal.start();
+
+		//	Mat srcdetect2;
+		//	Mat src_graydetect2;
+
+		//	int threshdetect2 = 78;
+		//	//int threshdetect2 = 100;
+		//	int max_threshdetect2 = 255;
+		//	RNG rngdetect2;
+
+		//	srcdetect2 = frame;
+
+		//	//Stopwatch sw;
+		//	//sw.start();
+		//	cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
+		//	//sw.stop();
+		//	//printf("cvtColor: %f ms\n", sw.elapsed() * 0.001);
+		//	//sw.restart();
+		//	blur(src_graydetect2, src_graydetect2, Size(3, 3));
+		//	//sw.stop();
+		//	//printf("blur: %f ms\n", sw.elapsed() * 0.001);
+		//	//Drawing and contours
+		//	Mat canny_output;
+		//	vector<vector<Point> > contours;
+		//	vector<Vec4i> hierarchy;
+
+		//	// Finding rects,tris and pentagons
+		//	std::vector<cv::Point> approx;
+
+		//	vector<vector<cv::Point>> rectangles;
+		//	vector<int> rectanglesContourPositions;
+		//	vector<vector<cv::Point>> triangles;
+		//	vector<int> trianglePositions;
+
+		//	//Found correct elements
+		//	vector<int> allowedRectanglesContourPositions;
+		//	vector<int> allowedTriangles;
+
+		//	//dilate(src_graydetect2, src_graydetect2, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+
+		//	// Detect edges using canny
+		//	//sw.restart();
+		//	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+		//	//sw.stop();
+		//	//printf("Canny: %f ms\n", sw.elapsed() * 0.001);
+
+		//	//sw.restart();
+		//	//thresholding the grayscale image to get better results
+		//	threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
+		//	//sw.stop();
+		//	//printf("threshold: %f ms\n", sw.elapsed() * 0.001);
+
+		//	//sw.restart();
+		//	// Find contours
+		//	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+
+		//	//sw.stop();
+		//	//printf("findContours: %f ms\n", sw.elapsed() * 0.001);		/// Draw contours
+		//	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
+
+		//	/*
+		//	*	Starting detection process
+		//	*/
+
+		//	//sw.restart();
+		//	for (size_t i = 0; i < contours.size(); i++)
+		//	{
+		//		// Approximate contour with accuracy proportional
+		//		// to the contour perimeter
+		//		// original elipse value 0.02
+		//		cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.15, true);
+
+		//		// Skip small or non-convex objects
+		//		if (std::fabs(cv::contourArea(contours[i])) < 300 || !cv::isContourConvex(approx))
+		//			continue;
+
+		//		// Rectangles
+
+		//		if (approx.size() == 4)
+		//		{
+		//			if (abs(approx[0].x - approx[3].x) < 100)
+		//			{
+		//				rectangles.push_back(contours[i]);
+		//				rectanglesContourPositions.push_back(i);
+		//			}
+		//		}
+
+		//		if (approx.size() == 3)
+		//		{
+		//			triangles.push_back(approx);
+		//			trianglePositions.push_back(i);
+		//		}
+		//	}
+
+		//	//sw.stop();
+		//	//printf("findContProcess: %f ms\n", sw.elapsed() * 0.001);
+
+		//	//sw.restart();
+		//	allowedRectanglesContourPositions = CheckForAllowedRectangles(rectangles, triangles, rectanglesContourPositions, trianglePositions, &allowedTriangles);
+		//	//sw.stop();
+		//	//printf("allowedRect: %f ms\n", sw.elapsed() * 0.001);
+
+		//	//sw.restart();
+		//	vector<Point> pointsTriRect;
+		//	vector<Point> contoursRect;
+		//	if (allowedTriangles.size() > 0){
+		//		pointsTriRect = GetFrontOfTriangle(triangles[allowedTriangles[0]]);
+		//	}
+
+		//	if (allowedRectanglesContourPositions.size() > 0)
+		//	{
+		//		contoursRect = contours[allowedRectanglesContourPositions[0]];
+		//	}
+
+		//	//sw.stop();
+		//	//printf("GetFrontOFTrie: %f ms\n", sw.elapsed() * 0.001);
+
+		//	//swTotal.stop();
+		//	//printf("Rect detection: %f ms\n", swTotal.elapsed() * 0.001);
+		//	//if (swTotal.elapsed() > 200000) {
+		//	//	printf("");
+		//	//}
+
+		//	if (pointsTriRect.size() == 2)
+		//		return Robot(pointsTriRect[1], pointsTriRect[0], contoursRect);
+		//	else
+		//		return Robot(Point(), Point(), contoursRect);
+		//}
+
 		Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
-			//Stopwatch sw;
-			//sw.start();
 
 			Mat srcdetect2;
 			Mat src_graydetect2;
+			//int threshdetect2 = 78;
 			int threshdetect2 = 100;
-			//int threshdetect2 = 100;
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
-			srcdetect2 = frame;
-
-			/// Convert it to gray
-			/*	Stopwatch cv;
-				cv.start();*/
-			cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
-			//cv.stop();
-			//printf("CV: %f ms\n", cv.elapsed() * 0.001);
-
-			/// Reduce the noise so we avoid false circle detection
-			/*		Stopwatch blur;
-					blur.start();*/
-			GaussianBlur(src_graydetect2, src_graydetect2, Size(9, 9), 2, 2);
-			//blur.stop();
-			//printf("blur: %f ms\n", blur.elapsed() * 0.001);
-
-			vector<Vec3f> circles;
-
-			/// Apply the Hough Transform to find the circles
-			/*		Stopwatch hough;
-					hough.start();*/
-			HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
-			//hough.stop();
-			//printf("hough: %f ms\n", hough.elapsed() * 0.001);
 
 			//Drawing and contours
-			Mat canny_output;
-			vector<vector<Point> > contours;
-			vector<Vec4i> hierarchy;
+			Mat canny_output2;
 
-			// Finding rects,tris and pentagons
-			std::vector<cv::Point> approx;
+			vector<vector<Point> > contours2;
+			vector<Vec4i> hierarchy2;
+
+
+			std::vector<cv::Point> approx2;
 
 			vector<vector<cv::Point>> triangles;
 			vector<int> trianglePositions;
+			vector<vector<cv::Point>> rectangles;
 
-			/*	Stopwatch canny;
-				canny.start();*/
-			Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
-			//canny.stop();
-			//printf("canny: %f ms\n", canny.elapsed() * 0.001);
 
-			//thresholding the grayscale image to get better results
-			//Stopwatch thresh;
-			//thresh.start();
-			threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
-			//thresh.stop();
-			//printf("threshold: %f ms\n", thresh.elapsed() * 0.001);
+			//int iLowH = 0;
+			//int iHighH = 179;
+
+			//int iLowS = 0;
+			//int iHighS = 255;
+
+			//int iLowV = 0;
+			//int iHighV = 60;
+
+			int iLowH = 0;
+			int iHighH = 179;
+
+			int iLowS = 0;
+			int iHighS = 244;
+
+			int iLowV = 0;
+			int iHighV = 245;
+
+
+			srcdetect2 = frame;
+			Mat imgHSV;
+
+			cvtColor(srcdetect2, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+
+			Mat imgThresholded;
+
+			inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+
+			//morphological opening (removes small objects from the foreground)
+			erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+			dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+
+			//morphological closing (removes small holes from the foreground)
+			dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+			erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+
+
+
+			/// Detect edges using canny
+			Canny(imgThresholded, canny_output2, threshdetect2, threshdetect2 * 2, 3);
+
+			//thresholding the grayscale canny_output2 to get better results
+			threshold(canny_output2, canny_output2, 128, 255, CV_THRESH_BINARY);
 
 			/// Find contours
-			/*	Stopwatch contour;
-				contour.start();*/
-			findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
-			//contour.stop();
-			//printf("contour: %f ms\n", contour.elapsed() * 0.001);
+			findContours(canny_output2, contours2, hierarchy2, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
 
-			/*Stopwatch rest;
-			rest.start();*/
-
-			vector<Point> contoursPent;
-			if (circles.size() > 0)
+			for (size_t i = 0; i < contours2.size(); i++)
 			{
-				/*
-				*	Starting detection process
-				*/
+				// Approximate contour with accuracy proportional
+				// to the contour perimeter
+				// original elipse value 0.02
+				cv::approxPolyDP(cv::Mat(contours2[i]), approx2, cv::arcLength(cv::Mat(contours2[i]), true)*0.1, true);
 
-				for (size_t i = 0; i < contours.size(); i++)
+				// Skip small or non-convex objects
+				if (std::fabs(cv::contourArea(contours2[i])) < 300 || !cv::isContourConvex(approx2))
+					continue;
+
+				if (approx2.size() == 3)
 				{
-					// Approximate contour with accuracy proportional
-					// to the contour perimeter
-					// original elipse value 0.02
-					cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
-
-					// Skip small or non-convex objects
-					if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
-						continue;
-
-					if (approx.size() == 3)
-					{
-						triangles.push_back(approx);
-						trianglePositions.push_back(i);
-					}
+					triangles.push_back(approx2);
+					trianglePositions.push_back(i);
 				}
-
-				/*	cout << "Size: " << triangles.size() << std::endl;
-					cout << "Size Circle: " << circles.size() << std::endl;*/
-
-				Point circleCenter;
-
-				/// Draw the circles detected
-				for (size_t i = 0; i < circles.size(); i++)
+				if (approx2.size() == 4)
 				{
-					Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-					Point circleCenter = center;
-
-					int radius = cvRound(circles[i][2]);
-					//circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
-					// circle outline
-					//circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
+					rectangles.push_back(approx2);
 				}
+			}
 
-				int triangleindex = 0;
+			vector<Point> pointsTriRect;
+			vector<Point> contoursRect;
+			bool found = false;
 
-				int diffx = 10000;
-				int diffy = 10000;
-				Point centerTri;
+			if (rectangles.size() > 0)
+			{
 
-				if (triangles.size() > 0)
-				{
+				if (triangles.size() > 0){
+
+					Point dir;
+					Point PosTop;
+
+
 					for (size_t i = 0; i < triangles.size(); i++)
 					{
-						int x_centroid = (triangles[i][0].x + triangles[i][1].x + triangles[i][2].x) / 3;
-						int y_centroid = (triangles[i][0].y + triangles[i][1].y + triangles[i][2].y) / 3;
-
-						Point center(cvRound(x_centroid), cvRound(y_centroid));
-						centerTri = center;
-
-						int tmpdiffx = abs(x_centroid - circleCenter.x);
-						int tmpdiffy = abs(y_centroid - circleCenter.y);
-
-						if (tmpdiffx < diffx || tmpdiffy < diffy)
+						pointsTriRect = GetFrontOfTriangle(triangles[i]);
+						dir = pointsTriRect[0];
+						PosTop = pointsTriRect[1];
+						if (pointPolygonTest(Mat(rectangles[0]), PosTop, true) < 0)
 						{
-							triangleindex = i;
+							found = true;
+							break;
 						}
 					}
+
+					if (found)
+					{
+
+						Point centerTri(PosTop.x - dir.x / 2, PosTop.y - dir.y / 2);
+
+						Point x(centerTri.x - 40, centerTri.y - 40);
+						Point y(centerTri.x + 40, centerTri.y + 40);
+						Point z(centerTri.x - 40, centerTri.y + 40);
+						Point v(centerTri.x - 40, centerTri.y + 40);
+
+						contoursRect.push_back(x);
+						contoursRect.push_back(y);
+						contoursRect.push_back(z);
+						contoursRect.push_back(v);
+					}
+
+
 				}
-
-				vector<Point> pointsTriRect;
-
-				Point x(centerTri.x - 40, centerTri.y - 40);
-				Point y(centerTri.x + 40, centerTri.y + 40);
-				Point z(centerTri.x - 40, centerTri.y + 40);
-				Point v(centerTri.x - 40, centerTri.y + 40);
-
-				contoursPent.push_back(x);
-				contoursPent.push_back(y);
-				contoursPent.push_back(z);
-				contoursPent.push_back(v);
-
-				//rest.stop();
-				//printf("rest %f ms\n", rest.elapsed() * 0.001);
-
-				//sw.stop();
-				//printf("Circle detection: %f ms\n", sw.elapsed() * 0.001);
-
-				if (triangles.size() > 0 && triangleindex >= 0)
-					pointsTriRect = GetFrontOfTriangle(triangles[triangleindex]);
-				else
-					return Robot(Point(), Point(), contoursPent);
-
-				if (pointsTriRect.size() == 2)
-					return Robot(pointsTriRect[1], pointsTriRect[0], contoursPent);
-				else
-					return Robot(Point(), Point(), contoursPent);
 			}
+
+
+			if (pointsTriRect.size() == 2 && found)
+				return Robot(pointsTriRect[1], pointsTriRect[0], contoursRect);
 			else
-			{
-				//sw.stop();
-				//printf("Error Circle: %f ms\n", sw.elapsed() * 0.001);
+				return Robot(Point(), Point(), contoursRect);
 
-				return Robot(Point(), Point(), contoursPent);
-			}
+
+
 		}
+
+		//Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
+		//	//Stopwatch sw;
+		//	//sw.start();
+
+		//	Mat srcdetect2;
+		//	Mat src_graydetect2;
+		//	int threshdetect2 = 100;
+		//	//int threshdetect2 = 100;
+		//	int max_threshdetect2 = 255;
+		//	RNG rngdetect2;
+
+		//	srcdetect2 = frame;
+
+		//	/// Convert it to gray
+		//	/*	Stopwatch cv;
+		//		cv.start();*/
+		//	cvtColor(srcdetect2, src_graydetect2, COLOR_BGR2GRAY);
+		//	//cv.stop();
+		//	//printf("CV: %f ms\n", cv.elapsed() * 0.001);
+
+		//	/// Reduce the noise so we avoid false circle detection
+		//	/*		Stopwatch blur;
+		//			blur.start();*/
+		//	GaussianBlur(src_graydetect2, src_graydetect2, Size(9, 9), 2, 2);
+		//	//blur.stop();
+		//	//printf("blur: %f ms\n", blur.elapsed() * 0.001);
+
+		//	vector<Vec3f> circles;
+
+		//	/// Apply the Hough Transform to find the circles
+		//	/*		Stopwatch hough;
+		//			hough.start();*/
+		//	HoughCircles(src_graydetect2, circles, CV_HOUGH_GRADIENT, 1, src_graydetect2.rows / 8, 80, 40, 20, 60);
+		//	//hough.stop();
+		//	//printf("hough: %f ms\n", hough.elapsed() * 0.001);
+
+		//	//Drawing and contours
+		//	Mat canny_output;
+		//	vector<vector<Point> > contours;
+		//	vector<Vec4i> hierarchy;
+
+		//	// Finding rects,tris and pentagons
+		//	std::vector<cv::Point> approx;
+
+		//	vector<vector<cv::Point>> triangles;
+		//	vector<int> trianglePositions;
+
+		//	/*	Stopwatch canny;
+		//		canny.start();*/
+		//	Canny(src_graydetect2, canny_output, threshdetect2, threshdetect2 * 2, 3);
+		//	//canny.stop();
+		//	//printf("canny: %f ms\n", canny.elapsed() * 0.001);
+
+		//	//thresholding the grayscale image to get better results
+		//	//Stopwatch thresh;
+		//	//thresh.start();
+		//	threshold(canny_output, canny_output, 128, 255, CV_THRESH_BINARY);
+		//	//thresh.stop();
+		//	//printf("threshold: %f ms\n", thresh.elapsed() * 0.001);
+
+		//	/// Find contours
+		//	/*	Stopwatch contour;
+		//		contour.start();*/
+		//	findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+		//	//contour.stop();
+		//	//printf("contour: %f ms\n", contour.elapsed() * 0.001);
+
+		//	/*Stopwatch rest;
+		//	rest.start();*/
+
+		//	vector<Point> contoursPent;
+		//	if (circles.size() > 0)
+		//	{
+		//		/*
+		//		*	Starting detection process
+		//		*/
+
+		//		for (size_t i = 0; i < contours.size(); i++)
+		//		{
+		//			// Approximate contour with accuracy proportional
+		//			// to the contour perimeter
+		//			// original elipse value 0.02
+		//			cv::approxPolyDP(cv::Mat(contours[i]), approx, cv::arcLength(cv::Mat(contours[i]), true)*0.1, true);
+
+		//			// Skip small or non-convex objects
+		//			if (std::fabs(cv::contourArea(contours[i])) < 100 || !cv::isContourConvex(approx))
+		//				continue;
+
+		//			if (approx.size() == 3)
+		//			{
+		//				triangles.push_back(approx);
+		//				trianglePositions.push_back(i);
+		//			}
+		//		}
+
+		//		/*	cout << "Size: " << triangles.size() << std::endl;
+		//			cout << "Size Circle: " << circles.size() << std::endl;*/
+
+		//		Point circleCenter;
+
+		//		/// Draw the circles detected
+		//		for (size_t i = 0; i < circles.size(); i++)
+		//		{
+		//			Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+		//			Point circleCenter = center;
+
+		//			int radius = cvRound(circles[i][2]);
+		//			//circle(srcdetect2, center, 3, Scalar(0, 255, 0), -1, 8, 0);
+		//			// circle outline
+		//			//circle(srcdetect2, center, radius, Scalar(0, 0, 255), 3, 8, 0);
+		//		}
+
+		//		int triangleindex = 0;
+
+		//		int diffx = 10000;
+		//		int diffy = 10000;
+		//		Point centerTri;
+
+		//		if (triangles.size() > 0)
+		//		{
+		//			for (size_t i = 0; i < triangles.size(); i++)
+		//			{
+		//				int x_centroid = (triangles[i][0].x + triangles[i][1].x + triangles[i][2].x) / 3;
+		//				int y_centroid = (triangles[i][0].y + triangles[i][1].y + triangles[i][2].y) / 3;
+
+		//				Point center(cvRound(x_centroid), cvRound(y_centroid));
+		//				centerTri = center;
+
+		//				int tmpdiffx = abs(x_centroid - circleCenter.x);
+		//				int tmpdiffy = abs(y_centroid - circleCenter.y);
+
+		//				if (tmpdiffx < diffx || tmpdiffy < diffy)
+		//				{
+		//					triangleindex = i;
+		//				}
+		//			}
+		//		}
+
+		//		vector<Point> pointsTriRect;
+
+		//		Point x(centerTri.x - 40, centerTri.y - 40);
+		//		Point y(centerTri.x + 40, centerTri.y + 40);
+		//		Point z(centerTri.x - 40, centerTri.y + 40);
+		//		Point v(centerTri.x - 40, centerTri.y + 40);
+
+		//		contoursPent.push_back(x);
+		//		contoursPent.push_back(y);
+		//		contoursPent.push_back(z);
+		//		contoursPent.push_back(v);
+
+		//		//rest.stop();
+		//		//printf("rest %f ms\n", rest.elapsed() * 0.001);
+
+		//		//sw.stop();
+		//		//printf("Circle detection: %f ms\n", sw.elapsed() * 0.001);
+
+		//		if (triangles.size() > 0 && triangleindex >= 0)
+		//			pointsTriRect = GetFrontOfTriangle(triangles[triangleindex]);
+		//		else
+		//			return Robot(Point(), Point(), contoursPent);
+
+		//		if (pointsTriRect.size() == 2)
+		//			return Robot(pointsTriRect[1], pointsTriRect[0], contoursPent);
+		//		else
+		//			return Robot(Point(), Point(), contoursPent);
+		//	}
+		//	else
+		//	{
+		//		//sw.stop();
+		//		//printf("Error Circle: %f ms\n", sw.elapsed() * 0.001);
+
+		//		return Robot(Point(), Point(), contoursPent);
+		//	}
+		//}
 
 		Shot ObjectDetectionService::DetectShotRoute(const Mat &frame, Player player, Player hitPlayer) {
 			/*Stopwatch sw;
