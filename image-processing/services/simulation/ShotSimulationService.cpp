@@ -44,7 +44,7 @@ namespace services {
 			startExplostionHalfXSize = gunShotImg.cols / 2;
 			startExplostionHalfYSize = gunShotImg.rows / 2;
 
-			//namedWindow("Test", WINDOW_AUTOSIZE);
+			namedWindow("Test", WINDOW_AUTOSIZE);
 			threadSleepTime = 1;
 			webcamService->AddObserver(this);
 		}
@@ -187,7 +187,7 @@ namespace services {
 					//total.stop();
 					//printf("hole overlay: %f ms\n", total.elapsed() * 0.001);
 
-					//imshow("Test", frame);
+					imshow("Test", frame);
 
 					webcamService->SetModifiedImage(frame);
 
