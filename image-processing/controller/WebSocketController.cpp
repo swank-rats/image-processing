@@ -9,8 +9,7 @@
 namespace controller {
 	namespace websocket {
 		WebSocketController::WebSocketController(URI uri)
-			: messageHandlerActivity(this, &WebSocketController::HandleReceivedMessages),
-			webSocketClient(new WebSocketClient(uri, receivedMessagesQueue)), notificationCenter() {
+			: messageHandlerActivity(this, &WebSocketController::HandleReceivedMessages), webSocketClient(new WebSocketClient(uri, receivedMessagesQueue)) {
 		}
 
 		WebSocketController::~WebSocketController() {
@@ -43,12 +42,8 @@ namespace controller {
 			}
 		}
 
-		NotificationCenter& WebSocketController::GetNotificationCenter() {
-			return notificationCenter;
-		}
-
 		void WebSocketController::Send(Message* message) {
-			webSocketClient->Send(message);
+			webSocketClient->Send(*message);
 		}
 
 		void WebSocketController::HandleReceivedMessages() {
@@ -59,7 +54,7 @@ namespace controller {
 					MessageNotification::Ptr messageNotification = notification.cast<MessageNotification>();
 					if (messageNotification)
 					{
-						notificationCenter.postNotification(messageNotification);
+						MessageReceived(this, *messageNotification->GetData()); //notify others
 					}
 				}
 				else {

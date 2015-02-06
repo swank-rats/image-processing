@@ -6,6 +6,7 @@
 //============================================================================
 #pragma once
 #include "..\..\..\..\services\webcam\WebcamService.h"
+#include "..\VideoStreamingServer.h"
 
 #include <Poco\Logger.h>
 #include <Poco\SharedPtr.h>
@@ -27,23 +28,20 @@ using Poco::BasicEvent;
 using Poco::SharedPtr;
 using Poco::NotificationQueue;
 using services::webcam::WebcamService;
+using infrastructure::video_streaming::VideoStreamingServer;
 
 namespace infrastructure {
 	namespace video_streaming {
 		class VideoStreamingRequestHandler : public HTTPRequestHandler
 		{
 		public:
-			BasicEvent<int> LostConnection;
-
-			VideoStreamingRequestHandler(SharedPtr<WebcamService> webcamService, NotificationQueue& lostConnectionQueue);
+			VideoStreamingRequestHandler(SharedPtr<WebcamService> webcamService, VideoStreamingServer& server);
 			~VideoStreamingRequestHandler();
 			void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
 		private:
 			SharedPtr<WebcamService> webcamService;
 			string boundary;
-			NotificationQueue& lostConnectionQueue;
-
-			void FireLostConnection();
+			VideoStreamingServer& server;
 		};
 	}
 }

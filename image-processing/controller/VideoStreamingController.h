@@ -12,6 +12,7 @@
 
 #include <Poco\SharedPtr.h>
 #include <Poco\AutoPtr.h>
+#include <Poco\Net\SocketAddress.h>
 #include <Poco\Activity.h>
 #include <Poco\NotificationQueue.h>
 
@@ -21,6 +22,7 @@ using namespace infrastructure::video_streaming;
 using Poco::NotificationQueue;
 using Poco::SharedPtr;
 using Poco::AutoPtr;
+using Poco::Net::SocketAddress;
 using Poco::Activity;
 using shared::notifications::MessageNotification;
 using controller::websocket::WebSocketController;
@@ -32,16 +34,14 @@ namespace controller {
 		public:
 			VideoStreamingController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> webSocketController);
 			~VideoStreamingController();
-			void HandleMessageNotification(MessageNotification* notification);
 			void StartStreamingServer();
 			bool StopStreamingServer();
 		private:
 			VideoStreamingServer* streamingServer;
-			NotificationQueue lostConnectionQueue;
 			SharedPtr<WebSocketController> webSocketController;
-			Activity<VideoStreamingController> lostConnectionHandlerActivity;
 
-			void HandleLostConnections();
+			void HandleLostConnections(const void* pSender, const SocketAddress& arg);
+			void HandleMessage(const void* pSender, Message& message);
 		};
 	}
 }

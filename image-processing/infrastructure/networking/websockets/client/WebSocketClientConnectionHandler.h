@@ -38,11 +38,12 @@ namespace infrastructure {
 		public:
 			BasicEvent<int> LostConnection;
 
-			WebSocketClientConnectionHandler(URI uri, NotificationQueue &receivedQueue, NotificationQueue &sendingQueue);
+			WebSocketClientConnectionHandler(URI uri, NotificationQueue &receivedQueue);
 			~WebSocketClientConnectionHandler();
 			URI GetURI();
 			bool OpenConnection();
 			void CloseConnection();
+			bool Send(Message& message);
 			bool Reconnect();
 			bool IsConnected();
 			bool IsReconnecting();
@@ -50,13 +51,11 @@ namespace infrastructure {
 		private:
 			URI uri;
 			Activity<WebSocketClientConnectionHandler> receiveActity;
-			Activity<WebSocketClientConnectionHandler> sendActity;
 			HTTPSClientSession* session;
 			WebSocket* webSocket;
 			Timespan sendTimeout;
 			Timespan receiveTimeout;
 			Timespan pollTimeout;
-			NotificationQueue &sendingQueue;
 			NotificationQueue &receivedQueue;
 			bool isConnected;
 			bool isReconnecting;

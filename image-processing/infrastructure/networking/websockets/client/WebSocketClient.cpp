@@ -29,8 +29,9 @@ using shared::model::message::MessageCommandEnum;
 namespace infrastructure {
 	namespace websocket {
 		WebSocketClient::WebSocketClient(URI uri, NotificationQueue &receivedQueue)
-			: connHandler(new WebSocketClientConnectionHandler(uri, receivedQueue, sendingQueue)) {
-			connHandler->LostConnection += Poco::delegate(this, &WebSocketClient::OnLostconnection);		}
+			: connHandler(new WebSocketClientConnectionHandler(uri, receivedQueue)) {
+			connHandler->LostConnection += Poco::delegate(this, &WebSocketClient::OnLostconnection);
+		}
 
 		WebSocketClient::~WebSocketClient() {
 			if (connHandler->IsConnected()) {
@@ -45,17 +46,14 @@ namespace infrastructure {
 		}
 
 		void WebSocketClient::CloseConnection() {
-			sendingQueue.clear();
-			sendingQueue.wakeUpAll();
-
 			connHandler->CloseConnection();
 		}
 		bool WebSocketClient::IsConnected() {
 			return connHandler->IsConnected();
 		}
 
-		void WebSocketClient::Send(Message* message) {
-			sendingQueue.enqueueNotification(new MessageNotification(message));
+		void WebSocketClient::Send(Message& message) {
+			connHandler->Send(message);
 		}
 
 		void WebSocketClient::OnLostconnection(const void* pSender, int& arg) {
@@ -65,7 +63,7 @@ namespace infrastructure {
 		}
 
 		void WebSocketClient::SendInitMessage() {
-			Send(new Message(MessageCommandEnum::init, "server"));
+			Send(*new Message(MessageCommandEnum::init, "server"));
 		}
 	}
 }

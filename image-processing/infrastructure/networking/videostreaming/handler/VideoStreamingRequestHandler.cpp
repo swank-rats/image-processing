@@ -50,8 +50,8 @@ namespace infrastructure {
 		//	return _avgdur;
 		//}
 
-		VideoStreamingRequestHandler::VideoStreamingRequestHandler(SharedPtr<WebcamService> webcamService, NotificationQueue& lostConnectionQueue)
-			: lostConnectionQueue(lostConnectionQueue), webcamService(webcamService) {
+		VideoStreamingRequestHandler::VideoStreamingRequestHandler(SharedPtr<WebcamService> webcamService, VideoStreamingServer& server)
+			: webcamService(webcamService), server(server) {
 			boundary = "VIDEOSTREAM";
 		}
 
@@ -117,7 +117,7 @@ namespace infrastructure {
 			printf("Frames: %u", frames);
 
 			logger.information("Video streaming stopped for client " + request.clientAddress().toString());
-			lostConnectionQueue.enqueueNotification(new ClientConnectionLostNotification(request.clientAddress()));
+			server.HandleClientLostConnection(request.clientAddress());
 		}
 	}
 }

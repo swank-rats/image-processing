@@ -144,9 +144,6 @@ private:
 		VideoStreamingController vidStreamCtrl(webcamService, webSocketCtrl);
 		ShotSimulationController shotSimCtrl(webcamService, webSocketCtrl);
 
-		webSocketCtrl->GetNotificationCenter().addObserver(Observer<ShotSimulationController, MessageNotification>(shotSimCtrl, &ShotSimulationController::HandleMessageNotification));
-		webSocketCtrl->GetNotificationCenter().addObserver(Observer<VideoStreamingController, MessageNotification>(vidStreamCtrl, &VideoStreamingController::HandleMessageNotification));
-
 		webCamCtrl.StartWebCam();
 		shotSimCtrl.StartSimulationService();
 		webSocketCtrl->StartWebSocketClient();
