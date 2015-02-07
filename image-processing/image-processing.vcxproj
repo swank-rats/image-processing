@@ -261,5 +261,37 @@
     <Content Include="image-processing.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="$(GSTREAMER_1_0_ROOT_X86)bin\libffi-6.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(GSTREAMER_1_0_ROOT_X86)bin\libglib-2.0-0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(GSTREAMER_1_0_ROOT_X86)bin\libgobject-2.0-0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(GSTREAMER_1_0_ROOT_X86)bin\libgstapp-1.0-0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(GSTREAMER_1_0_ROOT_X86)bin\libgstbase-1.0-0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(GSTREAMER_1_0_ROOT_X86)bin\libgstreamer-1.0-0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(GSTREAMER_1_0_ROOT_X86)bin\libwinpthread-1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+  <Target Name="Clean">
+    <Message Text="Removing build files" />
+    <Delete Files="$(OutputPath)image-processing.xml" />
+    <Delete Files="$(OutputPath)libffi-6.dll" />
+    <Delete Files="$(OutputPath)libglib-2.0-0.dll" />
+    <Delete Files="$(OutputPath)libgobject-2.0-0.dll" />
+    <Delete Files="$(OutputPath)libgstapp-1.0-0.dll" />
+    <Delete Files="$(OutputPath)libgstbase-1.0-0.dll" />
+    <Delete Files="$(OutputPath)libgstreamer-1.0-0.dll" />
+    <Delete Files="$(OutputPath)libwinpthread-1.dll" />
+  </Target>
 </Project>
