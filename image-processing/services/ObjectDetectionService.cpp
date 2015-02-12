@@ -241,7 +241,8 @@ namespace services {
 			int iHighS = 244;
 
 			int iLowV = 0;
-			int iHighV = 245;
+			//int iHighV = 245;
+			int iHighV = 253;
 
 
 			srcdetect2 = frame;
@@ -520,7 +521,8 @@ namespace services {
 			int iHighS = 244;
 
 			int iLowV = 0;
-			int iHighV = 245;
+			//int iHighV = 245;
+			int iHighV = 253;
 
 
 			srcdetect2 = frame;

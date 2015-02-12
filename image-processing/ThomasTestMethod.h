@@ -45,6 +45,9 @@ static int max_threshdetect2;
 static RNG rngdetect2;
 
 
+static vector<Point> leftClickPos;
+
+
 
 //our sensitivity value to be used in the threshold() function
 const static int SENSITIVITY_VALUE = 20;
@@ -817,7 +820,7 @@ static void thresh_callbackdetect4(int, void*)
 	int iHighS = 244;
 
 	int iLowV = 0;
-	int iHighV = 245;
+	int iHighV = 253;
 
 
 
@@ -965,7 +968,7 @@ static void thresh_callbackdetect5(int, void*)
 	int iHighS = 244;
 
 	int iLowV = 0;
-	int iHighV = 245;
+	int iHighV = 253;
 
 
 
@@ -1090,7 +1093,7 @@ static void thresh_callbackdetect5(int, void*)
 
 
 
-	}*/
+		}*/
 
 	for (size_t i = 0; i < triangles.size(); i++)
 	{
@@ -1122,6 +1125,30 @@ static double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0)
 
 
 
+}
+
+
+static void CallBackFunc(int event, int x, int y, int flags, void* userdata)
+{
+	if (event == EVENT_LBUTTONDOWN)
+	{
+		cout << "Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+		Point click(x, y);
+		leftClickPos.push_back(click);
+	}
+	else if (event == EVENT_RBUTTONDOWN)
+	{
+		//cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+	}
+	else if (event == EVENT_MBUTTONDOWN)
+	{
+		//cout << "Middle button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+	}
+	else if (event == EVENT_MOUSEMOVE)
+	{
+		//cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+
+	}
 }
 
 class ThomasTest{
@@ -1210,7 +1237,7 @@ public:
 
 	void DetectionRGBContour()
 	{
-
+		Mat tmp;
 		VideoCapture capture = VideoCapture();
 
 		capture.open(0);
@@ -1228,7 +1255,7 @@ public:
 		const char* source_window = "Source";
 		namedWindow(source_window, WINDOW_AUTOSIZE);
 
-		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect5);
+		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect4);
 
 		Stopwatch sw;
 
@@ -1237,6 +1264,12 @@ public:
 			sw.restart();
 
 			capture >> srcdetect2;
+
+			/*capture >> tmp;
+
+			Point left(90, 2);
+			Point right(575, 476);
+			tmp(Rect(left, right)).copyTo(srcdetect2);*/
 
 			hsvImg = srcdetect2.clone();
 
@@ -1248,7 +1281,7 @@ public:
 			//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
 			//thresh_callbackdetect2(0, 0);
 
-			thresh_callbackdetect5(0, 0);
+			thresh_callbackdetect4(0, 0);
 
 			sw.stop();
 			printf("%f\r", sw.elapsed()*0.001);
@@ -2441,8 +2474,11 @@ public:
 	void CalibartionTest(){
 
 		int numBoards = 1;
-		int numCornersHor = 5;
-		int numCornersVer = 3;
+		/*int numCornersHor = 5;
+		int numCornersVer = 3;*/
+
+		int numCornersHor = 8;
+		int numCornersVer = 5;
 
 		int numSquares = numCornersHor * numCornersVer;
 		Size board_sz = Size(numCornersHor, numCornersVer);
@@ -2689,6 +2725,56 @@ public:
 
 
 	}
+
+
+
+	void FieldSelection()
+	{
+
+		Mat img;
+		VideoCapture capture = VideoCapture();
+
+		capture.open(0);
+
+
+		////camera settings
+		capture.set(CV_CAP_PROP_FPS, 30);
+
+
+		//Create a window
+		namedWindow("My Window", 1);
+		//set the callback function for any mouse event
+		setMouseCallback("My Window", CallBackFunc, NULL);
+
+		while (true)
+		{
+
+
+			capture >> img;
+
+			//if fail to read the image
+			if (img.empty())
+			{
+				cout << "Error loading the image" << endl;
+			}
+
+			//show the image
+			imshow("My Window", img);
+
+			if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+			{
+				break;
+			}
+		}
+
+
+
+
+
+	}
+
+
+
 
 };
 #endif

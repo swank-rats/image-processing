@@ -220,8 +220,9 @@ private:
 		//th.startMotionTracking();
 		//th.Test11();
 		//th.WallDetectionTestOne();
-		//th.CalibartionTest();
-		th.DetectionRGBContour();
+		th.CalibartionTest();
+		//th.DetectionRGBContour();
+		//th.FieldSelection();
 		
 #endif
 	}
