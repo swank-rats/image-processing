@@ -6,12 +6,6 @@
 //============================================================================
 #include "WebCamController.h"
 
-#include <Poco\Thread.h>
-#include <Poco\RunnableAdapter.h>
-
-using Poco::Thread;
-using Poco::RunnableAdapter;
-
 namespace controller {
 	namespace webcam {
 		WebCamController::WebCamController(SharedPtr<WebcamService> webcamService) : webcamService(webcamService) {

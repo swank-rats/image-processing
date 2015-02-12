@@ -13,7 +13,6 @@
 #include <Poco\Thread.h>
 #include <Poco\ThreadPool.h>
 #include <Poco\Observer.h>
-#include <Poco\RunnableAdapter.h>
 
 //#include <Poco\Stopwatch.h>
 //using Poco::Stopwatch;
@@ -81,6 +80,13 @@ namespace services {
 
 		void ShotSimulationService::UpdateSimulation() {
 			//Stopwatch total;
+
+			/*
+				Performance improvement
+				1. do not simulate shot for each frame
+				- e.g. only every second or third
+				2. do robot detection only once per frame
+				*/
 
 			while (shallSimulate) {
 				Mat frame;
