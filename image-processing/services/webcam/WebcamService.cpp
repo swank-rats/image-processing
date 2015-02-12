@@ -85,11 +85,12 @@ namespace services {
 			capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
 			capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 
-			logger.information("Camera settings: ");
+			logger.information("Webcam settings");
+			logger.information("###################");
 			logger.information("FPS: " + std::to_string(capture.get(CV_CAP_PROP_FPS)));
-			logger.information("Resolution: " + std::to_string(capture.get(CV_CAP_PROP_FRAME_WIDTH)) + "x" + std::to_string(capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
-			logger.information("Codec: " + std::to_string(capture.get(CV_CAP_PROP_FOURCC)));
-			logger.information("Format: " + std::to_string(capture.get(CV_CAP_PROP_FORMAT)));
+			logger.information("Width: " + std::to_string(capture.get(CV_CAP_PROP_FRAME_WIDTH)));
+			logger.information("Height: " + std::to_string(capture.get(CV_CAP_PROP_FRAME_HEIGHT)));
+			logger.information("###################");
 
 			recordingActivity.start();
 
