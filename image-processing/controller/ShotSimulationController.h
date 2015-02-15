@@ -8,6 +8,7 @@
 #include "WebSocketController.h"
 
 #include "..\shared\notifications\MessageNotification.h"
+#include "..\shared\events\PlayerHitArgs.h"
 #include "..\services\simulation\ShotSimulationService.h"
 #include "..\services\ObjectDetectionService.h"
 #include "..\shared\model\Player.h"
@@ -24,6 +25,7 @@ using Poco::AutoPtr;
 using Poco::SharedPtr;
 using Poco::NotificationQueue;
 using services::simulation::ShotSimulationService;
+using shared::events::PlayerHitArgs;
 using shared::notifications::MessageNotification;
 using controller::websocket::WebSocketController;
 using services::object_detection::ObjectDetectionService;
@@ -39,6 +41,7 @@ namespace controller {
 			void StartSimulationService();
 			void StopSimulationService();
 			void StartTestingSimulation(); //only for testing
+
 		private:
 			SharedPtr<WebSocketController> webSocketController;
 			SharedPtr<WebcamService> webCamSrv;
@@ -47,12 +50,11 @@ namespace controller {
 			ObjectDetectionService *detectionService;
 			Player playerRect; //rectangle
 			Player playerPent; //pentagon
-			Activity<ShotSimulationController> playerHitActiviity;
 
 			Timer timer; //only for testing
 
-			void HandleMessage(const void* pSender, Message& message);
-			void HandlePlayerHitNotification();
+			void HandlePlayerHit(const void* pSender, const PlayerHitArgs& arg);
+			void HandleMessage(const void* pSender, const Message& message);
 			void StartShotSimulation(string playerType);
 			void OnTimer(Timer& timer);
 		};

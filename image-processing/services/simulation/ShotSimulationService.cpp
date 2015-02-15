@@ -5,7 +5,6 @@
 // Description :
 //============================================================================
 #include "ShotSimulationService.h"
-#include "..\..\shared\notifications\PlayerHitNotification.h"
 
 #include <algorithm>
 #include <vector>
@@ -23,12 +22,11 @@ using Poco::Observer;
 using std::max;
 using std::vector;
 using cv::imread;
-using shared::notifications::PlayerHitNotification;
 
 namespace services {
 	namespace simulation {
-		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService, NotificationQueue& playerHitQueue)
-			: webcamService(webcamService), detectionService(), playerHitQueue(playerHitQueue), maxNeededThreads(1),
+		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService)
+			: webcamService(webcamService), detectionService(), maxNeededThreads(1),
 			runnable(*this, &ShotSimulationService::UpdateSimulation), threadPool(1, maxNeededThreads, 2 * webcamService->GetDelay()) {
 			gunShotImg = imread("resources/images/gunfire2_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);
@@ -142,7 +140,7 @@ namespace services {
 								int id = iter->hitPlayer.playerId;
 
 								//Notify that player was hit
-								playerHitQueue.enqueueNotification(new PlayerHitNotification(iter->hitPlayer, 1));
+								PlayerHit.notifyAsync(this, PlayerHitArgs(iter->hitPlayer, 1));
 							}
 						}
 						//swStatus.stop();

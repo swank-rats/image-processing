@@ -58,7 +58,7 @@ namespace infrastructure {
 		}
 
 		void VideoStreamingServer::HandleClientLostConnection(const SocketAddress& clientAddr) {
-			ClientLostConnection(this, clientAddr);
+			ClientLostConnection.notifyAsync(this, clientAddr);
 		}
 	}
 }

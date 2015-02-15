@@ -17,7 +17,7 @@ namespace shared {
 			data = nullptr;
 		}
 
-		Message* MessageNotification::GetData() {
+		Message* MessageNotification::GetData() const {
 			return data;
 		}
 	}

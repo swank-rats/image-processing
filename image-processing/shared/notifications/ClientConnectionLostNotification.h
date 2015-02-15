@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : PlayerHitNotification.h
+// Name        : ClientConnectionLostNotification.h
 // Author      : ITM13
 // Version     : 1.0
 // Description :
