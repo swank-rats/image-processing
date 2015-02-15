@@ -19,7 +19,6 @@ namespace controller {
 	namespace shot_simulation {
 		ShotSimulationController::ShotSimulationController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> webSocketController) :
 			webCamSrv(webcamService), shotSimulation(webcamService), webSocketController(webSocketController) {
-			//TODO THOMAS Init players
 			playerRect.form = "square";
 			playerRect.playerId = 0;
 			playerPent.form = "circle";
@@ -76,7 +75,6 @@ namespace controller {
 		}
 
 		void ShotSimulationController::StartShotSimulation(string playerType) {
-			//TODO THOMAS
 			Player shootingPlayer;
 			Player hitPlayer;
 			if (playerType == "square") {

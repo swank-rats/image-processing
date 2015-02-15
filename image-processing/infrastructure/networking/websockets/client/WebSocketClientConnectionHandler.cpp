@@ -103,7 +103,7 @@ namespace infrastructure {
 				//wait for reconnecting to be finished to avoid loosing message
 				logger.warning("Cannot send message while reconnecting ... waiting for new connection...");
 
-				Thread::sleep(200);
+				Thread::sleep(50);
 			}
 
 			try {
@@ -145,6 +145,9 @@ namespace infrastructure {
 				logger.error("General exception: " + e.displayText());
 				FireLostConnection();
 			}
+
+			//exception occurred
+			return false;
 		}
 
 		void WebSocketClientConnectionHandler::Listen() {
@@ -211,8 +214,8 @@ namespace infrastructure {
 					break; //reconnected
 				}
 				else {
-					logger.warning("Reconnect failed; retry in 200ms");
-					Thread::sleep(200);
+					logger.warning("Reconnect failed; retry in 50ms");
+					Thread::sleep(50);
 				}
 			}
 

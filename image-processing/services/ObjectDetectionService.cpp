@@ -49,7 +49,6 @@ RNG rng(12345);
 
 static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons, vector<vector<cv::Point>> triangles, vector<int> pentagonContourPositions, vector<int> triangleContourPositions, vector<int> *allowedTriangles)
 {
-	int pentagonPos;
 	vector<int> allowedPentagonsContourPosition;
 	bool found = false;
 
@@ -95,7 +94,6 @@ static vector<int> CheckForAllowedPentagons(vector<vector<cv::Point>> pentagons,
 
 static vector<int> CheckForAllowedRectangles(vector<vector<cv::Point>> rectangles, vector<vector<cv::Point>> triangles, vector<int> rectanglesContourPositions, vector<int> triangleContourPositions, vector<int> *allowedTriangles)
 {
-	int rectPos;
 	vector<int> allowedRectanglesContourPositions;
 	bool found = false;
 
@@ -198,12 +196,10 @@ namespace services {
 				return DetectRobotPent(frame);
 			}
 
-			return Robot(); //TODO THOMAS??
+			return Robot();
 		}
 
 		Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
-
-
 			Mat srcdetect2;
 			Mat src_graydetect2;
 			//int threshdetect2 = 78;
@@ -211,13 +207,11 @@ namespace services {
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
-
 			//Drawing and contours
 			Mat canny_output2;
 
 			vector<vector<Point> > contours2;
 			vector<Vec4i> hierarchy2;
-
 
 			std::vector<cv::Point> approx2;
 
@@ -244,7 +238,6 @@ namespace services {
 			//int iHighV = 245;
 			int iHighV = 253;
 
-
 			srcdetect2 = frame;
 			Mat imgHSV;
 
@@ -261,8 +254,6 @@ namespace services {
 			//morphological closing (removes small holes from the foreground)
 			dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 			erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-
-
 
 			/// Detect edges using canny
 			Canny(imgThresholded, canny_output2, threshdetect2, threshdetect2 * 2, 3);
@@ -301,19 +292,16 @@ namespace services {
 
 			if (rectangles.size() > 0)
 			{
-
 				if (triangles.size() > 0){
-
 					Point dir;
 					Point PosTop;
-
 
 					for (size_t i = 0; i < triangles.size(); i++)
 					{
 						pointsTriRect = GetFrontOfTriangle(triangles[i]);
 						dir = pointsTriRect[0];
 						PosTop = pointsTriRect[1];
-						if (pointPolygonTest(Mat(rectangles[0]), PosTop, true) >0)
+						if (pointPolygonTest(Mat(rectangles[0]), PosTop, true) > 0)
 						{
 							found = true;
 							break;
@@ -322,7 +310,6 @@ namespace services {
 
 					if (found)
 					{
-
 						Point centerTri(PosTop.x - dir.x / 2, PosTop.y - dir.y / 2);
 
 						Point x(centerTri.x - 40, centerTri.y - 40);
@@ -335,20 +322,14 @@ namespace services {
 						contoursRect.push_back(z);
 						contoursRect.push_back(v);
 					}
-
-
 				}
 			}
-
 
 			if (pointsTriRect.size() == 2 && found)
 				return Robot(pointsTriRect[1], pointsTriRect[0], contoursRect);
 			else
 				return Robot(Point(), Point(), contoursRect);
-
-
 		}
-
 
 		//Robot ObjectDetectionService::DetectRobotRect(const Mat &frame){
 		//	//Stopwatch swTotal;
@@ -482,7 +463,6 @@ namespace services {
 		//}
 
 		Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
-
 			Mat srcdetect2;
 			Mat src_graydetect2;
 			//int threshdetect2 = 78;
@@ -490,20 +470,17 @@ namespace services {
 			int max_threshdetect2 = 255;
 			RNG rngdetect2;
 
-
 			//Drawing and contours
 			Mat canny_output2;
 
 			vector<vector<Point> > contours2;
 			vector<Vec4i> hierarchy2;
 
-
 			std::vector<cv::Point> approx2;
 
 			vector<vector<cv::Point>> triangles;
 			vector<int> trianglePositions;
 			vector<vector<cv::Point>> rectangles;
-
 
 			//int iLowH = 0;
 			//int iHighH = 179;
@@ -524,7 +501,6 @@ namespace services {
 			//int iHighV = 245;
 			int iHighV = 253;
 
-
 			srcdetect2 = frame;
 			Mat imgHSV;
 
@@ -541,8 +517,6 @@ namespace services {
 			//morphological closing (removes small holes from the foreground)
 			dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 			erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-
-
 
 			/// Detect edges using canny
 			Canny(imgThresholded, canny_output2, threshdetect2, threshdetect2 * 2, 3);
@@ -581,12 +555,9 @@ namespace services {
 
 			if (rectangles.size() > 0)
 			{
-
 				if (triangles.size() > 0){
-
 					Point dir;
 					Point PosTop;
-
 
 					for (size_t i = 0; i < triangles.size(); i++)
 					{
@@ -602,7 +573,6 @@ namespace services {
 
 					if (found)
 					{
-
 						Point centerTri(PosTop.x - dir.x / 2, PosTop.y - dir.y / 2);
 
 						Point x(centerTri.x - 40, centerTri.y - 40);
@@ -615,19 +585,13 @@ namespace services {
 						contoursRect.push_back(z);
 						contoursRect.push_back(v);
 					}
-
-
 				}
 			}
-
 
 			if (pointsTriRect.size() == 2 && found)
 				return Robot(pointsTriRect[1], pointsTriRect[0], contoursRect);
 			else
 				return Robot(Point(), Point(), contoursRect);
-
-
-
 		}
 
 		//Robot ObjectDetectionService::DetectRobotPent(const Mat &frame){
