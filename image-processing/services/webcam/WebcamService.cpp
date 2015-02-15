@@ -14,12 +14,13 @@
 using Poco::Stopwatch;
 
 using Poco::Clock;
-using Poco::Thread;
 using std::cout;
 
 namespace services {
 	namespace webcam {
-		WebcamService::WebcamService() : capture(VideoCapture()), recordingActivity(this, &WebcamService::RecordingCore) {
+		WebcamService::WebcamService() : capture(VideoCapture()) {
+			recordingThread = new Thread("WebCamRecording");
+			recordingAdapter = new RunnableAdapter<WebcamService>(*this, &WebcamService::RecordingCore);
 			isRecording = false;
 			params = { CV_IMWRITE_JPEG_QUALITY, 30 };
 			fps = 15;
@@ -27,7 +28,7 @@ namespace services {
 		}
 
 		WebcamService::~WebcamService() {
-			if (recordingActivity.isRunning()) {
+			if (recordingThread->isRunning()) {
 				StopRecording();
 			}
 
@@ -85,7 +86,8 @@ namespace services {
 			logger.information("Codec: " + std::to_string(capture.get(CV_CAP_PROP_FOURCC)));
 			logger.information("Format: " + std::to_string(capture.get(CV_CAP_PROP_FORMAT)));
 
-			recordingActivity.start();
+			isRecording = true;
+			recordingThread->start(*recordingAdapter);
 
 			logger.information("started recording");
 
@@ -97,10 +99,10 @@ namespace services {
 
 			logger.information("stopping recording...");
 
-			if (recordingActivity.isRunning()) {
-				recordingActivity.stop();
+			if (recordingThread->isRunning()) {
+				isRecording = false;
 				logger.information("recording activity stop requested");
-				recordingActivity.wait();
+				recordingThread->join();
 				logger.information("recording activity stopped successfully");
 			}
 			else {
@@ -113,7 +115,7 @@ namespace services {
 		}
 
 		bool WebcamService::IsRecording() {
-			return capture.isOpened() && recordingActivity.isRunning();
+			return capture.isOpened() && recordingThread->isRunning();
 		}
 
 		void WebcamService::RecordingCore() {
@@ -124,7 +126,7 @@ namespace services {
 			Clock clock;
 			int newDelay = 0;
 
-			while (!recordingActivity.isStopped()) {
+			while (isRecording) {
 				if (!capture.isOpened()) {
 					logger.error("Lost connection to webcam!");
 					break;
@@ -163,6 +165,8 @@ namespace services {
 					Thread::sleep(newDelay);
 				}
 			}
+
+			isRecording = false;
 		}
 	}
 }
