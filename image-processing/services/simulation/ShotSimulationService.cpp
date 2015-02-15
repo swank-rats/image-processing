@@ -72,12 +72,14 @@ namespace services {
 			framesQueueLock.unlock();
 
 			if (threadPool.used() < maxNeededThreads) {
-				threadPool.startWithPriority(Thread::Priority::PRIO_HIGHEST, runnable);
+				threadPool.startWithPriority(Thread::Priority::PRIO_HIGHEST, runnable, "ShotSimulator");
 			}
 		}
 
 		void ShotSimulationService::UpdateSimulation() {
 			//Stopwatch total;
+			static int frameCounter = 0;
+			static int skipFrame = 2;
 
 			/*
 				Performance improvement
@@ -98,14 +100,22 @@ namespace services {
 						framesQueue = queue<Mat>();
 					}
 					framesQueueLock.unlock();
+
+					++frameCounter;
 				}
 				else {
 					framesQueueLock.unlock();
-					Thread::sleep(threadSleepTime);
 					continue; //retry - no frames
 				}
 
 				try {
+					if (frameCounter == skipFrame) {
+						printf("skipped frame\n");
+						webcamService->SetModifiedImage(frame);
+						frameCounter = 0;
+						continue;
+					}
+
 					shotsSetLock.lock();
 					if (shots.empty())
 					{
