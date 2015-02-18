@@ -45,7 +45,7 @@ namespace controller {
 		private:
 			SharedPtr<WebSocketController> webSocketController;
 			SharedPtr<WebcamService> webCamSrv;
-			ShotSimulationService shotSimulation;
+			ShotSimulationService *shotSimulation;
 			NotificationQueue playerHitQueue;
 			ObjectDetectionService *detectionService;
 			Player playerRect; //rectangle

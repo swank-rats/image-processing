@@ -25,8 +25,8 @@ using cv::imread;
 
 namespace services {
 	namespace simulation {
-		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService)
-			: webcamService(webcamService), detectionService(), maxNeededThreads(1),
+		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService, ObjectDetectionService& detectionService)
+			: webcamService(webcamService), detectionService(detectionService), maxNeededThreads(1),
 			runnable(*this, &ShotSimulationService::UpdateSimulation), threadPool(1, maxNeededThreads, 2 * webcamService->GetDelay()) {
 			gunShotImg = imread("resources/images/gunfire2_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);
@@ -43,7 +43,6 @@ namespace services {
 
 			namedWindow("Test", WINDOW_AUTOSIZE);
 			threadSleepTime = 1;
-			webcamService->AddObserver(this);
 		}
 
 		ShotSimulationService::~ShotSimulationService()
@@ -55,9 +54,11 @@ namespace services {
 
 		void ShotSimulationService::Start() {
 			shallSimulate = true;
+			webcamService->AddObserver(this);
 		}
 
 		void ShotSimulationService::Stop() {
+			webcamService->RemoveObserver(this);
 			shallSimulate = false;
 			threadPool.stopAll();
 		}
@@ -78,18 +79,9 @@ namespace services {
 
 		void ShotSimulationService::UpdateSimulation() {
 			//Stopwatch total;
-
-			static int defaultStartCount = -1;
-			static int defaultMaxCount = 5;
-
-
 			static int frameCounter = 0;
 			static int skipFrame = 2;
-			static int counterRobotRect = defaultStartCount;
-			static int counterRobotCircle = defaultStartCount;
-			static bool dirtyFrame = true;
-
-
+			static int updateRobot = 2;
 
 			/*
 				Performance improvement
@@ -119,7 +111,11 @@ namespace services {
 				}
 
 				try {
-					if (frameCounter == skipFrame) {
+					if (frameCounter == updateRobot) {
+						detectionService.UpdateRobotPositions(frame);
+					}
+
+ 					if (frameCounter == skipFrame) {
 						frameCounter = 0;
 						continue;
 					}
@@ -127,13 +123,7 @@ namespace services {
 					shotsSetLock.lock();
 					if (shots.empty())
 					{
-
 						shotsSetLock.unlock();
-
-						counterRobotRect = defaultStartCount;
-						counterRobotCircle = defaultStartCount;
-						dirtyFrame = true;
-
 						//set unmodified image as modified
 						webcamService->SetModifiedImage(frame);
 
@@ -142,8 +132,6 @@ namespace services {
 
 					vector<Shot> deleteShots;
 					ShotsSetType::Iterator iter = shots.begin();
-
-
 
 					while (iter != shots.end()) {
 						//if (iter->SimulateStartExplosion()) {
@@ -154,34 +142,12 @@ namespace services {
 						//}
 
 						//simulate explosion
-						Stopwatch swStatus;
-						swStatus.start();
-
-						dirtyFrame = true;
-
-						if (iter->hitPlayer.playerId == 0)
-						{
-							++counterRobotRect;
-							dirtyFrame = counterRobotRect == defaultMaxCount || counterRobotRect == 0;
-							if (counterRobotRect == defaultMaxCount)
-							{
-								counterRobotRect = defaultStartCount+1;
-							}
-						}
-						else
-						{
-							++counterRobotCircle;
-							dirtyFrame = counterRobotCircle == defaultMaxCount || counterRobotCircle == 0;
-							if (counterRobotCircle == defaultMaxCount)
-							{
-								counterRobotCircle = defaultStartCount+1;
-							}
-						}
-
+						/*Stopwatch swStatus;
+						swStatus.start();*/
 
 						SimulationShot::SimulationHitStatus status = iter->status;
 						if (status == SimulationShot::SimulationHitStatus::UNKNOWN) {
-							if (detectionService.HasShotHitPlayer(frame, dirtyFrame, *iter)) {
+							if (detectionService.HasShotHitPlayer(frame, *iter)) {
 								iter->status = SimulationShot::HIT_PLAYER;
 								iter->SetCurrentPointAsEndoint();
 
@@ -191,8 +157,8 @@ namespace services {
 								PlayerHit.notifyAsync(this, PlayerHitArgs(iter->hitPlayer, 1));
 							}
 						}
-						swStatus.stop();
-						printf("swStatus: %f ms\n", swStatus.elapsed() * 0.001);
+						/*swStatus.stop();
+						printf("swStatus: %f ms\n", swStatus.elapsed() * 0.001);*/
 
 						if (iter->SimulateEndExplosion()) {
 							//	Stopwatch endExplo;

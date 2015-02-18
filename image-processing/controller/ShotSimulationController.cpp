@@ -18,15 +18,17 @@ using Poco::Delegate;
 namespace controller {
 	namespace shot_simulation {
 		ShotSimulationController::ShotSimulationController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> webSocketController) :
-			webCamSrv(webcamService), shotSimulation(webcamService), webSocketController(webSocketController) {
+			webCamSrv(webcamService), webSocketController(webSocketController) {
 			playerRect.form = "square";
 			playerRect.playerId = 0;
 			playerPent.form = "circle";
 			playerPent.playerId = 1;
 			detectionService = new ObjectDetectionService();
 
+			shotSimulation = new ShotSimulationService(webcamService, *detectionService);
+
 			webSocketController->MessageReceived += Poco::delegate(this, &ShotSimulationController::HandleMessage);
-			shotSimulation.PlayerHit += Poco::delegate(this, &ShotSimulationController::HandlePlayerHit);
+			shotSimulation->PlayerHit += Poco::delegate(this, &ShotSimulationController::HandlePlayerHit);
 		}
 
 		ShotSimulationController::~ShotSimulationController() {
@@ -34,7 +36,7 @@ namespace controller {
 			playerHitQueue.wakeUpAll();
 
 			webSocketController->MessageReceived -= Poco::delegate(this, &ShotSimulationController::HandleMessage);
-			shotSimulation.PlayerHit -= Poco::delegate(this, &ShotSimulationController::HandlePlayerHit);
+			shotSimulation->PlayerHit -= Poco::delegate(this, &ShotSimulationController::HandlePlayerHit);
 
 			//do not delete, since it is a shared pointer
 			webSocketController = nullptr;
@@ -42,17 +44,39 @@ namespace controller {
 			delete detectionService;
 			detectionService = nullptr;
 
+			delete shotSimulation;
+			shotSimulation = nullptr;
+
 #if defined(STANDALONE)
 			timer.stop();
 #endif
 		}
 
 		void ShotSimulationController::StartSimulationService() {
-			shotSimulation.Start();
+			Logger& logger = Logger::get("ShotSimulationController");
+
+			//wait till webcam is available
+			while (!webCamSrv->IsRecording()) {
+				logger.information("webcam service not yet available...");
+				Thread::sleep(20);
+			}
+
+			logger.information("waiting for webcam service...");
+			Thread::sleep(2000);
+
+			Mat frame = webCamSrv->GetLastImage();
+
+			while (frame.empty() || !detectionService->InitalDetection(frame)) {
+				logger.information("detection failed - retry...");
+				frame = webCamSrv->GetLastImage();
+			}
+
+			logger.information("robots detected successfully!");
+			shotSimulation->Start();
 		}
 
 		void ShotSimulationController::StopSimulationService() {
-			shotSimulation.Stop();
+			shotSimulation->Stop();
 		}
 
 		void ShotSimulationController::HandleMessage(const void* pSender, const Message& message) {
@@ -89,7 +113,7 @@ namespace controller {
 
 			Shot shot = detectionService->DetectShotRoute(webCamSrv->GetLastImage(), shootingPlayer, hitPlayer);
 
-			shotSimulation.SimulateShot(shot);
+			shotSimulation->SimulateShot(shot);
 		}
 
 		// ONLY FOR TESTING PURPOSE

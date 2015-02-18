@@ -1265,7 +1265,7 @@ public:
 		const char* source_window = "Source";
 		namedWindow(source_window, WINDOW_AUTOSIZE);
 
-		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect5);
+		createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect4);
 
 		Stopwatch sw;
 
@@ -1291,7 +1291,7 @@ public:
 			//createTrackbar(" Canny thresh:", "Source", &threshdetect2, max_threshdetect2, thresh_callbackdetect2);
 			//thresh_callbackdetect2(0, 0);
 
-			thresh_callbackdetect5(0, 0);
+			thresh_callbackdetect4(0, 0);
 
 			sw.stop();
 			printf("%f\r", sw.elapsed()*0.001);

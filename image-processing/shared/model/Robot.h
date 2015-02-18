@@ -18,12 +18,17 @@ namespace shared {
 
 			Point shotStartingPoint;
 			Point shotDirection;
+			Point currentPosition;
 			vector<Point> robotForm;
 
 			Robot() { }
 
+			Robot(Point shotStartingPoint, Point shotDirection, Point currentPosition,vector<Point> robotForm)
+				:shotStartingPoint(shotStartingPoint), shotDirection(shotDirection), currentPosition(currentPosition), robotForm(robotForm){}
+
+
 			Robot(Point shotStartingPoint, Point shotDirection, vector<Point> robotForm)
-				:shotStartingPoint(shotStartingPoint), shotDirection(shotDirection), robotForm(robotForm){}
+				:shotStartingPoint(shotStartingPoint), shotDirection(shotDirection),robotForm(robotForm){}
 
 
 		};

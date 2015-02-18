@@ -45,7 +45,7 @@ namespace services {
 		class ShotSimulationService : public IObserver < WebcamService >
 		{
 		public:
-			ShotSimulationService(SharedPtr<WebcamService> webcamService);
+			ShotSimulationService(SharedPtr<WebcamService> webcamService, ObjectDetectionService& detectionService);
 			~ShotSimulationService();
 
 			BasicEvent<const PlayerHitArgs> PlayerHit;
@@ -76,7 +76,7 @@ namespace services {
 			ThreadPool threadPool;
 			queue<Mat> framesQueue;
 			SharedPtr<WebcamService> webcamService;
-			ObjectDetectionService detectionService;
+			ObjectDetectionService& detectionService;
 			ShotsSetType shots;
 
 			void UpdateSimulation();

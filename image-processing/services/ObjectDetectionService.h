@@ -27,17 +27,30 @@ namespace services {
 			ObjectDetectionService();
 			virtual ~ObjectDetectionService();
 
-			Robot ObjectDetectionService::DetectRobot(Player player, const Mat &frame);
-			Robot ObjectDetectionService::DetectRobotRect(const Mat &frame);
-			Robot ObjectDetectionService::DetectRobotPent(const Mat &frame);
+			Robot DetectRobot(Player player, const Mat &frame);
+			Robot DetectRobotRect(const Mat &frame);
+			Robot DetectRobotPent(const Mat &frame);
+			Robot DetectRobotPentInital(const Mat &frame);
+			Robot DetectRobotRectInital(const Mat &frame);
 
-			Shot DetectShotRoute(const Mat &frame, Player player, Player hitPlayer); //TODO player parameter
-			bool HasShotHitPlayer(const Mat &frame,bool dirtyFrame, SimulationShot &shot);
+			bool InitalDetection(const Mat &frame);
+			bool UpdateRobotPositions(const Mat &frame);
+
+			Shot DetectShotRoute(const Mat &frame, Player player, Player hitPlayer); 
+			bool HasShotHitPlayer(const Mat &frame, SimulationShot &shot);
+			bool InitalDetection(const Mat &frame, Player player, Player player2);
+
+
+
 		private:
+			Robot* robotRect;
+			Robot* robotCircle;
 			Mat src;
 			Mat src_gray;
 			int thresh = 100;
 			int max_thresh = 255;
+
+			bool UpdateRobotPosition(int robotId,const Mat &frame);
 		};
 	}
 }
