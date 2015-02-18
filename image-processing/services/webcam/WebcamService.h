@@ -10,7 +10,7 @@
 #include <opencv2\core\core.hpp>
 #include <opencv2\opencv.hpp>
 #include <Poco\Thread.h>
-#include <Poco\Activity.h>
+#include <Poco\RunnableAdapter.h>
 #include <Poco\Logger.h>
 #include <Poco\RWLock.h>
 #include <Poco\Mutex.h>
@@ -21,7 +21,8 @@
 using cv::VideoCapture;
 using cv::Mat;
 using std::vector;
-using Poco::Activity;
+using Poco::Thread;
+using Poco::RunnableAdapter;
 using Poco::Logger;
 using Poco::Mutex;
 
@@ -48,7 +49,8 @@ namespace services {
 			VideoCapture capture;
 			Mat lastImage;
 			vector<uchar> modifiedImage;
-			Activity<WebcamService> recordingActivity;
+			Thread* recordingThread;
+			RunnableAdapter<WebcamService>* recordingAdapter;
 			Poco::Mutex lastImgMutex;
 			Poco::Mutex modifiedImgMutex;
 			vector<int> params;

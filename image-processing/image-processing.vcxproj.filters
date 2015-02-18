@@ -81,6 +81,9 @@
     <ClCompile Include="controller\WebCamController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="shared\events\PlayerHitArgs.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shared\observer\IObserver.h">
@@ -156,6 +159,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="controller\WebCamController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="shared\events\PlayerHitArgs.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

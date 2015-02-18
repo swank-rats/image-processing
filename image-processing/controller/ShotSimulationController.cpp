@@ -7,11 +7,9 @@
 #include "ShotSimulationController.h"
 
 #include "..\shared\model\message\MessageCommands.h"
-#include "..\shared\notifications\PlayerHitNotification.h"
 
 #include <Poco\Delegate.h>
 
-using shared::notifications::PlayerHitNotification;
 using shared::model::message::MessageCommandEnum;
 using Poco::TimerCallback;
 using Poco::FastMutex;
@@ -20,9 +18,7 @@ using Poco::Delegate;
 namespace controller {
 	namespace shot_simulation {
 		ShotSimulationController::ShotSimulationController(SharedPtr<WebcamService> webcamService, SharedPtr<WebSocketController> webSocketController) :
-			webCamSrv(webcamService), shotSimulation(webcamService, playerHitQueue), webSocketController(webSocketController),
-			playerHitActiviity(this, &ShotSimulationController::HandlePlayerHitNotification) {
-			//TODO THOMAS Init players
+			webCamSrv(webcamService), shotSimulation(webcamService), webSocketController(webSocketController) {
 			playerRect.form = "square";
 			playerRect.playerId = 0;
 			playerPent.form = "circle";
@@ -30,6 +26,7 @@ namespace controller {
 			detectionService = new ObjectDetectionService();
 
 			webSocketController->MessageReceived += Poco::delegate(this, &ShotSimulationController::HandleMessage);
+			shotSimulation.PlayerHit += Poco::delegate(this, &ShotSimulationController::HandlePlayerHit);
 		}
 
 		ShotSimulationController::~ShotSimulationController() {
@@ -37,6 +34,8 @@ namespace controller {
 			playerHitQueue.wakeUpAll();
 
 			webSocketController->MessageReceived -= Poco::delegate(this, &ShotSimulationController::HandleMessage);
+			shotSimulation.PlayerHit -= Poco::delegate(this, &ShotSimulationController::HandlePlayerHit);
+
 			//do not delete, since it is a shared pointer
 			webSocketController = nullptr;
 
@@ -50,23 +49,13 @@ namespace controller {
 
 		void ShotSimulationController::StartSimulationService() {
 			shotSimulation.Start();
-
-			if (!playerHitActiviity.isRunning()) {
-				playerHitActiviity.start();
-			}
 		}
 
 		void ShotSimulationController::StopSimulationService() {
 			shotSimulation.Stop();
-
-			if (playerHitActiviity.isRunning()) {
-				playerHitActiviity.stop();
-				playerHitQueue.wakeUpAll();
-				playerHitActiviity.wait();
-			}
 		}
 
-		void ShotSimulationController::HandleMessage(const void* pSender, Message& message) {
+		void ShotSimulationController::HandleMessage(const void* pSender, const Message& message) {
 			switch (message.GetCmd()) {
 			case MessageCommandEnum::shot:
 				string form;
@@ -77,32 +66,15 @@ namespace controller {
 			}
 		}
 
-		void ShotSimulationController::HandlePlayerHitNotification() {
-			while (!playerHitActiviity.isStopped())
-			{
-				Notification::Ptr notification(playerHitQueue.waitDequeueNotification());
-				if (notification)
-				{
-					PlayerHitNotification::Ptr playerHitNotification = notification.cast<PlayerHitNotification>();
-					if (playerHitNotification)
-					{
-						Message* msg = new Message(MessageCommandEnum::hit, "server");
-						msg->AddParam("form", playerHitNotification->GetHitPlayer().form);
-						msg->AddParam("precision", std::to_string(playerHitNotification->GetPrecision()));
+		void ShotSimulationController::HandlePlayerHit(const void* pSender, const PlayerHitArgs& arg) {
+			Message* msg = new Message(MessageCommandEnum::hit, "server");
+			msg->AddParam("form", arg.GetHitPlayer().form);
+			msg->AddParam("precision", std::to_string(arg.GetPrecision()));
 
-						webSocketController->Send(msg);
-					}
-				}
-				else {
-					//null signals that worker should stop polling queue
-					playerHitActiviity.stop();
-					break;
-				}
-			}
+			webSocketController->Send(msg);
 		}
 
 		void ShotSimulationController::StartShotSimulation(string playerType) {
-			//TODO THOMAS
 			Player shootingPlayer;
 			Player hitPlayer;
 			if (playerType == "square") {

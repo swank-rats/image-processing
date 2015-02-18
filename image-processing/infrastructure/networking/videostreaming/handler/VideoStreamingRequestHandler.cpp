@@ -5,7 +5,6 @@
 // Description :
 //============================================================================
 #include "VideoStreamingRequestHandler.h"
-#include "..\..\..\..\shared\notifications\ClientConnectionLostNotification.h"
 
 #include <Poco\Net\MultipartWriter.h>
 #include <Poco\Net\MessageHeader.h>
@@ -13,7 +12,6 @@
 using Poco::Net::MessageHeader;
 using Poco::Net::HTTPResponse;
 using Poco::Net::MultipartWriter;
-using shared::notifications::ClientConnectionLostNotification;
 
 namespace infrastructure {
 	namespace video_streaming {

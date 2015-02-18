@@ -9,9 +9,11 @@
 #include "..\ObjectDetectionService.h"
 #include "..\..\shared\model\Shot.h"
 #include "..\..\shared\observer\IObserver.h"
+#include "..\..\shared\events\PlayerHitArgs.h"
 
 #include <opencv2\core\core.hpp>
 
+#include <Poco\BasicEvent.h>
 #include <Poco\ThreadPool.h>
 #include <Poco\HashSet.h>
 #include <Poco\SharedPtr.h>
@@ -29,7 +31,9 @@ using services::webcam::WebcamService;
 using services::object_detection::ObjectDetectionService;
 using shared::model::Shot;
 using shared::model::SimulationShot;
+using shared::events::PlayerHitArgs;
 using Poco::HashSet;
+using Poco::BasicEvent;
 using Poco::SharedPtr;
 using Poco::NotificationQueue;
 using Poco::Mutex;
@@ -41,8 +45,11 @@ namespace services {
 		class ShotSimulationService : public IObserver < WebcamService >
 		{
 		public:
-			ShotSimulationService(SharedPtr<WebcamService> webcamService, NotificationQueue& playerHitQueue);
+			ShotSimulationService(SharedPtr<WebcamService> webcamService);
 			~ShotSimulationService();
+
+			BasicEvent<const PlayerHitArgs> PlayerHit;
+
 			void SimulateShot(Shot shot);
 			void Start();
 			void Stop();
@@ -70,7 +77,6 @@ namespace services {
 			queue<Mat> framesQueue;
 			SharedPtr<WebcamService> webcamService;
 			ObjectDetectionService detectionService;
-			NotificationQueue& playerHitQueue;
 			ShotsSetType shots;
 
 			void UpdateSimulation();

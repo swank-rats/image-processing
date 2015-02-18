@@ -23,7 +23,7 @@ namespace shared {
 
 			MessageNotification(Message *data);
 			~MessageNotification();
-			Message* GetData();
+			Message* GetData() const;
 		private:
 			Message *data;
 		};

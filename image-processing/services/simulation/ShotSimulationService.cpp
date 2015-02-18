@@ -5,7 +5,6 @@
 // Description :
 //============================================================================
 #include "ShotSimulationService.h"
-#include "..\..\shared\notifications\PlayerHitNotification.h"
 
 #include <algorithm>
 #include <vector>
@@ -13,7 +12,6 @@
 #include <Poco\Thread.h>
 #include <Poco\ThreadPool.h>
 #include <Poco\Observer.h>
-#include <Poco\RunnableAdapter.h>
 
 //#include <Poco\Stopwatch.h>
 //using Poco::Stopwatch;
@@ -24,12 +22,11 @@ using Poco::Observer;
 using std::max;
 using std::vector;
 using cv::imread;
-using shared::notifications::PlayerHitNotification;
 
 namespace services {
 	namespace simulation {
-		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService, NotificationQueue& playerHitQueue)
-			: webcamService(webcamService), detectionService(), playerHitQueue(playerHitQueue), maxNeededThreads(1),
+		ShotSimulationService::ShotSimulationService(SharedPtr<WebcamService> webcamService)
+			: webcamService(webcamService), detectionService(), maxNeededThreads(1),
 			runnable(*this, &ShotSimulationService::UpdateSimulation), threadPool(1, maxNeededThreads, 2 * webcamService->GetDelay()) {
 			gunShotImg = imread("resources/images/gunfire2_small.png", CV_LOAD_IMAGE_UNCHANGED);
 			cheeseImg = imread("resources/images/cheese_small.png", CV_LOAD_IMAGE_UNCHANGED);
@@ -75,12 +72,21 @@ namespace services {
 			framesQueueLock.unlock();
 
 			if (threadPool.used() < maxNeededThreads) {
-				threadPool.startWithPriority(Thread::Priority::PRIO_HIGHEST, runnable);
+				threadPool.startWithPriority(Thread::Priority::PRIO_HIGHEST, runnable, "ShotSimulator");
 			}
 		}
 
 		void ShotSimulationService::UpdateSimulation() {
 			//Stopwatch total;
+			static int frameCounter = 0;
+			static int skipFrame = 2;
+
+			/*
+				Performance improvement
+				1. do not simulate shot for each frame
+				- e.g. only every second or third
+				2. do robot detection only once per frame
+				*/
 
 			while (shallSimulate) {
 				Mat frame;
@@ -94,14 +100,22 @@ namespace services {
 						framesQueue = queue<Mat>();
 					}
 					framesQueueLock.unlock();
+
+					++frameCounter;
 				}
 				else {
 					framesQueueLock.unlock();
-					Thread::sleep(threadSleepTime);
 					continue; //retry - no frames
 				}
 
 				try {
+					if (frameCounter == skipFrame) {
+						printf("skipped frame\n");
+						webcamService->SetModifiedImage(frame);
+						frameCounter = 0;
+						continue;
+					}
+
 					shotsSetLock.lock();
 					if (shots.empty())
 					{
@@ -136,7 +150,7 @@ namespace services {
 								int id = iter->hitPlayer.playerId;
 
 								//Notify that player was hit
-								playerHitQueue.enqueueNotification(new PlayerHitNotification(iter->hitPlayer, 1));
+								PlayerHit.notifyAsync(this, PlayerHitArgs(iter->hitPlayer, 1));
 							}
 						}
 						//swStatus.stop();

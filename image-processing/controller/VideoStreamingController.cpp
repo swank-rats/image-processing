@@ -6,12 +6,10 @@
 //============================================================================
 #include "VideoStreamingController.h"
 #include "..\shared\model\message\MessageCommands.h"
-#include "..\shared\notifications\ClientConnectionLostNotification.h"
 
 #include <Poco\Delegate.h>
 
 using shared::model::message::MessageCommandEnum;
-using shared::notifications::ClientConnectionLostNotification;
 
 using Poco::Delegate;
 
@@ -47,7 +45,7 @@ namespace controller {
 			return true;
 		}
 
-		void VideoStreamingController::HandleMessage(const void* pSender, Message& message) {
+		void VideoStreamingController::HandleMessage(const void* pSender, const Message& message) {
 			switch (message.GetCmd()) {
 			case MessageCommandEnum::start:
 				StartStreamingServer();

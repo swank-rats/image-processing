@@ -41,7 +41,7 @@ namespace controller {
 			SharedPtr<WebSocketController> webSocketController;
 
 			void HandleLostConnections(const void* pSender, const SocketAddress& arg);
-			void HandleMessage(const void* pSender, Message& message);
+			void HandleMessage(const void* pSender, const Message& message);
 		};
 	}
 }

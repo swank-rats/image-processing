@@ -33,7 +33,7 @@ namespace controller {
 		class WebSocketController
 		{
 		public:
-			BasicEvent<Message> MessageReceived;
+			BasicEvent<const Message> MessageReceived;
 
 			WebSocketController(URI uri);
 			~WebSocketController();

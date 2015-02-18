@@ -223,7 +223,7 @@ private:
 		//th.CalibartionTest();
 		th.DetectionRGBContour();
 		//th.FieldSelection();
-		
+
 #endif
 	}
 };

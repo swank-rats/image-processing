@@ -189,6 +189,7 @@
     <ClCompile Include="controller\WebCamController.cpp" />
     <ClCompile Include="controller\VideoStreamingController.cpp" />
     <ClCompile Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.cpp" />
+    <ClCompile Include="shared\events\PlayerHitArgs.cpp" />
     <ClCompile Include="shared\notifications\NewFrameNotification.cpp" />
     <ClCompile Include="shared\model\message\Message.cpp" />
     <ClCompile Include="shared\model\message\MessageCommands.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="controller\WebCamController.h" />
     <ClInclude Include="controller\VideoStreamingController.h" />
     <ClInclude Include="infrastructure\networking\videostreaming\handler\InvalidUriRequestHandler.h" />
+    <ClInclude Include="shared\events\PlayerHitArgs.h" />
     <ClInclude Include="shared\notifications\NewFrameNotification.h" />
     <ClInclude Include="shared\model\message\Message.h" />
     <ClInclude Include="shared\model\message\MessageCommands.h" />
