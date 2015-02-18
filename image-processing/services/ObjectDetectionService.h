@@ -32,7 +32,7 @@ namespace services {
 			Robot ObjectDetectionService::DetectRobotPent(const Mat &frame);
 
 			Shot DetectShotRoute(const Mat &frame, Player player, Player hitPlayer); //TODO player parameter
-			bool HasShotHitPlayer(const Mat &frame, SimulationShot &shot);
+			bool HasShotHitPlayer(const Mat &frame,bool dirtyFrame, SimulationShot &shot);
 		private:
 			Mat src;
 			Mat src_gray;

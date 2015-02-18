@@ -13,8 +13,8 @@
 #include <Poco\ThreadPool.h>
 #include <Poco\Observer.h>
 
-//#include <Poco\Stopwatch.h>
-//using Poco::Stopwatch;
+#include <Poco\Stopwatch.h>
+using Poco::Stopwatch;
 
 using Poco::Thread;
 using Poco::ThreadPool;
@@ -78,8 +78,18 @@ namespace services {
 
 		void ShotSimulationService::UpdateSimulation() {
 			//Stopwatch total;
+
+			static int defaultStartCount = -1;
+			static int defaultMaxCount = 5;
+
+
 			static int frameCounter = 0;
 			static int skipFrame = 2;
+			static int counterRobotRect = defaultStartCount;
+			static int counterRobotCircle = defaultStartCount;
+			static bool dirtyFrame = true;
+
+
 
 			/*
 				Performance improvement
@@ -117,7 +127,12 @@ namespace services {
 					shotsSetLock.lock();
 					if (shots.empty())
 					{
+
 						shotsSetLock.unlock();
+
+						counterRobotRect = defaultStartCount;
+						counterRobotCircle = defaultStartCount;
+						dirtyFrame = true;
 
 						//set unmodified image as modified
 						webcamService->SetModifiedImage(frame);
@@ -128,6 +143,8 @@ namespace services {
 					vector<Shot> deleteShots;
 					ShotsSetType::Iterator iter = shots.begin();
 
+
+
 					while (iter != shots.end()) {
 						//if (iter->SimulateStartExplosion()) {
 						//	//simulate gun explosion
@@ -137,11 +154,34 @@ namespace services {
 						//}
 
 						//simulate explosion
-						//Stopwatch swStatus;
-						//swStatus.start();
+						Stopwatch swStatus;
+						swStatus.start();
+
+						dirtyFrame = true;
+
+						if (iter->hitPlayer.playerId == 0)
+						{
+							++counterRobotRect;
+							dirtyFrame = counterRobotRect == defaultMaxCount || counterRobotRect == 0;
+							if (counterRobotRect == defaultMaxCount)
+							{
+								counterRobotRect = defaultStartCount+1;
+							}
+						}
+						else
+						{
+							++counterRobotCircle;
+							dirtyFrame = counterRobotCircle == defaultMaxCount || counterRobotCircle == 0;
+							if (counterRobotCircle == defaultMaxCount)
+							{
+								counterRobotCircle = defaultStartCount+1;
+							}
+						}
+
+
 						SimulationShot::SimulationHitStatus status = iter->status;
 						if (status == SimulationShot::SimulationHitStatus::UNKNOWN) {
-							if (detectionService.HasShotHitPlayer(frame, *iter)) {
+							if (detectionService.HasShotHitPlayer(frame, dirtyFrame, *iter)) {
 								iter->status = SimulationShot::HIT_PLAYER;
 								iter->SetCurrentPointAsEndoint();
 
@@ -151,8 +191,8 @@ namespace services {
 								PlayerHit.notifyAsync(this, PlayerHitArgs(iter->hitPlayer, 1));
 							}
 						}
-						//swStatus.stop();
-						//printf("swStatus: %f ms\n", swStatus.elapsed() * 0.001);
+						swStatus.stop();
+						printf("swStatus: %f ms\n", swStatus.elapsed() * 0.001);
 
 						if (iter->SimulateEndExplosion()) {
 							//	Stopwatch endExplo;

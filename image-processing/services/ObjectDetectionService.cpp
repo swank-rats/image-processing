@@ -22,6 +22,9 @@ using Poco::Stopwatch;
 
 RNG rng(12345);
 
+Point posRobotRect;
+Point posRobotCircle;
+
 //int nextShot = -1;
 //int shotsSize = 8;
 //Player p;
@@ -831,21 +834,12 @@ namespace services {
 			//return shots[nextShot];
 		}
 
-		bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame, SimulationShot &shot) {
+		bool ObjectDetectionService::HasShotHitPlayer(const Mat &frame,bool dirtyFrame, SimulationShot &shot) {
 			//Stopwatch sw;
 			//sw.start();
 
-			Robot robotHitPlayer = DetectRobot(shot.hitPlayer, frame);
-
-			//sw.stop();
-			//printf("DetectRobot: %f ms\n", sw.elapsed() * 0.001);
-
-			if (robotHitPlayer.robotForm.size() <= 0)
-			{
-				return false;
-			}
-
-			//sw.restart();
+			Point* actuelPosition = nullptr;
+			Robot robotHitPlayer;
 
 			Point2i tmp = shot.GetCurrentShotPoint();
 
@@ -853,6 +847,110 @@ namespace services {
 			//printf("GetCurrentShotPoint: %f ms\n", sw.elapsed() * 0.001);
 
 			Point2f currentShotingPoint = Point2f(tmp.x, tmp.y);
+
+			if (!dirtyFrame)
+			{
+				if (shot.hitPlayer.playerId == 0)
+				{
+					actuelPosition = &posRobotRect;
+				}
+				if (shot.hitPlayer.playerId == 1)
+				{
+					actuelPosition = &posRobotCircle;
+				}
+
+
+				if (actuelPosition)
+				{
+
+					int diffx = abs(actuelPosition->x - currentShotingPoint.x);
+					int diffy = abs(actuelPosition->y - currentShotingPoint.y);
+
+					if (diffx > 100 || diffy > 100)
+					{
+						return false;
+					}
+
+
+
+					int x1 = actuelPosition->x <= 100 ? 0 : actuelPosition->x - 100;
+					int x2 = actuelPosition->x >= frame.cols - 100 ? frame.cols : actuelPosition->x + 100;
+					int y1 = actuelPosition->y <= 100 ? 0 : actuelPosition->y - 100;
+					int y2 = actuelPosition->y >= frame.rows - 100 ? frame.rows : actuelPosition->y + 100;
+
+
+					Point left(x1, y1);
+					Point right(x2, y2);
+
+					Mat tmp;
+					frame(Rect(left, right)).copyTo(tmp);
+
+					robotHitPlayer = DetectRobot(shot.hitPlayer, tmp);
+
+					if (robotHitPlayer.robotForm.size() <= 0)
+					{
+						return false;
+					}
+
+
+					Point dir(robotHitPlayer.shotDirection.x+left.x,robotHitPlayer.shotDirection.y+left.y);
+					Point PosTop(robotHitPlayer.shotStartingPoint.x + left.x, robotHitPlayer.shotStartingPoint.y + left.y);
+					Point centerTri(PosTop.x - dir.x / 2, PosTop.y - dir.y / 2);
+
+					actuelPosition->x = centerTri.x;
+					actuelPosition->y = centerTri.y;
+
+					robotHitPlayer.robotForm[0].x += left.x;
+					robotHitPlayer.robotForm[0].y += left.y;
+					robotHitPlayer.robotForm[1].x += left.x;
+					robotHitPlayer.robotForm[1].y += left.y;	
+					robotHitPlayer.robotForm[2].x += left.x;
+					robotHitPlayer.robotForm[2].y += left.y;
+					robotHitPlayer.robotForm[3].x += left.x;
+					robotHitPlayer.robotForm[3].y += left.y;
+
+
+				}
+			}
+			else
+			{
+				robotHitPlayer = DetectRobot(shot.hitPlayer, frame);
+
+				if (robotHitPlayer.robotForm.size() <= 0)
+				{
+					return false;
+				}
+
+				
+				Point centerTri(robotHitPlayer.shotStartingPoint.x - robotHitPlayer.shotDirection.x / 2, robotHitPlayer.shotStartingPoint.y - robotHitPlayer.shotDirection.y / 2);
+
+				if (shot.hitPlayer.playerId == 0)
+				{
+					
+					posRobotRect.x = centerTri.x;
+					posRobotRect.y = centerTri.y;
+				}
+				if (shot.hitPlayer.playerId == 1)
+				{
+					posRobotCircle.x = centerTri.x;
+					posRobotCircle.y = centerTri.y;
+				}
+
+			}
+
+
+
+
+
+
+			//sw.stop();
+			//printf("DetectRobot: %f ms\n", sw.elapsed() * 0.001);
+
+			
+
+			//sw.restart();
+
+			
 
 			//Logger& logger = Logger::get("ObjectDetectionService");
 
