@@ -148,7 +148,7 @@ namespace services {
 						{
 							Poco::Mutex::ScopedLock lock(lastImgMutex); //will be released after leaving scop
 							lastImage = frame; //Clone image
-							logger.information("new image");
+							//logger.information("new image");
 						}
 
 					//sw.stop();

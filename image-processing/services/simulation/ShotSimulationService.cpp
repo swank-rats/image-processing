@@ -110,8 +110,6 @@ namespace services {
 
 				try {
 					if (frameCounter == skipFrame) {
-						printf("skipped frame\n");
-						webcamService->SetModifiedImage(frame);
 						frameCounter = 0;
 						continue;
 					}
