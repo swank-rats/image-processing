@@ -325,10 +325,11 @@ namespace services {
 
 						Point centerTri(PosTop.x - dir.x / 2, PosTop.y - dir.y / 2);
 
-						Point x(centerTri.x - 40, centerTri.y - 40);
-						Point y(centerTri.x + 40, centerTri.y + 40);
-						Point z(centerTri.x - 40, centerTri.y + 40);
-						Point v(centerTri.x - 40, centerTri.y + 40);
+						Point x(centerTri.x - 50, centerTri.y - 50);
+						Point y(centerTri.x + 50, centerTri.y + 50);
+						Point z(centerTri.x - 50, centerTri.y + 50);
+						Point v(centerTri.x - 50, centerTri.y + 50);
+
 
 						contoursRect.push_back(x);
 						contoursRect.push_back(y);

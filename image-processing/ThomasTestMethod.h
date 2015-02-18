@@ -903,6 +903,16 @@ static void thresh_callbackdetect4(int, void*)
 
 				circle(srcdetect2, PosTop, 10.0, Scalar(0, 0, 255), 1, 8);
 				circle(srcdetect2, PosTop - dir, 10.0, Scalar(0, 0, 255), 1, 8);
+
+				Point centerTri(PosTop.x - dir.x / 2, PosTop.y - dir.y / 2);
+
+
+				Point x(centerTri.x - 50, centerTri.y - 50);
+				Point y(centerTri.x + 50, centerTri.y + 50);
+				Point z(centerTri.x - 50, centerTri.y + 50);
+				Point v(centerTri.x - 50, centerTri.y + 50);
+
+				rectangle(srcdetect2, x, y, Scalar(0, 255, 0), 1, 8, 0);
 			}
 
 		}
@@ -1055,10 +1065,10 @@ static void thresh_callbackdetect5(int, void*)
 
 				Point centerTri(PosTop.x - dir.x / 2, PosTop.y - dir.y / 2);
 
-				Point x(centerTri.x - 40, centerTri.y - 40);
-				Point y(centerTri.x + 40, centerTri.y + 40);
-				Point z(centerTri.x - 40, centerTri.y + 40);
-				Point v(centerTri.x - 40, centerTri.y + 40);
+				Point x(centerTri.x - 55, centerTri.y - 55);
+				Point y(centerTri.x + 55, centerTri.y + 55);
+				Point z(centerTri.x - 55, centerTri.y + 55);
+				Point v(centerTri.x - 55, centerTri.y + 55);
 
 				rectangle(srcdetect2, x, y, Scalar(0, 255, 0), 1, 8, 0);
 			}
