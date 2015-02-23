@@ -40,7 +40,8 @@ namespace services {
 			bool HasShotHitPlayer(const Mat &frame, SimulationShot &shot);
 			bool InitalDetection(const Mat &frame, Player player, Player player2);
 
-
+			Point& GetRobotRect();
+			Point& GetRobotCircle();
 
 		private:
 			Robot* robotRect;

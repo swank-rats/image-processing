@@ -919,5 +919,16 @@ namespace services {
 			return false;
 
 		}
+
+
+		Point& ObjectDetectionService::GetRobotRect() {
+			return robotRect->shotStartingPoint;
+		}
+		
+		Point& ObjectDetectionService::GetRobotCircle() {
+			return robotCircle->shotStartingPoint;
+
+		}
+
 	}
 }

@@ -19,7 +19,6 @@ namespace controller {
 			: webSocketController(webSocketController) {
 			streamingServer = new VideoStreamingServer(4711, "/videostream", webcamService);
 			streamingServer->ClientLostConnection += Poco::delegate(this, &VideoStreamingController::HandleLostConnections);
-			webSocketController->MessageReceived += Poco::delegate(this, &VideoStreamingController::HandleMessage);
 		}
 
 		VideoStreamingController::~VideoStreamingController() {
@@ -27,7 +26,6 @@ namespace controller {
 			delete streamingServer;
 			streamingServer = nullptr;
 
-			webSocketController->MessageReceived -= Poco::delegate(this, &VideoStreamingController::HandleMessage);
 			webSocketController = nullptr; //do not delete - is shared pointer
 		}
 
@@ -43,17 +41,6 @@ namespace controller {
 			}
 
 			return true;
-		}
-
-		void VideoStreamingController::HandleMessage(const void* pSender, const Message& message) {
-			switch (message.GetCmd()) {
-			case MessageCommandEnum::start:
-				StartStreamingServer();
-				break;
-			case MessageCommandEnum::stop:
-				StopStreamingServer();
-				break;
-			}
 		}
 
 		void VideoStreamingController::HandleLostConnections(const void* pSender, const SocketAddress& arg) {

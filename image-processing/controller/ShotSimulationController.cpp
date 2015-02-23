@@ -65,11 +65,15 @@ namespace controller {
 			Thread::sleep(2000);
 
 			Mat frame = webCamSrv->GetLastImage();
+			namedWindow("RobotDetection");
 
 			while (frame.empty() || !detectionService->InitalDetection(frame)) {
 				logger.information("detection failed - retry...");
+				imshow("RobotDetection", frame);
 				frame = webCamSrv->GetLastImage();
 			}
+
+			destroyWindow("RobotDetection");
 
 			logger.information("robots detected successfully!");
 			shotSimulation->Start();

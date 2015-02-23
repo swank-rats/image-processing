@@ -147,6 +147,7 @@ private:
 		webCamCtrl.StartWebCam();
 		shotSimCtrl.StartSimulationService();
 		webSocketCtrl->StartWebSocketClient();
+		vidStreamCtrl.StartStreamingServer();
 
 #if defined(CONNTEST)
 
@@ -163,7 +164,6 @@ private:
 #endif
 
 #if defined(THOMAS) || defined(STANDALONE)
-		vidStreamCtrl.StartStreamingServer();
 
 		shotSimCtrl.StartTestingSimulation();
 #endif
@@ -176,6 +176,7 @@ private:
 				break; //If you hit ESC key loop will break.
 			}
 		}
+
 		shotSimCtrl.StopSimulationService();
 		webCamCtrl.StopWebCam();
 		vidStreamCtrl.StopStreamingServer();

@@ -119,6 +119,8 @@ namespace services {
 						frameCounter = 0;
 						continue;
 					}
+					
+					//imshow("Test", frame);
 
 					shotsSetLock.lock();
 					if (shots.empty())
@@ -202,10 +204,16 @@ namespace services {
 					}
 					shotsSetLock.unlock();
 
+					//Point& pointCircle = detectionService.GetRobotCircle();
+					//circle(frame, pointCircle, 10.0, Scalar(255, 0, 0), 1, 8);
+
+					//Point& pointRect = detectionService.GetRobotRect();
+					//circle(frame, pointRect, 10.0, Scalar(255, 0, 0), 1, 8);
+
 					//total.stop();
 					//printf("hole overlay: %f ms\n", total.elapsed() * 0.001);
 
-					imshow("Test", frame);
+					//imshow("Test", frame);
 
 					webcamService->SetModifiedImage(frame);
 
